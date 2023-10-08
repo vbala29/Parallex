@@ -20,4 +20,5 @@ Run start_command_node.sh from command directory
 Run run_daemon.sh from provider directory
 
 **What to do to update requirements for this project**
+
 ```pip3 freeze > requirements.txt```
