@@ -25,7 +25,8 @@ class DaemonHandler(daemon_pb2_grpc.MetricsServicer):
         print("Received static metrics")
         print(request)
         print(context)
-        p = Provider(context.peer())
+
+        p = Provider(ip=context.peer())
         self.cm.add_provider(p)
         print(self.cm.providers)
         return daemon_pb2.Empty()
@@ -34,7 +35,7 @@ class DaemonHandler(daemon_pb2_grpc.MetricsServicer):
         print("Received dynamic metrics")
         print(request)
         print(context)
-        p = Provider(context.peer())
+        p = Provider(ip=context.peer())
         self.cm.add_provider(p)
         print(self.cm.providers)
         return daemon_pb2.Empty()

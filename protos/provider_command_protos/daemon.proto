@@ -17,14 +17,12 @@ service Metrics {
 message StaticMetrics {
     int32 CPUNumCores = 1;
     string CPUName = 2;
-    int32 MBMemory = 3;
-    int32 MBRam = 4; 
+    int32 MBRam = 3; 
 }
 
 message DynamicMetrics {
-    int32 CPUUsage = 1;
-    int32 MemoryUsage = 2;
-    int32 RamUsage = 3;
+    float CPUUsage = 1;
+    float RamUsage = 2;
 }
 
 message Empty {}
