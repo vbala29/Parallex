@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package metrics;
+
+service Metrics {
+    rpc SendMetrics (Metrics) returns (Empty) {}
+}
+
+message Metrics {
+    string CPU = 1;
+    string Memory = 2;
+    string Disk = 3;
+    float CPUUsage = 4;
+    float MemoryUsage = 5;
+    float DiskUsage = 6;
+    string IP = 7; // are we able to get the IP address of the client without them sending it to us?
+}
