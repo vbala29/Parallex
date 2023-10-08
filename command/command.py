@@ -15,21 +15,28 @@ class CommandNode():
         self.providers = {}
 
     def add_provider(self, provider):
-        self.providers[provider.name] = provider
+        self.providers[provider.ip] = provider
 
 class DaemonHandler(daemon_pb2_grpc.MetricsServicer):
+    def __init__(self, cm):
+        self.cm = cm
 
-    
     def SendStaticMetrics(self, request, context):
         print("Received static metrics")
         print(request)
         print(context)
+        p = Provider(context.peer())
+        self.cm.add_provider(p)
+        print(self.cm.providers)
         return daemon_pb2.Empty()
     
     def SendDynamicMetrics(self, request, context):
         print("Received dynamic metrics")
         print(request)
         print(context)
+        p = Provider(context.peer())
+        self.cm.add_provider(p)
+        print(self.cm.providers)
         return daemon_pb2.Empty()
 
 def serve(cm):
