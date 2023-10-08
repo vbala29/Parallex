@@ -1,18 +1,24 @@
 syntax = "proto3";
-import "google/protobuf/empty.proto";
+
 package metrics;
 
-service Metrics {
-    rpc SendStaticMetrics (StaticMetrics) returns (google.protobuf.Empty) {}
 
-    rpc SendDynamicMetrics (DynamicMetrics) returns (google.protobuf.Empty) {}
+
+service Metrics {
+    rpc SendStaticMetrics (StaticMetrics) returns (Empty) {}
+
+    rpc SendDynamicMetrics (DynamicMetrics) returns (Empty) {}
 }
+
+/* StaticMetrics are those that the provider nodes should send upon joining the network,
+ * such that the command node knows about the available hardware on the node. 
+ * Data in MB is megabytes, not MiB mebibytes. */
 
 message StaticMetrics {
     int32 CPUNumCores = 1;
     string CPUName = 2;
     int32 MBMemory = 3;
-    int32 MBRam = 4;
+    int32 MBRam = 4; 
 }
 
 message DynamicMetrics {
@@ -20,4 +26,6 @@ message DynamicMetrics {
     int32 MemoryUsage = 2;
     int32 RamUsage = 3;
 }
+
+message Empty {}
 

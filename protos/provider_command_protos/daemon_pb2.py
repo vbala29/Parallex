@@ -11,20 +11,21 @@ from google.protobuf.internal import builder as _builder
 _sym_db = _symbol_database.Default()
 
 
-from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0c\x64\x61\x65mon.proto\x12\x07metrics\x1a\x1bgoogle/protobuf/empty.proto\"V\n\rStaticMetrics\x12\x13\n\x0b\x43PUNumCores\x18\x01 \x01(\x05\x12\x0f\n\x07\x43PUName\x18\x02 \x01(\t\x12\x10\n\x08MBMemory\x18\x03 \x01(\x05\x12\r\n\x05MBRam\x18\x04 \x01(\x05\"I\n\x0e\x44ynamicMetrics\x12\x10\n\x08\x43PUUsage\x18\x01 \x01(\x05\x12\x13\n\x0bMemoryUsage\x18\x02 \x01(\x05\x12\x10\n\x08RamUsage\x18\x03 \x01(\x05\x32\x99\x01\n\x07Metrics\x12\x45\n\x11SendStaticMetrics\x12\x16.metrics.StaticMetrics\x1a\x16.google.protobuf.Empty\"\x00\x12G\n\x12SendDynamicMetrics\x12\x17.metrics.DynamicMetrics\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0c\x64\x61\x65mon.proto\x12\x07metrics\"V\n\rStaticMetrics\x12\x13\n\x0b\x43PUNumCores\x18\x01 \x01(\x05\x12\x0f\n\x07\x43PUName\x18\x02 \x01(\t\x12\x10\n\x08MBMemory\x18\x03 \x01(\x05\x12\r\n\x05MBRam\x18\x04 \x01(\x05\"I\n\x0e\x44ynamicMetrics\x12\x10\n\x08\x43PUUsage\x18\x01 \x01(\x05\x12\x13\n\x0bMemoryUsage\x18\x02 \x01(\x05\x12\x10\n\x08RamUsage\x18\x03 \x01(\x05\"\x07\n\x05\x45mpty2\x89\x01\n\x07Metrics\x12=\n\x11SendStaticMetrics\x12\x16.metrics.StaticMetrics\x1a\x0e.metrics.Empty\"\x00\x12?\n\x12SendDynamicMetrics\x12\x17.metrics.DynamicMetrics\x1a\x0e.metrics.Empty\"\x00\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'daemon_pb2', _globals)
 if _descriptor._USE_C_DESCRIPTORS == False:
   DESCRIPTOR._options = None
-  _globals['_STATICMETRICS']._serialized_start=54
-  _globals['_STATICMETRICS']._serialized_end=140
-  _globals['_DYNAMICMETRICS']._serialized_start=142
-  _globals['_DYNAMICMETRICS']._serialized_end=215
-  _globals['_METRICS']._serialized_start=218
-  _globals['_METRICS']._serialized_end=371
+  _globals['_STATICMETRICS']._serialized_start=25
+  _globals['_STATICMETRICS']._serialized_end=111
+  _globals['_DYNAMICMETRICS']._serialized_start=113
+  _globals['_DYNAMICMETRICS']._serialized_end=186
+  _globals['_EMPTY']._serialized_start=188
+  _globals['_EMPTY']._serialized_end=195
+  _globals['_METRICS']._serialized_start=198
+  _globals['_METRICS']._serialized_end=335
 # @@protoc_insertion_point(module_scope)

@@ -3,7 +3,6 @@
 import grpc
 
 import daemon_pb2 as daemon__pb2
-from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
 class MetricsStub(object):
@@ -18,12 +17,12 @@ class MetricsStub(object):
         self.SendStaticMetrics = channel.unary_unary(
                 '/metrics.Metrics/SendStaticMetrics',
                 request_serializer=daemon__pb2.StaticMetrics.SerializeToString,
-                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                response_deserializer=daemon__pb2.Empty.FromString,
                 )
         self.SendDynamicMetrics = channel.unary_unary(
                 '/metrics.Metrics/SendDynamicMetrics',
                 request_serializer=daemon__pb2.DynamicMetrics.SerializeToString,
-                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                response_deserializer=daemon__pb2.Empty.FromString,
                 )
 
 
@@ -48,12 +47,12 @@ def add_MetricsServicer_to_server(servicer, server):
             'SendStaticMetrics': grpc.unary_unary_rpc_method_handler(
                     servicer.SendStaticMetrics,
                     request_deserializer=daemon__pb2.StaticMetrics.FromString,
-                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                    response_serializer=daemon__pb2.Empty.SerializeToString,
             ),
             'SendDynamicMetrics': grpc.unary_unary_rpc_method_handler(
                     servicer.SendDynamicMetrics,
                     request_deserializer=daemon__pb2.DynamicMetrics.FromString,
-                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                    response_serializer=daemon__pb2.Empty.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -78,7 +77,7 @@ class Metrics(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/metrics.Metrics/SendStaticMetrics',
             daemon__pb2.StaticMetrics.SerializeToString,
-            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            daemon__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -95,6 +94,6 @@ class Metrics(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/metrics.Metrics/SendDynamicMetrics',
             daemon__pb2.DynamicMetrics.SerializeToString,
-            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            daemon__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

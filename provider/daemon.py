@@ -4,7 +4,7 @@ import daemon_pb2
 
 def sendStaticMetrics():
     channel = grpc.insecure_channel('localhost:50051')
-    stub = daemon_pb2_grpc.MetricsDaemonStub(channel)
+    stub = daemon_pb2_grpc.MetricsStub(channel)
     """
     int32 CPUNumCores = 1;
     string CPUName = 2;
@@ -16,12 +16,12 @@ def sendStaticMetrics():
     CPUName = "Intel"
     MBMemory = 16
     MBRam = 16
-    response = stub.SendMetrics(daemon_pb2.StaticMetrics(CPUNumCores=CPUNumCores, CPUName=CPUName, MBMemory=MBMemory, MBRam=MBRam))
+    response = stub.SendStaticMetrics(daemon_pb2.StaticMetrics(CPUNumCores=CPUNumCores, CPUName=CPUName, MBMemory=MBMemory, MBRam=MBRam))
     print(response)
 
 def sendDynamicMetrics():
     channel = grpc.insecure_channel('localhost:50051')
-    stub = daemon_pb2_grpc.MetricsDaemonStub(channel)
+    stub = daemon_pb2_grpc.MetricsStub(channel)
     """
     int32 CPUUsage = 1;
     int32 MemoryUsage = 2;
@@ -31,7 +31,7 @@ def sendDynamicMetrics():
     CPUUsage = 20
     MemoryUsage = 40
     RamUsage = 60
-    response = stub.SendMetrics(daemon_pb2.DynamicMetrics(CPUUsage=CPUUsage, MemoryUsage=MemoryUsage, RamUsage=RamUsage))
+    response = stub.SendDynamicMetrics(daemon_pb2.DynamicMetrics(CPUUsage=CPUUsage, MemoryUsage=MemoryUsage, RamUsage=RamUsage))
     print(response)
 
 if __name__ == '__main__':
