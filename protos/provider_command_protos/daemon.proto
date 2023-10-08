@@ -1,0 +1,23 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+package metrics;
+
+service Metrics {
+    rpc SendStaticMetrics (StaticMetrics) returns (google.protobuf.Empty) {}
+
+    rpc SendDynamicMetrics (DynamicMetrics) returns (google.protobuf.Empty) {}
+}
+
+message StaticMetrics {
+    int32 CPUNumCores = 1;
+    string CPUName = 2;
+    int32 MBMemory = 3;
+    int32 MBRam = 4;
+}
+
+message DynamicMetrics {
+    int32 CPUUsage = 1;
+    int32 MemoryUsage = 2;
+    int32 RamUsage = 3;
+}
+
