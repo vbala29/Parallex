@@ -15,15 +15,15 @@ class MetricsStub(object):
             channel: A grpc.Channel.
         """
         self.SendStaticMetrics = channel.unary_unary(
-                '/metrics.Metrics/SendStaticMetrics',
-                request_serializer=daemon__pb2.StaticMetrics.SerializeToString,
-                response_deserializer=daemon__pb2.Empty.FromString,
-                )
+            '/metrics.Metrics/SendStaticMetrics',
+            request_serializer=daemon__pb2.StaticMetrics.SerializeToString,
+            response_deserializer=daemon__pb2.Empty.FromString,
+        )
         self.SendDynamicMetrics = channel.unary_unary(
-                '/metrics.Metrics/SendDynamicMetrics',
-                request_serializer=daemon__pb2.DynamicMetrics.SerializeToString,
-                response_deserializer=daemon__pb2.Empty.FromString,
-                )
+            '/metrics.Metrics/SendDynamicMetrics',
+            request_serializer=daemon__pb2.DynamicMetrics.SerializeToString,
+            response_deserializer=daemon__pb2.Empty.FromString,
+        )
 
 
 class MetricsServicer(object):
@@ -44,56 +44,60 @@ class MetricsServicer(object):
 
 def add_MetricsServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'SendStaticMetrics': grpc.unary_unary_rpc_method_handler(
-                    servicer.SendStaticMetrics,
-                    request_deserializer=daemon__pb2.StaticMetrics.FromString,
-                    response_serializer=daemon__pb2.Empty.SerializeToString,
+        'SendStaticMetrics':
+            grpc.unary_unary_rpc_method_handler(
+                servicer.SendStaticMetrics,
+                request_deserializer=daemon__pb2.StaticMetrics.FromString,
+                response_serializer=daemon__pb2.Empty.SerializeToString,
             ),
-            'SendDynamicMetrics': grpc.unary_unary_rpc_method_handler(
-                    servicer.SendDynamicMetrics,
-                    request_deserializer=daemon__pb2.DynamicMetrics.FromString,
-                    response_serializer=daemon__pb2.Empty.SerializeToString,
+        'SendDynamicMetrics':
+            grpc.unary_unary_rpc_method_handler(
+                servicer.SendDynamicMetrics,
+                request_deserializer=daemon__pb2.DynamicMetrics.FromString,
+                response_serializer=daemon__pb2.Empty.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'metrics.Metrics', rpc_method_handlers)
+        'metrics.Metrics', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
- # This class is part of an EXPERIMENTAL API.
+# This class is part of an EXPERIMENTAL API.
 class Metrics(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
     def SendStaticMetrics(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/metrics.Metrics/SendStaticMetrics',
+                          target,
+                          options=(),
+                          channel_credentials=None,
+                          call_credentials=None,
+                          insecure=False,
+                          compression=None,
+                          wait_for_ready=None,
+                          timeout=None,
+                          metadata=None):
+        return grpc.experimental.unary_unary(
+            request, target, '/metrics.Metrics/SendStaticMetrics',
             daemon__pb2.StaticMetrics.SerializeToString,
-            daemon__pb2.Empty.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            daemon__pb2.Empty.FromString, options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout,
+            metadata)
 
     @staticmethod
     def SendDynamicMetrics(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/metrics.Metrics/SendDynamicMetrics',
+                           target,
+                           options=(),
+                           channel_credentials=None,
+                           call_credentials=None,
+                           insecure=False,
+                           compression=None,
+                           wait_for_ready=None,
+                           timeout=None,
+                           metadata=None):
+        return grpc.experimental.unary_unary(
+            request, target, '/metrics.Metrics/SendDynamicMetrics',
             daemon__pb2.DynamicMetrics.SerializeToString,
-            daemon__pb2.Empty.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            daemon__pb2.Empty.FromString, options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout,
+            metadata)
