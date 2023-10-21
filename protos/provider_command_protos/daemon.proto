@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package metrics;
 
-
-
 service Metrics {
     rpc SendStaticMetrics (StaticMetrics) returns (Empty) {}
 
@@ -12,17 +10,17 @@ service Metrics {
 
 /* StaticMetrics are those that the provider nodes should send upon joining the network,
  * such that the command node knows about the available hardware on the node. 
- * Data in MB is megabytes, not MiB mebibytes. */
+ * CPUClockSpeed is in MHz. RAM is in MiB. Note 1 MiB has 2^20 bytes*/
 
 message StaticMetrics {
     int32 CPUNumCores = 1;
     string CPUName = 2;
-    int32 MBRam = 3; 
+    float MiBRam = 3; 
 }
 
 message DynamicMetrics {
     float CPUUsage = 1;
-    float RamUsage = 2;
+    float MiBRamUsage = 2;
 }
 
 message Empty {}

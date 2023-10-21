@@ -1,10 +1,9 @@
-import os
-import platform
+import psutil
+from cpuinfo import get_cpu_info
 
 import grpc
 import daemon_pb2_grpc
 import daemon_pb2
-
 
 def sendStaticMetrics():
     channel = grpc.insecure_channel('localhost:50051')
@@ -15,11 +14,11 @@ def sendStaticMetrics():
     int32 MBRam = 3;
     """
     #dummy data for now
-    CPUNumCores = os.cpu_count()
-    CPUName = platform.processor()
-    MBRam = 1024
-    response = stub.SendStaticMetrics(daemon_pb2.StaticMetrics(CPUNumCores=CPUNumCores, CPUName=CPUName, MBRam=MBRam))
-    print(response)
+    CPUNumCores = psutil.cpu_count(logical=True)
+    cpu_info = get_cpu_info()
+    CPUName = cpu_info['brand_raw'] + " " + cpu_info['arch']
+    MiBRam = psutil.virtual_memory().total / (2^20)
+    response = stub.SendStaticMetrics(daemon_pb2.StaticMetrics(CPUNumCores=CPUNumCores, CPUName=CPUName, MiBRam=MiBRam))
 
 def sendDynamicMetrics():
     channel = grpc.insecure_channel('localhost:50051')
@@ -29,10 +28,9 @@ def sendDynamicMetrics():
     int32 RamUsage = 2;
     """
     #dummy data for now
-    RamUsage = 50
-    CPUUsage = 50
-    response = stub.SendDynamicMetrics(daemon_pb2.DynamicMetrics(CPUUsage=CPUUsage, RamUsage=RamUsage))
-    print(response)
+    MiBRamUsage = psutil.virtual_memory().used / (2^20)
+    CPUUsage = psutil.cpu_percent(interval=1)
+    response = stub.SendDynamicMetrics(daemon_pb2.DynamicMetrics(CPUUsage=CPUUsage, MiBRamUsage=MiBRamUsage))
 
 if __name__ == '__main__':
     sendStaticMetrics()

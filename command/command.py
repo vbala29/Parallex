@@ -9,6 +9,16 @@ class Provider():
     def __init__(self, ip):
         self.ip = ip
         self.last_seen = time.time()
+        self.static_metrics = {}
+        self.dynamic_metrics = {}
+    
+    def update_static_metrics(self, static_metrics):
+        self.static_metrics = static_metrics
+        self.last_seen = time.time()
+
+    def update_dynamic_metrics(self, dynamic_metrics):
+        self.dynamic_metrics = dynamic_metrics
+        self.last_seen = time.time()
 
 class CommandNode():
     def __init__(self):
@@ -20,24 +30,35 @@ class CommandNode():
 class DaemonHandler(daemon_pb2_grpc.MetricsServicer):
     def __init__(self, cm):
         self.cm = cm
+    
+    @staticmethod
+    def ExtractPeerIP(peer):
+        return peer[:peer.rfind(":")]
 
     def SendStaticMetrics(self, request, context):
         print("Received static metrics")
-        print(request)
-        print(context)
+        ip = DaemonHandler.ExtractPeerIP(context.peer())
+        if ip not in self.cm.providers:
+            print("Received static metrics from unknown provider: {}".format(ip))
+            p = Provider(ip=ip)
+            self.cm.add_provider(p)
+        else:
+            p = self.cm.providers[ip]
+    
+        p.update_static_metrics({"CPUNumCores" : request.CPUNumCores, "CPUName" : request.CPUName, "MiBRam" : request.MiBRam})
 
-        p = Provider(ip=context.peer())
-        self.cm.add_provider(p)
-        print(self.cm.providers)
         return daemon_pb2.Empty()
     
     def SendDynamicMetrics(self, request, context):
         print("Received dynamic metrics")
-        print(request)
-        print(context)
-        p = Provider(ip=context.peer())
-        self.cm.add_provider(p)
-        print(self.cm.providers)
+        ip = DaemonHandler.ExtractPeerIP(context.peer())
+
+        if ip not in self.cm.providers:
+            print("Received dynamic metrics from unknown provider: {}".format(ip))
+        else:
+            p = self.cm.providers[ip]
+            p.update_dynamic_metrics({"CPUUsage" : request.CPUUsage, "MiBRamUsage" : request.MiBRamUsage})
+
         return daemon_pb2.Empty()
 
 def serve(cm):
