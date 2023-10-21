@@ -22,3 +22,8 @@ Run run_daemon.sh from provider directory
 **What to do to update requirements for this project**
 
 ```pip3 freeze > requirements.txt```
+
+**Format Style of Files**
+Run from root direcotry of project to format all Python files according to google style guide
+```yapf -ir . --style='{based_on_style: google}'```
+
