@@ -25,7 +25,7 @@ Run run_daemon.sh from provider directory
 
 **Format Style of Files**
 
-Run from root direcotry of project to format all Python files according to google style guide
+Run from a dir with Python files to format all Python files according to google style guide
 
 ```yapf --in-place --recursive --style="{based_on_style: google}" *.py```
 
