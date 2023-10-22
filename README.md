@@ -41,8 +41,11 @@ Run from a dir with Python files to format all Python files according to google 
 # Tools Used
 
 **Ray.io** For job definition and paralellization https://www.ray.io
+
 **gRPC** For node communication https://grpc.io
+
 **ident.me** For public IP address https://api.ident.me
+
 **psutil** For system metrics https://psutil.readthedocs.io/en/latest/#
 
 
