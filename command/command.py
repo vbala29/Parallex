@@ -1,4 +1,3 @@
-from concurrent import futures
 import time
 import requests
 import ipinfo
@@ -6,6 +5,7 @@ import grpc
 from protos.provider_command_protos import daemon_pb2
 from protos.provider_command_protos import daemon_pb2_grpc
 from collections import defaultdict
+from concurrent import futures
 
 
 class Provider():
@@ -23,7 +23,7 @@ class Provider():
     def update_dynamic_metrics(self, dynamic_metrics):
         self.dynamic_metrics = dynamic_metrics
         self.last_seen = time.time()
-    
+
     def parse_location(self, location):
         split = location.split(",")
         self.lat = split[0]
@@ -63,8 +63,7 @@ class DaemonHandler(daemon_pb2_grpc.MetricsServicer):
             DaemonHandler.FindProviderLocation(p)
 
         else:
-            print(
-                "Received static metrics from known provider: {}".format(ip))
+            print("Received static metrics from known provider: {}".format(ip))
             p = self.cm.providers[ip][request.uuid]
 
         p.update_static_metrics({
@@ -81,14 +80,12 @@ class DaemonHandler(daemon_pb2_grpc.MetricsServicer):
             print(
                 "Received dynamic metrics from unknown provider: {}".format(ip))
         else:
-            print(
-                "Received dynamic metrics from known provider: {}".format(ip))
+            print("Received dynamic metrics from known provider: {}".format(ip))
             p = self.cm.providers[ip][request.uuid]
             p.update_dynamic_metrics({
                 "CPUUsage": request.CPUUsage,
                 "MiBRamUsage": request.MiBRamUsage,
             })
-
         return daemon_pb2.Empty()
 
 

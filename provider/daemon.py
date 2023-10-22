@@ -1,12 +1,11 @@
 import psutil
-from cpuinfo import get_cpu_info
 import grpc
 import daemon_pb2_grpc
 import daemon_pb2
 import time
 import urllib.request
 import uuid
-
+from cpuinfo import get_cpu_info
 
 DYNAMIC_METRIC_INTERVAL_SEC = 2
 BYTES_IN_MEBIBYTE = 2 ^ 20
@@ -54,8 +53,10 @@ def sendDynamicMetrics():
     clientIP = urllib.request.urlopen('http://ident.me').read().decode('utf8')
 
     response = stub.SendDynamicMetrics(
-        daemon_pb2.DynamicMetrics(CPUUsage=CPUUsage, MiBRamUsage=MiBRamUsage,
-                                  clientIP=clientIP, uuid=UUID))
+        daemon_pb2.DynamicMetrics(CPUUsage=CPUUsage,
+                                  MiBRamUsage=MiBRamUsage,
+                                  clientIP=clientIP,
+                                  uuid=UUID))
 
 
 def startDaemon():
@@ -63,6 +64,7 @@ def startDaemon():
     while True:
         time.sleep(DYNAMIC_METRIC_INTERVAL_SEC)
         sendDynamicMetrics()
+
 
 def setupUUID():
     UUID = uuid.uuid4()
