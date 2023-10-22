@@ -2,6 +2,7 @@ import time
 import requests
 import ipinfo
 import grpc
+import geopy.distance
 from protos.provider_command_protos import daemon_pb2
 from protos.provider_command_protos import daemon_pb2_grpc
 from collections import defaultdict
@@ -37,6 +38,18 @@ class CommandNode():
 
     def add_provider(self, provider, uuid):
         self.providers[provider.ip][uuid] = provider
+
+    def select_providers(self, num, user_location): # user location is a tuple (lat, lon)
+        providers_by_distance = []
+        for ip in self.providers:
+            for uuid in self.providers[ip]:
+                provider = self.providers[ip][uuid]
+                # use geopy.distance.distance() to calculate distance
+                distance = geopy.distance.distance(
+                    (provider.lat, provider.lon), user_location).km
+                providers_by_distance.append((provider, distance))
+        providers_by_distance.sort(key=lambda x: x[1])
+        return providers_by_distance[:num]
 
 
 class DaemonHandler(daemon_pb2_grpc.MetricsServicer):
@@ -102,3 +115,4 @@ def serve(cm):
 if __name__ == '__main__':
     cm = CommandNode()
     serve(cm)
+

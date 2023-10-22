@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package job;
+
+service Job {
+    rpc SendJob (JobMetrics) returns (Empty) {}
+
+}
+
+message JobMetrics {
+    float lat = 1;
+    float lon = 2;
+}
+
+message Empty {}
+
