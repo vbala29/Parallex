@@ -1,10 +1,11 @@
 import psutil
 from cpuinfo import get_cpu_info
-
 import grpc
 import daemon_pb2_grpc
 import daemon_pb2
 import time
+import urllib.request
+
 
 DYNAMIC_METRIC_INTERVAL_SEC = 2
 BYTES_IN_MEBIBYTE = 2 ^ 20
@@ -18,16 +19,20 @@ def sendStaticMetrics():
     int32 CPUNumCores = 1;
     string CPUName = 2;
     float MiBRam = 3; 
+    int128 clientIP = 4;
     """
     #dummy data for now
     CPUNumCores = psutil.cpu_count(logical=True)
     cpu_info = get_cpu_info()
     CPUName = cpu_info['brand_raw'] + " " + cpu_info['arch']
     MiBRam = psutil.virtual_memory().total / (BYTES_IN_MEBIBYTE)
+    clientIP = urllib.request.urlopen('http://ident.me').read().decode('utf8')
+
     response = stub.SendStaticMetrics(
         daemon_pb2.StaticMetrics(CPUNumCores=CPUNumCores,
                                  CPUName=CPUName,
-                                 MiBRam=MiBRam))
+                                 MiBRam=MiBRam,
+                                 clientIP=clientIP))
 
 
 def sendDynamicMetrics():
@@ -36,12 +41,16 @@ def sendDynamicMetrics():
     """
     float CPUUsage = 1;
     float MiBRamUsage = 2;
+    int128 clientIP = 3;
     """
     #dummy data for now
     MiBRamUsage = psutil.virtual_memory().used / (BYTES_IN_MEBIBYTE)
     CPUUsage = psutil.cpu_percent(interval=CPU_FREQ_INTERVAL_SEC)
+    clientIP = urllib.request.urlopen('http://ident.me').read().decode('utf8')
+
     response = stub.SendDynamicMetrics(
-        daemon_pb2.DynamicMetrics(CPUUsage=CPUUsage, MiBRamUsage=MiBRamUsage))
+        daemon_pb2.DynamicMetrics(CPUUsage=CPUUsage, MiBRamUsage=MiBRamUsage,
+                                  clientIP=clientIP))
 
 
 def startDaemon():

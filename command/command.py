@@ -1,6 +1,7 @@
 from concurrent import futures
 import time
-
+import requests
+import ipinfo
 import grpc
 from protos.provider_command_protos import daemon_pb2
 from protos.provider_command_protos import daemon_pb2_grpc
@@ -21,6 +22,11 @@ class Provider():
     def update_dynamic_metrics(self, dynamic_metrics):
         self.dynamic_metrics = dynamic_metrics
         self.last_seen = time.time()
+    
+    def find_location(self, location):
+        split = location.split(",")
+        self.lat = split[0]
+        self.lon = split[1]
 
 
 class CommandNode():
@@ -38,17 +44,24 @@ class DaemonHandler(daemon_pb2_grpc.MetricsServicer):
         self.cm = cm
 
     @staticmethod
-    def ExtractPeerIP(peer):
-        return peer[:peer.rfind(":")]
+    def FindProviderLocation(p):
+        f = open("../access_tokens/ipinfo", "r")
+        access_token = f.read().strip()
+        handler = ipinfo.getHandler(access_token)
+        ip_address = p.ip
+        details = handler.getDetails(ip_address)
+        p.find_location(details.loc)
 
     def SendStaticMetrics(self, request, context):
         print("Received static metrics")
-        ip = DaemonHandler.ExtractPeerIP(context.peer())
+        ip = request.clientIP
         if ip not in self.cm.providers:
             print(
                 "Received static metrics from unknown provider: {}".format(ip))
             p = Provider(ip=ip)
             self.cm.add_provider(p)
+            DaemonHandler.FindProviderLocation(p)
+
         else:
             p = self.cm.providers[ip]
 
@@ -62,7 +75,7 @@ class DaemonHandler(daemon_pb2_grpc.MetricsServicer):
 
     def SendDynamicMetrics(self, request, context):
         print("Received dynamic metrics")
-        ip = DaemonHandler.ExtractPeerIP(context.peer())
+        ip = request.clientIP
 
         if ip not in self.cm.providers:
             print(
