@@ -48,4 +48,5 @@ Run from a dir with Python files to format all Python files according to google 
 
 **psutil** For system metrics https://psutil.readthedocs.io/en/latest/#
 
+**ipinfo** For IP geolocation https://ipinfo.io
 
