@@ -5,11 +5,13 @@ import daemon_pb2_grpc
 import daemon_pb2
 import time
 import urllib.request
+import uuid
 
 
 DYNAMIC_METRIC_INTERVAL_SEC = 2
 BYTES_IN_MEBIBYTE = 2 ^ 20
 CPU_FREQ_INTERVAL_SEC = 1
+UUID = ""
 
 
 def sendStaticMetrics():
@@ -19,7 +21,8 @@ def sendStaticMetrics():
     int32 CPUNumCores = 1;
     string CPUName = 2;
     float MiBRam = 3; 
-    int128 clientIP = 4;
+    string clientIP = 4;
+    string uuid = 5;
     """
     #dummy data for now
     CPUNumCores = psutil.cpu_count(logical=True)
@@ -32,7 +35,8 @@ def sendStaticMetrics():
         daemon_pb2.StaticMetrics(CPUNumCores=CPUNumCores,
                                  CPUName=CPUName,
                                  MiBRam=MiBRam,
-                                 clientIP=clientIP))
+                                 clientIP=clientIP,
+                                 uuid=UUID))
 
 
 def sendDynamicMetrics():
@@ -41,7 +45,8 @@ def sendDynamicMetrics():
     """
     float CPUUsage = 1;
     float MiBRamUsage = 2;
-    int128 clientIP = 3;
+    string clientIP = 3;
+    string uuid = 4;
     """
     #dummy data for now
     MiBRamUsage = psutil.virtual_memory().used / (BYTES_IN_MEBIBYTE)
@@ -50,7 +55,7 @@ def sendDynamicMetrics():
 
     response = stub.SendDynamicMetrics(
         daemon_pb2.DynamicMetrics(CPUUsage=CPUUsage, MiBRamUsage=MiBRamUsage,
-                                  clientIP=clientIP))
+                                  clientIP=clientIP, uuid=UUID))
 
 
 def startDaemon():
@@ -59,6 +64,10 @@ def startDaemon():
         time.sleep(DYNAMIC_METRIC_INTERVAL_SEC)
         sendDynamicMetrics()
 
+def setupUUID():
+    UUID = uuid.uuid4()
+
 
 if __name__ == '__main__':
+    setupUUID()
     startDaemon()

@@ -5,6 +5,7 @@ import ipinfo
 import grpc
 from protos.provider_command_protos import daemon_pb2
 from protos.provider_command_protos import daemon_pb2_grpc
+from collections import defaultdict
 
 
 class Provider():
@@ -23,7 +24,7 @@ class Provider():
         self.dynamic_metrics = dynamic_metrics
         self.last_seen = time.time()
     
-    def find_location(self, location):
+    def parse_location(self, location):
         split = location.split(",")
         self.lat = split[0]
         self.lon = split[1]
@@ -32,10 +33,10 @@ class Provider():
 class CommandNode():
 
     def __init__(self):
-        self.providers = {}
+        self.providers = defaultdict(dict)
 
-    def add_provider(self, provider):
-        self.providers[provider.ip] = provider
+    def add_provider(self, provider, uuid):
+        self.providers[provider.ip][uuid] = provider
 
 
 class DaemonHandler(daemon_pb2_grpc.MetricsServicer):
@@ -50,20 +51,21 @@ class DaemonHandler(daemon_pb2_grpc.MetricsServicer):
         handler = ipinfo.getHandler(access_token)
         ip_address = p.ip
         details = handler.getDetails(ip_address)
-        p.find_location(details.loc)
+        p.parse_location(details.loc)
 
     def SendStaticMetrics(self, request, context):
-        print("Received static metrics")
         ip = request.clientIP
         if ip not in self.cm.providers:
             print(
                 "Received static metrics from unknown provider: {}".format(ip))
             p = Provider(ip=ip)
-            self.cm.add_provider(p)
+            self.cm.add_provider(p, request.uuid)
             DaemonHandler.FindProviderLocation(p)
 
         else:
-            p = self.cm.providers[ip]
+            print(
+                "Received static metrics from known provider: {}".format(ip))
+            p = self.cm.providers[ip][request.uuid]
 
         p.update_static_metrics({
             "CPUNumCores": request.CPUNumCores,
@@ -74,17 +76,17 @@ class DaemonHandler(daemon_pb2_grpc.MetricsServicer):
         return daemon_pb2.Empty()
 
     def SendDynamicMetrics(self, request, context):
-        print("Received dynamic metrics")
         ip = request.clientIP
-
         if ip not in self.cm.providers:
             print(
                 "Received dynamic metrics from unknown provider: {}".format(ip))
         else:
-            p = self.cm.providers[ip]
+            print(
+                "Received dynamic metrics from known provider: {}".format(ip))
+            p = self.cm.providers[ip][request.uuid]
             p.update_dynamic_metrics({
                 "CPUUsage": request.CPUUsage,
-                "MiBRamUsage": request.MiBRamUsage
+                "MiBRamUsage": request.MiBRamUsage,
             })
 
         return daemon_pb2.Empty()

@@ -17,12 +17,14 @@ message StaticMetrics {
     string CPUName = 2;
     float MiBRam = 3; 
     string clientIP = 4;
+    string uuid = 5;
 }
 
 message DynamicMetrics {
     float CPUUsage = 1;
     float MiBRamUsage = 2;
     string clientIP = 3;
+    string uuid = 4;
 }
 
 message Empty {}
