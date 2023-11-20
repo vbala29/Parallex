@@ -17,7 +17,7 @@ class JobStub(object):
         self.SendJob = channel.unary_unary(
                 '/job.Job/SendJob',
                 request_serializer=user__pb2.JobMetrics.SerializeToString,
-                response_deserializer=user__pb2.Empty.FromString,
+                response_deserializer=user__pb2.HeadNode.FromString,
                 )
 
 
@@ -36,7 +36,7 @@ def add_JobServicer_to_server(servicer, server):
             'SendJob': grpc.unary_unary_rpc_method_handler(
                     servicer.SendJob,
                     request_deserializer=user__pb2.JobMetrics.FromString,
-                    response_serializer=user__pb2.Empty.SerializeToString,
+                    response_serializer=user__pb2.HeadNode.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -61,6 +61,6 @@ class Job(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/job.Job/SendJob',
             user__pb2.JobMetrics.SerializeToString,
-            user__pb2.Empty.FromString,
+            user__pb2.HeadNode.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

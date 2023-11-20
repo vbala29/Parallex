@@ -10,6 +10,8 @@ from protos.user_command_protos import user_pb2_grpc
 from collections import defaultdict
 from concurrent import futures
 
+HEAD_NODE_CPUS = 1
+HEAD_NODE_RAM  = 2048
 
 class Provider():
 
@@ -83,9 +85,14 @@ class ProviderCandidate():
 class CommandNode():
     def __init__(self):
         self.providers = defaultdict(dict)
+        self.headNodes = []
 
     def add_provider(self, provider, uuid):
         self.providers[provider.ip][uuid] = provider
+        self.add_headnode(provider)
+
+    def add_headnode(self, provider):
+        self.headNodes.append(provider)
 
     def select_providers(self, user_location, requiredCPU, requiredMemory):  # user location is a tuple (lat, lon)
         best_candidate_providers = []
@@ -177,16 +184,29 @@ class JobHandler(user_pb2_grpc.JobServicer):
         self.cm = cm
 
     def SendJob(self, request, context):
-        ip = request.clientIP
         cpuCount = request.cpuCount
         memoryCount = request.memoryCount
-        job = Job(ip)
+
+        headNode = None
+        for provider in self.cm.headNodes:
+            if provider.static_metrics["CPUNumCores"] >= HEAD_NODE_CPUS and provider.static_metrics["MiBRam"] >= HEAD_NODE_RAM:
+                headNode = provider
+                break
+        
+        if headNode == None:
+            print("No head nodes available")
+            return user_pb2.HeadNode(headIP="INVALID_IP")
+        
+        job = Job(headNode.ip)
         findLocation(job)
-        print("Received a job from IP: {}".format(ip))
+        print("Received a job from IP: {}".format(request.clientIP))
         providers = cm.select_providers((job.lat, job.lon), cpuCount, memoryCount)
         print("{} providers selected".format(len(providers)))
         print("providers nodes selected for job: {}".format(providers))
-        return user_pb2.Empty()
+        
+        for provider in providers:
+            provider.job_queue.append(job)
+        return user_pb2.HeadNode(headIP=headNode.ip)
     
     # def duringJobFunction
 
