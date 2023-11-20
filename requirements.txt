@@ -7,6 +7,8 @@ certifi==2023.7.22
 charset-normalizer==3.3.0
 docopt==0.6.2
 frozenlist==1.4.0
+geographiclib==2.0
+geopy==2.4.0
 grpcio==1.59.0
 grpcio-tools==1.59.0
 idna==3.4

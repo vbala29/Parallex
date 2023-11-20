@@ -1,16 +1,19 @@
 import grpc
 import user_pb2_grpc
 import user_pb2
+import urllib.request
 
-def sendJob():
+
+def SendJob():
     channel = grpc.insecure_channel('localhost:50051')
-    stub = user_pb2_grpc.UserStub(channel)
+    stub = user_pb2_grpc.JobStub(channel)
     """
-    float lat = 1;
-    float lon = 2;
+    string IP = 1;
     """
-    response = stub.SendJob(user_pb2.Job(lat=100, lon=100))
+    clientIP = urllib.request.urlopen('http://ident.me').read().decode('utf8')
+    response = stub.SendJob(user_pb2.JobMetrics(clientIP=clientIP, cpuCount = 1, memoryCount = 2048))
     print("Job sent")
 
+
 if __name__ == '__main__':
-    sendJob()
+    SendJob()

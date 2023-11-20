@@ -1,1 +1,2 @@
 (cd provider_command_protos ; python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. daemon.proto)
+(cd user_command_protos ; python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. user.proto)

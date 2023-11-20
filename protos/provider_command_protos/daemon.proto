@@ -5,7 +5,7 @@ package metrics;
 service Metrics {
     rpc SendStaticMetrics (StaticMetrics) returns (Empty) {}
 
-    rpc SendDynamicMetrics (DynamicMetrics) returns (Empty) {}
+    rpc SendDynamicMetrics (stream DynamicMetrics) returns (stream JobClusterRequest) {}
 }
 
 /* StaticMetrics are those that the provider nodes should send upon joining the network,
@@ -25,6 +25,10 @@ message DynamicMetrics {
     float MiBRamUsage = 2;
     string clientIP = 3;
     string uuid = 4;
+}
+
+message JobClusterRequest {
+    string headIP = 1;
 }
 
 message Empty {}

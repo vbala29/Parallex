@@ -8,8 +8,9 @@ service Job {
 }
 
 message JobMetrics {
-    float lat = 1;
-    float lon = 2;
+    string clientIP = 1;
+    int32 cpuCount = 3;
+    int32 memoryCount = 4;
 }
 
 message Empty {}
