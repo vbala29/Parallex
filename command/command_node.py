@@ -5,6 +5,7 @@ from collections import defaultdict
 from concurrent import futures
 import asyncio
 from threading import Thread
+import urllib
 
 from command.provider import Provider, ProviderCandidate
 from protos.provider_command_protos import daemon_pb2
@@ -76,7 +77,9 @@ def findLocation(p):
     f = open("../access_tokens/ipinfo", "r")
     access_token = f.read().strip()
     handler = ipinfo.getHandler(access_token)
-    ip_address = p.ip
+    # ip_address = p.ip
+    # For sake of local testing use local IP
+    ip_address = urllib.request.urlopen('http://ident.me').read().decode('utf8')
     details = handler.getDetails(ip_address)
     p.parse_location(details.loc)
 

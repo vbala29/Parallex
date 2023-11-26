@@ -7,6 +7,7 @@ from cpuinfo import get_cpu_info
 from threading import Thread
 import asyncio
 import json
+import socket
 
 import daemon_pb2_grpc
 import daemon_pb2
@@ -64,9 +65,12 @@ async def handleClusterJoinRequest(msg):
 
 def startDaemon():
     global IP
-    IP = urllib.request.urlopen('http://ident.me').read().decode('utf8')
-    print("IP is: {}".format(IP))
-    print("UUID is: {}".format(UUID))
+    #IP = urllib.request.urlopen('http://ident.me').read().decode('utf8'
+    # For sake of local testing get local IP
+    hostname = socket.gethostname()
+    IP = socket.gethostbyname(hostname) 
+    print(f"IP is: {IP}")
+    print(f"UUID is: {UUID}")
     sendStaticMetrics()
     asyncio.run_coroutine_threadsafe(
         aqmp.receive_messages(UUID, lambda msg: handleClusterJoinRequest(msg)),
