@@ -11,6 +11,7 @@ pip3 install -r requirements.txt
 ```
 
 **Using RabbitMQ for local testing**
+
 *Mac*
 ```
 brew install rabbitmq
@@ -28,6 +29,11 @@ Command line inspection
 ```
 rabbitmqctl list_queues
 rabbitmqadmin get queue=<name> count=<int>
+```
+
+*Windows*
+```
+TBD
 ```
 
 
