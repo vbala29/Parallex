@@ -4,10 +4,8 @@
 # How to Use
 **Set up your python environment and install required dependencies**
 ```
-cd test-env
-python3 -m venv env
-cd ../
-pip3 install -r requirements.txt
+conda env create -f environment.yml
+conda activate parallex
 ```
 
 **Using RabbitMQ for local testing**
@@ -56,7 +54,7 @@ Run run_daemon.sh from provider directory
 # Miscellaneous
 **What to do to update requirements for this project**
 
-```pip3 freeze > requirements.txt```
+```conda env export > environment.yml```
 
 **Format Style of Files**
 
