@@ -11,6 +11,4 @@ cd ../protos/user_command_protos
 export PYTHONPATH=$PYTHONPATH:$(pwd)
 cd ../../command
 echo $PYTHONPATH
-source ../test-env/env/bin/activate
-python command.py
-
+python command_node.py

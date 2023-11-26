@@ -3,9 +3,9 @@
 # source: user.proto
 """Generated protocol buffer code."""
 from google.protobuf import descriptor as _descriptor
-from google.protobuf import descriptor_pool as _descriptor_pool
+from google.protobuf import message as _message
+from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
-from google.protobuf.internal import builder as _builder
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
@@ -13,19 +13,171 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nuser.proto\x12\x03job\"E\n\nJobMetrics\x12\x10\n\x08\x63lientIP\x18\x01 \x01(\t\x12\x10\n\x08\x63puCount\x18\x03 \x01(\x05\x12\x13\n\x0bmemoryCount\x18\x04 \x01(\x05\"\x1a\n\x08HeadNode\x12\x0e\n\x06headIP\x18\x01 \x01(\t\"\x07\n\x05\x45mpty22\n\x03Job\x12+\n\x07SendJob\x12\x0f.job.JobMetrics\x1a\r.job.HeadNode\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor.FileDescriptor(
+  name='user.proto',
+  package='job',
+  syntax='proto3',
+  serialized_options=None,
+  create_key=_descriptor._internal_create_key,
+  serialized_pb=b'\n\nuser.proto\x12\x03job\"E\n\nJobMetrics\x12\x10\n\x08\x63lientIP\x18\x01 \x01(\t\x12\x10\n\x08\x63puCount\x18\x03 \x01(\x05\x12\x13\n\x0bmemoryCount\x18\x04 \x01(\x05\"\x1a\n\x08HeadNode\x12\x0e\n\x06headIP\x18\x01 \x01(\t\"\x07\n\x05\x45mpty22\n\x03Job\x12+\n\x07SendJob\x12\x0f.job.JobMetrics\x1a\r.job.HeadNode\"\x00\x62\x06proto3'
+)
 
-_globals = globals()
-_builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
-_builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'user_pb2', _globals)
-if _descriptor._USE_C_DESCRIPTORS == False:
-  DESCRIPTOR._options = None
-  _globals['_JOBMETRICS']._serialized_start=19
-  _globals['_JOBMETRICS']._serialized_end=88
-  _globals['_HEADNODE']._serialized_start=90
-  _globals['_HEADNODE']._serialized_end=116
-  _globals['_EMPTY']._serialized_start=118
-  _globals['_EMPTY']._serialized_end=125
-  _globals['_JOB']._serialized_start=127
-  _globals['_JOB']._serialized_end=177
+
+
+
+_JOBMETRICS = _descriptor.Descriptor(
+  name='JobMetrics',
+  full_name='job.JobMetrics',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='clientIP', full_name='job.JobMetrics.clientIP', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='cpuCount', full_name='job.JobMetrics.cpuCount', index=1,
+      number=3, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='memoryCount', full_name='job.JobMetrics.memoryCount', index=2,
+      number=4, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=19,
+  serialized_end=88,
+)
+
+
+_HEADNODE = _descriptor.Descriptor(
+  name='HeadNode',
+  full_name='job.HeadNode',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='headIP', full_name='job.HeadNode.headIP', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=90,
+  serialized_end=116,
+)
+
+
+_EMPTY = _descriptor.Descriptor(
+  name='Empty',
+  full_name='job.Empty',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=118,
+  serialized_end=125,
+)
+
+DESCRIPTOR.message_types_by_name['JobMetrics'] = _JOBMETRICS
+DESCRIPTOR.message_types_by_name['HeadNode'] = _HEADNODE
+DESCRIPTOR.message_types_by_name['Empty'] = _EMPTY
+_sym_db.RegisterFileDescriptor(DESCRIPTOR)
+
+JobMetrics = _reflection.GeneratedProtocolMessageType('JobMetrics', (_message.Message,), {
+  'DESCRIPTOR' : _JOBMETRICS,
+  '__module__' : 'user_pb2'
+  # @@protoc_insertion_point(class_scope:job.JobMetrics)
+  })
+_sym_db.RegisterMessage(JobMetrics)
+
+HeadNode = _reflection.GeneratedProtocolMessageType('HeadNode', (_message.Message,), {
+  'DESCRIPTOR' : _HEADNODE,
+  '__module__' : 'user_pb2'
+  # @@protoc_insertion_point(class_scope:job.HeadNode)
+  })
+_sym_db.RegisterMessage(HeadNode)
+
+Empty = _reflection.GeneratedProtocolMessageType('Empty', (_message.Message,), {
+  'DESCRIPTOR' : _EMPTY,
+  '__module__' : 'user_pb2'
+  # @@protoc_insertion_point(class_scope:job.Empty)
+  })
+_sym_db.RegisterMessage(Empty)
+
+
+
+_JOB = _descriptor.ServiceDescriptor(
+  name='Job',
+  full_name='job.Job',
+  file=DESCRIPTOR,
+  index=0,
+  serialized_options=None,
+  create_key=_descriptor._internal_create_key,
+  serialized_start=127,
+  serialized_end=177,
+  methods=[
+  _descriptor.MethodDescriptor(
+    name='SendJob',
+    full_name='job.Job.SendJob',
+    index=0,
+    containing_service=None,
+    input_type=_JOBMETRICS,
+    output_type=_HEADNODE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+])
+_sym_db.RegisterServiceDescriptor(_JOB)
+
+DESCRIPTOR.services_by_name['Job'] = _JOB
+
 # @@protoc_insertion_point(module_scope)

@@ -39,20 +39,21 @@ def sendStaticMetrics():
 def sendDynamicMetrics():
     channel = grpc.insecure_channel('localhost:50051')
     stub = daemon_pb2_grpc.MetricsStub(channel)
-  
+
     MiBRamUsage = psutil.virtual_memory().used / (BYTES_IN_MEBIBYTE)
     CPUUsage = psutil.cpu_percent(interval=CPU_FREQ_INTERVAL_SEC)
     time.sleep(DYNAMIC_METRIC_INTERVAL_SEC)
-    response =  stub.SendDynamicMetrics(daemon_pb2.DynamicMetrics(CPUUsage=CPUUsage,
-                            MiBRamUsage=MiBRamUsage,
-                            clientIP=IP,
-                            uuid=UUID))
+    response = stub.SendDynamicMetrics(
+        daemon_pb2.DynamicMetrics(CPUUsage=CPUUsage,
+                                  MiBRamUsage=MiBRamUsage,
+                                  clientIP=IP,
+                                  uuid=UUID))
 
 async def handleClusterJoinRequest(msg):
     async with msg.process():
         jsonMsg = json.loads(json.loads(msg.body))
         typeStr = jsonMsg["type"]
-        
+
         if typeStr == join_cluster_request.getTypeStr():
             print("Received join_cluster_request")
             req = join_cluster_request.loadFromJson(jsonMsg)
@@ -68,9 +69,8 @@ def startDaemon():
     print("UUID is: {}".format(UUID))
     sendStaticMetrics()
     asyncio.run_coroutine_threadsafe(
-        aqmp.receive_messages(UUID, 
-                              lambda msg: handleClusterJoinRequest(msg)), 
-                              aqmp.loop)
+        aqmp.receive_messages(UUID, lambda msg: handleClusterJoinRequest(msg)),
+        aqmp.loop)
 
     while True:
         sendDynamicMetrics()

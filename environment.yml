@@ -1,0 +1,54 @@
+name: parallex
+channels:
+  - defaults
+dependencies:
+  - abseil-cpp=20211102.0=hc377ac9_0
+  - bzip2=1.0.8=h620ffc9_4
+  - c-ares=1.19.1=h80987f9_0
+  - ca-certificates=2023.08.22=hca03da5_0
+  - expat=2.5.0=h313beb8_0
+  - grpc-cpp=1.48.2=h877324c_0
+  - grpcio=1.42.0=py310h95c9599_0
+  - grpcio-tools=1.42.0=py310h313beb8_2
+  - gtest=1.14.0=h48ca7d4_0
+  - libcxx=14.0.6=h848a8c0_0
+  - libffi=3.4.4=hca03da5_0
+  - libprotobuf=3.20.3=h514c7bf_0
+  - ncurses=6.4=h313beb8_0
+  - openssl=1.1.1w=h1a28f6b_0
+  - pip=23.3.1=py310hca03da5_0
+  - protobuf=3.20.3=py310h313beb8_0
+  - psutil=5.9.0=py310h1a28f6b_0
+  - py-cpuinfo=9.0.0=py310hca03da5_0
+  - python=3.10.13=hc0d8a6c_0
+  - re2=2022.04.01=hc377ac9_0
+  - readline=8.2=h1a28f6b_0
+  - setuptools=68.0.0=py310hca03da5_0
+  - six=1.16.0=pyhd3eb1b0_1
+  - sqlite=3.41.2=h80987f9_0
+  - tk=8.6.12=hb8d0fd4_0
+  - tzdata=2023c=h04d1e81_0
+  - wheel=0.41.2=py310hca03da5_0
+  - xz=5.4.2=h80987f9_0
+  - zlib=1.2.13=h5a0b063_0
+  - pip:
+      - aio-pika==9.3.1
+      - aiohttp==3.9.0
+      - aiormq==6.7.7
+      - aiosignal==1.3.1
+      - async-timeout==4.0.3
+      - attrs==23.1.0
+      - cachetools==5.3.2
+      - certifi==2023.11.17
+      - charset-normalizer==3.3.2
+      - frozenlist==1.4.0
+      - geographiclib==2.0
+      - geopy==2.4.1
+      - idna==3.6
+      - ipinfo==4.4.3
+      - multidict==6.0.4
+      - pamqp==3.2.1
+      - requests==2.31.0
+      - urllib3==2.1.0
+      - yarl==1.9.3
+prefix: /Users/vikrambala/miniconda3/envs/parallex
