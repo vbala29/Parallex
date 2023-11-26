@@ -1,11 +1,13 @@
 import json
+
 """
 Message Format: head_node_join_cluster_request
 TYPE: JSON
 keys: type [string]
 """
 
-class head_node_join_cluster_request():
+
+class head_node_join_cluster_request:
     type = "head_node_join_cluster_request"
 
     def __init__(self, infoDict):
@@ -18,7 +20,8 @@ class head_node_join_cluster_request():
     @staticmethod
     def createNewRequest():
         return head_node_join_cluster_request(
-            json.dumps({"type": head_node_join_cluster_request.type}))
+            json.dumps({"type": head_node_join_cluster_request.type})
+        )
 
     @staticmethod
     def getTypeStr():

@@ -1,7 +1,7 @@
 import time
 
-class Provider():
 
+class Provider:
     def __init__(self, ip, uuid):
         self.ip = ip
         self.last_seen = time.time()
@@ -24,16 +24,17 @@ class Provider():
 
     def __str__(self):
         return "Provider uuid: {}, ip: {}, lat: {}, lon: {}".format(
-            self.uuid, self.ip, self.lat, self.lon)
+            self.uuid, self.ip, self.lat, self.lon
+        )
 
     def __repr__(self):
         return "Provider uuid: {}, ip: {}, lat: {}, lon: {}".format(
-            self.uuid, self.ip, self.lat, self.lon)
+            self.uuid, self.ip, self.lat, self.lon
+        )
 
-class ProviderCandidate():
 
-    def __init__(self, provider, distance, ramCountAvailable,
-                 cpuCountAvailable):
+class ProviderCandidate:
+    def __init__(self, provider, distance, ramCountAvailable, cpuCountAvailable):
         self.provider = provider
         self.distance = distance
         self.ramCountAvailable = ramCountAvailable
@@ -56,7 +57,11 @@ class ProviderCandidate():
             return False
 
     def __eq__(self, other):
-        if self.cpuCountAvailable == other.cpuCountAvailable and self.ramCountAvailable == other.ramCountAvailable and self.distance == other.distance:
+        if (
+            self.cpuCountAvailable == other.cpuCountAvailable
+            and self.ramCountAvailable == other.ramCountAvailable
+            and self.distance == other.distance
+        ):
             return True
         else:
             return False

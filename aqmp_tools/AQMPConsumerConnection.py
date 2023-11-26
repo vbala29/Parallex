@@ -1,7 +1,7 @@
 from aqmp_tools.AQMPConnection import AQMPConnection
 
-class AQMPConsumerConnection(AQMPConnection):
 
+class AQMPConsumerConnection(AQMPConnection):
     def __init__(self):
         super().__init__()
 
