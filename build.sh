@@ -1,1 +1,4 @@
-(cd protos/ ; source compile_protos.sh)
+(
+    cd protos/
+    source compile_protos.sh
+)

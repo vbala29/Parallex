@@ -50,5 +50,6 @@ dependencies:
       - pamqp
       - requests
       - urllib3
+      - ray[air]
       - yarl
 prefix: /Users/vikrambala/miniconda3/envs/parallex

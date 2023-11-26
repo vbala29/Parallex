@@ -4,7 +4,7 @@
 cd ../ 
 export PYTHONPATH=$PYTHONPATH:$(pwd)
 cd provider
-cd ../protos/provider_command_protos 
+cd ../protos/build
 export PYTHONPATH=$PYTHONPATH:$(pwd)
 cd ../../provider
 python daemon.py
