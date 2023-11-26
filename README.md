@@ -2,18 +2,18 @@
 
 <img width="278" alt="Screenshot 2023-09-30 at 3 33 47 PM" src="https://github.com/vbala29/Parallex/assets/56012430/2b17fc5a-a84a-425a-9cd8-29fc8216f0de">
 
-# How to Use
+## How to Use
 
-**Set up your python environment and install required dependencies**
+### Set up your python environment and install required dependencies
 
-```
+```(bash)
 conda env create -f environment.yml
 conda activate parallex
 ```
 
-**Using RabbitMQ for local testing**
+### Using RabbitMQ for local testing
 
-*Mac*
+#### Mac
 
 ```(bash)
 brew install rabbitmq
@@ -22,7 +22,7 @@ brew services stop rabbitmq
 brew services restart rabbitmq
 ```
 
-*Linux*
+#### Linux
 
 ```(bash)
 chmod +x rmq_install.sh
@@ -30,26 +30,26 @@ chmod +x rmq_install.sh
 sudo systemctl start rabbitmq-server
 ```
 
-Enable command line inspection
+#### Enable command line inspection
 
 ```(bash)
 rabbitmq-plugins enable rabbitmq_management
 ```
 
-Command line inspection
+#### Command line inspection
 
 ```(bash)
 rabbitmqctl list_queues
 rabbitmqadmin get queue=<name> count=<int>
 ```
 
-*Windows*
+#### Windows
 
-```
-TBD
+```(text)
+You should not be developing on windows :/
 ```
 
-**Set up ipinfo API access authorization**
+### Set up ipinfo API access authorization
 
 1. Create account at <https://ipinfo.io/signup>
 2. Go to token tab on left, and copy the token.
@@ -65,19 +65,19 @@ Run start_command_node.sh from command directory
 **Run Provider Daemon**
 Run run_daemon.sh from provider directory
 
-# Miscellaneous
+## Miscellaneous
 
-**What to do to update requirements for this project**
+### What to do to update requirements for this project
 
 ```conda env export > environment.yml```
 
-**Format Style of Files**
+### Format Style of Files
 
 Run from a dir with Python files to format all Python files according to google style guide
 
 ```yapf --in-place --recursive --style="{based_on_style: google}" *.py```
 
-# Tools Used
+## Tools Used
 
 **Ray.io** For job definition and paralellization <https://www.ray.io>
 
