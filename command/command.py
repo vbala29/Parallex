@@ -1,16 +1,16 @@
 import time
-import requests
 import ipinfo
 import grpc
 import geopy.distance
-from protos.provider_command_protos import daemon_pb2
-from protos.provider_command_protos import daemon_pb2_grpc
-from protos.user_command_protos import user_pb2
-from protos.user_command_protos import user_pb2_grpc
 from collections import defaultdict
 from concurrent import futures
 import asyncio
 from threading import Thread
+
+from protos.provider_command_protos import daemon_pb2
+from protos.provider_command_protos import daemon_pb2_grpc
+from protos.user_command_protos import user_pb2
+from protos.user_command_protos import user_pb2_grpc
 from aqmp_tools.formats.join_cluster_request import join_cluster_request
 from aqmp_tools.AQMPProducerConnection import AQMPProducerConnection
 
@@ -194,18 +194,20 @@ class JobHandler(user_pb2_grpc.JobServicer):
         findLocation(job)
         print("Received a job from IP: {}".format(request.clientIP))
         providers = cm.select_providers((job.lat, job.lon), cpuCount, memoryCount)
-        print("{} providers selected".format(len(providers)))
+        print("{} provider(s) selected".format(len(providers)))
         print("providers nodes selected for job: {}".format(providers))
 
         print("Sending cluster head join request to provider: {}".format(headNode.uuid))
-        task = asyncio.run_coroutine_threadsafe(aqmp.sendHeadNodeClusterJoinRequest(headNode.uuid), aqmp.loop)
+        task = asyncio.run_coroutine_threadsafe(
+            aqmp.sendHeadNodeClusterJoinRequest(headNode.uuid), aqmp.loop)
 
         for provider in providers:  
             print("Sending cluster join request to provider: {}".format(provider.uuid))
-            task = asyncio.run_coroutine_threadsafe((aqmp.sendClusterJoinRequest(provider.uuid, join_cluster_request(headNode.ip).dump())), aqmp.loop)
+            req = join_cluster_request.createNewRequest(headNode.ip)
+            task = asyncio.run_coroutine_threadsafe(
+                aqmp.sendClusterJoinRequest(provider.uuid, req.dumps()), aqmp.loop)
         
         return user_pb2.HeadNode(headIP=headNode.ip)
-    
 
 def serve(cm):
     port = "50051"

@@ -1,14 +1,18 @@
 import psutil
 import grpc
-import daemon_pb2_grpc
-import daemon_pb2
 import time
 import urllib.request
 import uuid
 from cpuinfo import get_cpu_info
 from threading import Thread
-from aqmp_tools.AQMPConsumerConnection import AQMPConsumerConnection
 import asyncio
+import json
+
+import daemon_pb2_grpc
+import daemon_pb2
+from aqmp_tools.AQMPConsumerConnection import AQMPConsumerConnection
+from aqmp_tools.formats.head_node_join_cluster_request import head_node_join_cluster_request
+from aqmp_tools.formats.join_cluster_request import join_cluster_request
 
 DYNAMIC_METRIC_INTERVAL_SEC = 1
 BYTES_IN_MEBIBYTE = 2 ^ 20
@@ -19,14 +23,7 @@ IP = ""
 def sendStaticMetrics():
     channel = grpc.insecure_channel('localhost:50051')
     stub = daemon_pb2_grpc.MetricsStub(channel)
-    """
-    int32 CPUNumCores = 1;
-    string CPUName = 2;
-    float MiBRam = 3; 
-    string clientIP = 4;
-    string uuid = 5;
-    """
-    #dummy data for now
+
     CPUNumCores = psutil.cpu_count(logical=True)
     cpu_info = get_cpu_info()
     CPUName = cpu_info['brand_raw'] + " " + cpu_info['arch']
@@ -38,7 +35,6 @@ def sendStaticMetrics():
                                  MiBRam=MiBRam,
                                  clientIP=IP,
                                  uuid=UUID))
-
 
 def sendDynamicMetrics():
     channel = grpc.insecure_channel('localhost:50051')
@@ -52,13 +48,29 @@ def sendDynamicMetrics():
                             clientIP=IP,
                             uuid=UUID))
 
+async def handleClusterJoinRequest(msg):
+    async with msg.process():
+        jsonMsg = json.loads(json.loads(msg.body))
+        typeStr = jsonMsg["type"]
+        
+        if typeStr == join_cluster_request.getTypeStr():
+            print("Received join_cluster_request")
+            req = join_cluster_request.loadFromJson(jsonMsg)
+            headIP = req.getHeadIP()
+        elif typeStr == head_node_join_cluster_request.getTypeStr():
+            print("Received head_node_join_cluster_request")
+            req = head_node_join_cluster_request.loadFromJson(jsonMsg)
+
 def startDaemon():
     global IP
     IP = urllib.request.urlopen('http://ident.me').read().decode('utf8')
     print("IP is: {}".format(IP))
     print("UUID is: {}".format(UUID))
     sendStaticMetrics()
-    asyncio.run_coroutine_threadsafe(aqmp.receive_messages(UUID, (lambda msg: print(msg))), aqmp.loop)
+    asyncio.run_coroutine_threadsafe(
+        aqmp.receive_messages(UUID, 
+                              lambda msg: handleClusterJoinRequest(msg)), 
+                              aqmp.loop)
 
     while True:
         sendDynamicMetrics()
