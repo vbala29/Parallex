@@ -1,10 +1,16 @@
+""" Launches a Parallex cluster worker node. """
 import subprocess
-import launch_utils
-import launch_head
 
-# TODO(andyliu14): Replace this during command node integration.
-_HEAD_ADDRESS_PORT: str = "192.168.1.50:6000"
 
-if __name__ == "__main__":
-    launch_utils.make_dir(launch_head._TEMP_DIR)
-    subprocess.run(f"ray start --address={_HEAD_ADDRESS_PORT}")
+def launch_worker(head_ip: str, port: int):
+    """Launches a Parallex cluster's worker node.
+
+    Args:
+        head_ip (str): The IP address of the head node. Must be publically accessible.
+        port (int): The description on which to start the port
+
+    Raises:
+        CalledProcessError: If cluster fails to launch
+    """
+
+    subprocess.run(f"ray start --address={head_ip} --port={port}".split(), check=True)

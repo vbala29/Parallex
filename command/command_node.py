@@ -8,10 +8,10 @@ from threading import Thread
 import urllib
 
 from command.provider import Provider, ProviderCandidate
-from protos.provider_command_protos import daemon_pb2
-from protos.provider_command_protos import daemon_pb2_grpc
-from protos.user_command_protos import user_pb2
-from protos.user_command_protos import user_pb2_grpc
+from protos.build import daemon_pb2
+from protos.build import daemon_pb2_grpc
+from protos.build import user_pb2
+from protos.build import user_pb2_grpc
 from aqmp_tools.formats.join_cluster_request import join_cluster_request
 from aqmp_tools.AQMPProducerConnection import AQMPProducerConnection
 

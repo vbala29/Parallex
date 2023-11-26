@@ -6,7 +6,7 @@ from typing import Optional
 import platform
 
 
-def _is_port_open(host: str, port: int) -> bool:
+def is_port_open(host: str, port: int) -> bool:
     """Check if `port` is open on `host`."""
     with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
         return sock.connect_ex((host, port))
@@ -15,8 +15,9 @@ def _is_port_open(host: str, port: int) -> bool:
 def find_open_port(
     host: str, *, low_port: int = 6000, high_port: int = 8000
 ) -> Optional[int]:
+    """Finds the first open port on `host` between `low_port` and `high_port`."""
     for port in range(low_port, high_port):
-        if _is_port_open(host, port):
+        if is_port_open(host, port):
             return port
     return None
 

@@ -17,16 +17,20 @@ from aqmp_tools.formats.head_node_join_cluster_request import (
 )
 from aqmp_tools.formats.join_cluster_request import join_cluster_request
 
-DYNAMIC_METRIC_INTERVAL_SEC = 1
-BYTES_IN_MEBIBYTE = 2 ^ 20
-CPU_FREQ_INTERVAL_SEC = 1
-UUID = ""
-IP = ""
+from launch import launch_head
+from launch import launch_worker
 
-_COMMAND_IP = "localhost"
-_COMMAND_PORT = 50051
+DYNAMIC_METRIC_INTERVAL_SEC: int = 1
+BYTES_IN_MEBIBYTE: int = 2 ^ 20
+CPU_FREQ_INTERVAL_SEC: int = 1
+UUID: str = ""
+IP: str = ""
 
-_COMMAND_IP_PORT = f"{_COMMAND_IP}:{_COMMAND_PORT}"
+_COMMAND_IP: str = "localhost"
+_COMMAND_PORT: int = 50051
+_COMMAND_IP_PORT: str = f"{_COMMAND_IP}:{_COMMAND_PORT}"
+
+_RAY_PORT: int = 6379
 
 
 def sendStaticMetrics():
@@ -76,7 +80,8 @@ async def handleClusterJoinRequest(msg):
         if typeStr == join_cluster_request.getTypeStr():
             print("Received join_cluster_request")
             req = join_cluster_request.loadFromJson(jsonMsg)
-            headIP = req.getHeadIP()
+            head_ip = req.getHeadIP()
+
         elif typeStr == head_node_join_cluster_request.getTypeStr():
             print("Received head_node_join_cluster_request")
             req = head_node_join_cluster_request.loadFromJson(jsonMsg)
