@@ -9,6 +9,10 @@ from protos.user_command_protos import user_pb2
 from protos.user_command_protos import user_pb2_grpc
 from collections import defaultdict
 from concurrent import futures
+import asyncio
+from threading import Thread
+from aqmp_tools.formats.join_cluster_request import join_cluster_request
+from aqmp_tools.AQMPProducerConnection import AQMPProducerConnection
 
 HEAD_NODE_CPUS = 1
 HEAD_NODE_RAM  = 2048
@@ -21,7 +25,6 @@ class Provider():
         self.static_metrics = {}
         self.dynamic_metrics = {}
         self.uuid = uuid
-        self.job_queue = []
 
     def update_static_metrics(self, static_metrics):
         self.static_metrics = static_metrics
@@ -44,7 +47,6 @@ class Provider():
 
     
 class Job():
-
     def __init__(self, ip):
         self.ip = ip
 
@@ -90,6 +92,7 @@ class CommandNode():
     def add_provider(self, provider, uuid):
         self.providers[provider.ip][uuid] = provider
         self.add_headnode(provider)
+        asyncio.run_coroutine_threadsafe(aqmp.initializeQueue(provider.uuid), aqmp.loop)
 
     def add_headnode(self, provider):
         self.headNodes.append(provider)
@@ -130,7 +133,6 @@ def findLocation(p):
     p.parse_location(details.loc)
 
 class DaemonHandler(daemon_pb2_grpc.MetricsServicer):
-
     def __init__(self, cm):
         self.cm = cm
 
@@ -155,31 +157,22 @@ class DaemonHandler(daemon_pb2_grpc.MetricsServicer):
 
         return daemon_pb2.Empty()
 
-    def SendDynamicMetrics(self, request_iter, context):
-        for request in request_iter:
-            ip = request.clientIP
-            if ip not in self.cm.providers:
-                print(
-                    "Received dynamic metrics from unknown provider: {}".format(request.uuid))
-            else:
-                print("Received dynamic metrics from known provider: {}".format(request.uuid))
-                p = self.cm.providers[ip][request.uuid]
-                p.update_dynamic_metrics({
-                    "CPUUsage": request.CPUUsage,
-                    "MiBRamUsage": request.MiBRamUsage,
-                })
-            
-            # Check provider queue for waiting job clusters to join
-            for provider in self.cm.providers:
-                for uuid in self.cm.providers[provider]:
-                    p = self.cm.providers[provider][uuid]
-                    while len(p.job_queue) > 0:
-                        job = p.job_queue.pop()
-                        yield daemon_pb2.JobClusterRequest(headIP=job.ip)
-
+    def SendDynamicMetrics(self, request, context):
+        ip = request.clientIP
+        if ip not in self.cm.providers:
+            print(
+                "Received dynamic metrics from unknown provider: {}".format(request.uuid))
+        else:
+            print("Received dynamic metrics from known provider: {}".format(request.uuid))
+            p = self.cm.providers[ip][request.uuid]
+            p.update_dynamic_metrics({
+                "CPUUsage": request.CPUUsage,
+                "MiBRamUsage": request.MiBRamUsage,
+            })
+        
+        return daemon_pb2.Empty()
 
 class JobHandler(user_pb2_grpc.JobServicer):
-
     def __init__(self, cm):
         self.cm = cm
 
@@ -203,13 +196,16 @@ class JobHandler(user_pb2_grpc.JobServicer):
         providers = cm.select_providers((job.lat, job.lon), cpuCount, memoryCount)
         print("{} providers selected".format(len(providers)))
         print("providers nodes selected for job: {}".format(providers))
+
+        print("Sending cluster head join request to provider: {}".format(headNode.uuid))
+        task = asyncio.run_coroutine_threadsafe(aqmp.sendHeadNodeClusterJoinRequest(headNode.uuid), aqmp.loop)
+
+        for provider in providers:  
+            print("Sending cluster join request to provider: {}".format(provider.uuid))
+            task = asyncio.run_coroutine_threadsafe((aqmp.sendClusterJoinRequest(provider.uuid, join_cluster_request(headNode.ip).dump())), aqmp.loop)
         
-        for provider in providers:
-            provider.job_queue.append(job)
         return user_pb2.HeadNode(headIP=headNode.ip)
     
-    # def duringJobFunction
-
 
 def serve(cm):
     port = "50051"
@@ -221,7 +217,14 @@ def serve(cm):
     print("Server started on port " + port)
     server.wait_for_termination()
 
+def start_background_loop(loop):
+    asyncio.set_event_loop(loop)
+    loop.run_forever()
 
 if __name__ == '__main__':
     cm = CommandNode()
+    aqmp = AQMPProducerConnection()
+    aqmp.loop.run_until_complete(aqmp.setupAQMP())
+    t = Thread(target=start_background_loop, args=(aqmp.loop,), daemon=True)
+    t.start()
     serve(cm)

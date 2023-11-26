@@ -19,10 +19,10 @@ class MetricsStub(object):
                 request_serializer=daemon__pb2.StaticMetrics.SerializeToString,
                 response_deserializer=daemon__pb2.Empty.FromString,
                 )
-        self.SendDynamicMetrics = channel.stream_stream(
+        self.SendDynamicMetrics = channel.unary_unary(
                 '/metrics.Metrics/SendDynamicMetrics',
                 request_serializer=daemon__pb2.DynamicMetrics.SerializeToString,
-                response_deserializer=daemon__pb2.JobClusterRequest.FromString,
+                response_deserializer=daemon__pb2.Empty.FromString,
                 )
 
 
@@ -35,7 +35,7 @@ class MetricsServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def SendDynamicMetrics(self, request_iterator, context):
+    def SendDynamicMetrics(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -49,10 +49,10 @@ def add_MetricsServicer_to_server(servicer, server):
                     request_deserializer=daemon__pb2.StaticMetrics.FromString,
                     response_serializer=daemon__pb2.Empty.SerializeToString,
             ),
-            'SendDynamicMetrics': grpc.stream_stream_rpc_method_handler(
+            'SendDynamicMetrics': grpc.unary_unary_rpc_method_handler(
                     servicer.SendDynamicMetrics,
                     request_deserializer=daemon__pb2.DynamicMetrics.FromString,
-                    response_serializer=daemon__pb2.JobClusterRequest.SerializeToString,
+                    response_serializer=daemon__pb2.Empty.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -82,7 +82,7 @@ class Metrics(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def SendDynamicMetrics(request_iterator,
+    def SendDynamicMetrics(request,
             target,
             options=(),
             channel_credentials=None,
@@ -92,8 +92,8 @@ class Metrics(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.stream_stream(request_iterator, target, '/metrics.Metrics/SendDynamicMetrics',
+        return grpc.experimental.unary_unary(request, target, '/metrics.Metrics/SendDynamicMetrics',
             daemon__pb2.DynamicMetrics.SerializeToString,
-            daemon__pb2.JobClusterRequest.FromString,
+            daemon__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

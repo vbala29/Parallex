@@ -12,8 +12,10 @@ def SendJob():
     """
     clientIP = urllib.request.urlopen('http://ident.me').read().decode('utf8')
     response = stub.SendJob(user_pb2.JobMetrics(clientIP=clientIP, cpuCount = 1, memoryCount = 2048))
-    print("Job sent")
+    print("Job sent, got response: ")
+    print(response)
 
 
 if __name__ == '__main__':
     SendJob()
+    
