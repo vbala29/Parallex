@@ -4,11 +4,36 @@
 # How to Use
 **Set up your python environment and install required dependencies**
 ```
-cd test-env
-python3 -m venv env
-cd ../
-pip3 install -r requirements.txt
+conda env create -f environment.yml
+conda activate parallex
 ```
+
+**Using RabbitMQ for local testing**
+
+*Mac*
+```
+brew install rabbitmq
+brew services start rabbitmq
+brew services stop rabbitmq
+brew services restart rabbitmq
+```
+
+Enable command line inspection
+```
+rabbitmq-plugins enable rabbitmq_management
+```
+
+Command line inspection
+```
+rabbitmqctl list_queues
+rabbitmqadmin get queue=<name> count=<int>
+```
+
+*Windows*
+```
+TBD
+```
+
 
 **Set up ipinfo API access authorization**
 1. Create account at https://ipinfo.io/signup
@@ -29,7 +54,7 @@ Run run_daemon.sh from provider directory
 # Miscellaneous
 **What to do to update requirements for this project**
 
-```pip3 freeze > requirements.txt```
+```conda env export > environment.yml```
 
 **Format Style of Files**
 
