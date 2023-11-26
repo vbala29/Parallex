@@ -31,6 +31,7 @@ _COMMAND_PORT: int = 50051
 _COMMAND_IP_PORT: str = f"{_COMMAND_IP}:{_COMMAND_PORT}"
 
 _RAY_PORT: int = 6379
+_IS_HEAD_NODE: bool = False
 
 
 def sendStaticMetrics():
@@ -81,10 +82,12 @@ async def handleClusterJoinRequest(msg):
             print("Received join_cluster_request")
             req = join_cluster_request.loadFromJson(jsonMsg)
             head_ip = req.getHeadIP()
+            launch_worker.launch_worker(head_ip, _RAY_PORT)
 
         elif typeStr == head_node_join_cluster_request.getTypeStr():
             print("Received head_node_join_cluster_request")
             req = head_node_join_cluster_request.loadFromJson(jsonMsg)
+            launch_head.launch_head(_RAY_PORT)
 
 
 def startDaemon():

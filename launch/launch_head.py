@@ -11,5 +11,6 @@ def launch_head(port: int):
     Raises:
         CalledProcessError: If cluster fails to launch
     """
+    print(f"Starting Parallex head on port: {port}")
 
     subprocess.run(f"ray start --head --port={port}".split(), check=True)

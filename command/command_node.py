@@ -31,8 +31,11 @@ class Job:
 
 class CommandNode:
     def __init__(self):
+        # TODO(vikbala): Clean this up and segment by active/inactive in a nicer way
         self.providers = defaultdict(dict)
+        self.active_providers = defaultdict(dict)
         self.headNodes = []
+        self.active_heads = []
 
     def add_provider(self, provider, uuid):
         self.providers[provider.ip][uuid] = provider
@@ -41,6 +44,32 @@ class CommandNode:
 
     def add_headnode(self, provider):
         self.headNodes.append(provider)
+
+    def select_and_reserve_head(self):
+        head = None
+        for i, provider in enumerate(self.headNodes):
+            if (
+                provider.static_metrics["CPUNumCores"] >= HEAD_NODE_CPUS
+                and provider.static_metrics["MiBRam"] >= HEAD_NODE_RAM
+            ):
+                head = provider
+                self.headNodes.pop(i)
+                self.active_heads.append(head)
+                break
+        if head is None:
+            return None
+
+        # Remove from list of available providers
+        del self.providers[head.ip][head.uuid]
+
+        # Clean up empty head dict if all UUIDs with the same IP are removed
+        if not self.providers[head.ip]:
+            del self.providers[head.ip]
+
+        # Save to active providers, so that selection algorithm does not choose the used head node
+        self.active_providers[head.ip][head.uuid] = head
+
+        return head
 
     def select_providers(
         self, user_location, requiredCPU, requiredMemory
@@ -70,9 +99,9 @@ class CommandNode:
             p = best_candidate_providers.pop()
             providers.append(p.provider)
             totalCPU += p.cpuCountAvailable
-            totalMemory += p.ramCountAvailable
+            totalMemory += p.ramCountAvailables
 
-        print("providers sorted: ".format(providers))
+        print(f"providers sorted: {providers}")
         return providers
 
 
@@ -94,17 +123,13 @@ class DaemonHandler(daemon_pb2_grpc.MetricsServicer):
     def SendStaticMetrics(self, request, context):
         ip = request.clientIP
         if (ip not in self.cm.providers) or (request.uuid not in self.cm.providers[ip]):
-            print(
-                "Received static metrics from unknown provider: {}".format(request.uuid)
-            )
+            print(f"Received static metrics from unknown provider: {request.uuid}")
             p = Provider(ip=ip, uuid=request.uuid)
             self.cm.add_provider(p, request.uuid)
             findLocation(p)
 
         else:
-            print(
-                "Received static metrics from known provider: {}".format(request.uuid)
-            )
+            print(f"Received static metrics from known provider: {request.uuid}")
             p = self.cm.providers[ip][request.uuid]
 
         p.update_static_metrics(
@@ -120,15 +145,9 @@ class DaemonHandler(daemon_pb2_grpc.MetricsServicer):
     def SendDynamicMetrics(self, request, context):
         ip = request.clientIP
         if ip not in self.cm.providers:
-            print(
-                "Received dynamic metrics from unknown provider: {}".format(
-                    request.uuid
-                )
-            )
+            print(f"Received dynamic metrics from unknown provider: {request.uuid}")
         else:
-            print(
-                "Received dynamic metrics from known provider: {}".format(request.uuid)
-            )
+            print(f"Received dynamic metrics from known provider: {request.uuid}")
             p = self.cm.providers[ip][request.uuid]
             p.update_dynamic_metrics(
                 {
@@ -148,34 +167,29 @@ class JobHandler(user_pb2_grpc.JobServicer):
         cpuCount = request.cpuCount
         memoryCount = request.memoryCount
 
-        headNode = None
-        for provider in self.cm.headNodes:
-            if (
-                provider.static_metrics["CPUNumCores"] >= HEAD_NODE_CPUS
-                and provider.static_metrics["MiBRam"] >= HEAD_NODE_RAM
-            ):
-                headNode = provider
-                break
+        headNode = self.cm.select_and_reserve_head()
 
-        if headNode == None:
+        print(f"Selected and reserved head: {headNode}")
+
+        if headNode is None:
             print("No head nodes available")
             return user_pb2.HeadNode(headIP="INVALID_IP")
 
         # Send request right away to give head node time to initialize cluster
-        print("Sending cluster head join request to provider: {}".format(headNode.uuid))
+        print(f"Sending cluster head join request to provider: {headNode.uuid}")
         asyncio.run_coroutine_threadsafe(
             aqmp.sendHeadNodeClusterJoinRequest(headNode.uuid), aqmp.loop
         )
 
         job = Job(headNode.ip)
         findLocation(job)
-        print("Received a job from IP: {}".format(request.clientIP))
+        print(f"Received a job from IP: {request.clientIP}")
         providers = cm.select_providers((job.lat, job.lon), cpuCount, memoryCount)
-        print("{} provider(s) selected".format(len(providers)))
-        print("providers nodes selected for job: {}".format(providers))
+        print(f"{len(providers)} provider(s) selected")
+        print(f"providers nodes selected for job: {providers}")
 
         for provider in providers:
-            print("Sending cluster join request to provider: {}".format(provider.uuid))
+            print(f"Sending cluster join request to provider: {provider.uuid}")
             req = join_cluster_request.createNewRequest(headNode.ip)
             task = asyncio.run_coroutine_threadsafe(
                 aqmp.sendClusterJoinRequest(provider.uuid, req.dumps()), aqmp.loop

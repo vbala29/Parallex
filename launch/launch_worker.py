@@ -13,4 +13,4 @@ def launch_worker(head_ip: str, port: int):
         CalledProcessError: If cluster fails to launch
     """
 
-    subprocess.run(f"ray start --address={head_ip} --port={port}".split(), check=True)
+    subprocess.run(f"ray start --address={head_ip}:{port}".split(), check=True)
