@@ -75,3 +75,7 @@ Run from a dir with Python files to format all Python files according to google 
 
 **ipinfo** For IP geolocation https://ipinfo.io
 
+**aio-pika** For asynchronous RabbitMQ https://aio-pika.readthedocs.io/en/latest/
+
+**RabbitMQ** For the distributed message broker https://www.rabbitmq.com
+
