@@ -101,7 +101,7 @@ class CommandNode:
             p = best_candidate_providers.pop()
             providers.append(p.provider)
             totalCPU += p.cpuCountAvailable
-            totalMemory += p.ramCountAvailables
+            totalMemory += p.ramCountAvailable
 
         print(f"providers sorted: {providers}")
         return providers
