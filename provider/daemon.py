@@ -26,7 +26,7 @@ CPU_FREQ_INTERVAL_SEC: int = 1
 UUID: str = ""
 IP: str = ""
 
-_COMMAND_IP: str = "localhost"
+_COMMAND_IP: str = "192.168.1.35"
 _COMMAND_PORT: int = 50051
 _COMMAND_IP_PORT: str = f"{_COMMAND_IP}:{_COMMAND_PORT}"
 
@@ -119,7 +119,7 @@ def start_background_loop(loop):
 
 
 if __name__ == "__main__":
-    aqmp = AQMPConsumerConnection()
+    aqmp = AQMPConsumerConnection(_COMMAND_IP)
     setupUUID()
     aqmp.loop.run_until_complete(aqmp.setupAQMP())
     aqmp.loop.run_until_complete(aqmp.initializeQueue(UUID))

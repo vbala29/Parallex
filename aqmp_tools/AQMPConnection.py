@@ -3,11 +3,12 @@ import asyncio
 
 
 class AQMPConnection:
-    def __init__(self):
+    def __init__(self, host):
         self.connection = None
         self.channel = None
         self.queues = {}
         self.loop = asyncio.new_event_loop()
+        self.host = host
 
     async def setupAQMP(self):
         self.connection = await aio_pika.connect_robust("amqp://guest:guest@localhost/")

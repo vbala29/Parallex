@@ -18,6 +18,8 @@ from aqmp_tools.AQMPProducerConnection import AQMPProducerConnection
 HEAD_NODE_CPUS = 1
 HEAD_NODE_RAM = 2048
 
+_COMMAND_IP = 'localhost'
+
 
 class Job:
     def __init__(self, ip):
@@ -216,7 +218,7 @@ def start_background_loop(loop):
 
 if __name__ == "__main__":
     cm = CommandNode()
-    aqmp = AQMPProducerConnection()
+    aqmp = AQMPProducerConnection(_COMMAND_IP)
     aqmp.loop.run_until_complete(aqmp.setupAQMP())
     t = Thread(target=start_background_loop, args=(aqmp.loop,), daemon=True)
     t.start()
