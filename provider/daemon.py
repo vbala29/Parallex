@@ -94,8 +94,9 @@ def startDaemon():
     global IP
     # IP = urllib.request.urlopen('http://ident.me').read().decode('utf8'
     # For sake of local testing get local IP
-    hostname = socket.gethostname()
-    IP = socket.gethostbyname(hostname)
+    # hostname = socket.gethostname()
+    # IP = socket.gethostbyname(hostname)
+    IP = _get_local_ip()
     print(f"IP is: {IP}")
     print(f"UUID is: {UUID}")
     sendStaticMetrics()
@@ -107,6 +108,12 @@ def startDaemon():
     while True:
         sendDynamicMetrics()
 
+
+def _get_local_ip() -> str:
+    # TODO(andy) - this is hacky so lets change this
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+        s.connect(("8.8.8.8", 80))
+        return s.getsockname()[0]
 
 def setupUUID():
     global UUID
