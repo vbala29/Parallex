@@ -28,7 +28,7 @@ IP: str = ""
 
 _HEAD_START_DELAY_SECS:int = 5
 
-_COMMAND_IP: str = "192.168.1.35"
+_COMMAND_IP: str = "localhost"
 _COMMAND_PORT: int = 50051
 _COMMAND_IP_PORT: str = f"{_COMMAND_IP}:{_COMMAND_PORT}"
 
