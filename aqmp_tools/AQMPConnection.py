@@ -1,6 +1,9 @@
 import aio_pika
 import asyncio
 
+# TODO(vikbala): CHANGE, INSECURE.
+_DEFAULT_USER = 'test'
+_DEFAULT_PASS = 'test'
 
 class AQMPConnection:
     def __init__(self, host):
@@ -11,7 +14,8 @@ class AQMPConnection:
         self.host = host
 
     async def setupAQMP(self):
-        self.connection = await aio_pika.connect_robust("amqp://guest:guest@localhost/")
+        print(f'host: {self.host}')
+        self.connection = await aio_pika.connect_robust(f"amqp://{_DEFAULT_USER}:{_DEFAULT_PASS}@{self.host}/")
         self.channel = await self.connection.channel()
 
     async def initializeQueue(self, queueName):
