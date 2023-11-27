@@ -7,7 +7,7 @@
 ### Set up your python environment and install required dependencies
 
 ```(bash)
-conda env create -f environment.yml
+conda env create -f environment_xcompat.yml
 conda activate parallex
 ```
 
@@ -75,7 +75,7 @@ Run run_daemon.sh from provider directory
 
 ### What to do to update requirements for this project
 
-```conda env export > environment.yml```
+```conda env export > environment_xcompat.yml```
 
 ### Format Style of Files
 
