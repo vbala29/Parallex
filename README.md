@@ -30,6 +30,12 @@ chmod +x rmq_install.sh
 sudo systemctl start rabbitmq-server
 ```
 
+#### All OS
+
+We need to make a user with username `test` and password `test` so that remote users can reach the RabbitMQ server. `guest:guest` is forbidden from accessing remotely.
+
+On linux this can be done using the `rmq_setup.sh` script.
+
 #### Enable command line inspection
 
 ```(bash)
