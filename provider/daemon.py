@@ -28,7 +28,7 @@ IP: str = ""
 
 _HEAD_START_DELAY_SECS:int = 5
 
-_COMMAND_IP: str = "localhost"
+_COMMAND_IP: str = "192.168.1.35"
 _COMMAND_PORT: int = 50051
 _COMMAND_IP_PORT: str = f"{_COMMAND_IP}:{_COMMAND_PORT}"
 
@@ -81,15 +81,14 @@ async def handleClusterJoinRequest(msg):
 
         if typeStr == join_cluster_request.getTypeStr():
             print("Received join_cluster_request")
+            print(f' Sleeping for {_HEAD_START_DELAY_SECS}')
+            time.sleep(_HEAD_START_DELAY_SECS)
             req = join_cluster_request.loadFromJson(jsonMsg)
             head_ip = req.getHeadIP()
             launch_worker.launch_worker(head_ip, _RAY_PORT)
 
         elif typeStr == head_node_join_cluster_request.getTypeStr():
-            #TODO(andyl): Let's change this to have a response from head indicating start first.
-            print("Received head_node_join_cluster_request")
-            print(f'Sleeping for: {_HEAD_START_DELAY_SECS}')
-            time.sleep(_HEAD_START_DELAY_SECS)
+            print('Starting node as head')
             req = head_node_join_cluster_request.loadFromJson(jsonMsg)
             launch_head.launch_head(_RAY_PORT)
 
