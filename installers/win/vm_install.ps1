@@ -3,8 +3,6 @@ $vmName = "TestVM"
 $vmMemoryMB = 2048  # Memory in megabytes
 $vmDiskSizeMB = 10960  # Disk size in megabytes
 $isoURL = "https://releases.ubuntu.com/20.04/ubuntu-20.04.3-live-server-amd64.iso"  # Ubuntu ISO URL
-$adapterName = "Ethernet"  # Name of the host network adapter to bridge with
-
 # Combine directory path and file name
 $vmVHDPath = "C:\Users\aniru\OneDrive\Documents\Anirudh\Senior-Spring\CIS4010\Parallex\vms"
 $fullVHDPath = Join-Path -Path $vmVHDPath -ChildPath "$vmName.vdi"
@@ -29,9 +27,26 @@ VBoxManage storageattach $vmName --storagectl "SATA Controller" --port 0 --devic
 VBoxManage storageattach $vmName --storagectl "SATA Controller" --port 1 --device 0 --type dvddrive --medium $isoURL
 
 # Set the VM's network adapter to Bridged mode
-VBoxManage modifyvm $vmName --nic1 bridged --bridgeadapter1 $adapterName
 
+# Retrieve all network adapters excluding those with "Virtual" in their name and that are up
+$nonVirtualAdapters = Get-NetAdapter | Where-Object { $_.Name -notlike '*Virtual*' -and $_.Status -eq 'Up' }
 
+# Select Ethernet adapter if available, otherwise select Wi-Fi
+$preferredAdapter = $nonVirtualAdapters | Where-Object { $_.Name -like '*Ethernet*' } | Select-Object -First 1
 
+if (-not $preferredAdapter) {
+    $preferredAdapter = $nonVirtualAdapters | Where-Object { $_.Name -like '*Wi-Fi*' } | Select-Object -First 1
+}
 
+# Save the name of the preferred adapter in the adapterName variable
+$adapterName = $null
+if ($preferredAdapter) {
+    $adapterName = $preferredAdapter.Name
+}
 
+# Output the name of the preferred adapter
+if ($adapterName) {
+    VBoxManage modifyvm $vmName --nic1 bridged --bridgeadapter1 $adapterName
+} else {
+    Write-Output "No suitable adapter found."
+}
