@@ -1,8 +1,8 @@
 # Define VM parameters
-$vmName = "TestVM"
+$vmName = "ParallexProviderVM"
 $vmMemoryMB = 2048  # Memory in megabytes
 $vmDiskSizeMB = 10960  # Disk size in megabytes
-$isoURL = "https://releases.ubuntu.com/20.04/ubuntu-20.04.3-live-server-amd64.iso"  # Ubuntu ISO URL
+$isoURL = "https://releases.ubuntu.com/focal/ubuntu-20.04.6-live-server-amd64.iso"  # Ubuntu ISO URL
 # Combine directory path and file name
 $vmVHDPath = "C:\Users\aniru\OneDrive\Documents\Anirudh\Senior-Spring\CIS4010\Parallex\vms"
 $fullVHDPath = Join-Path -Path $vmVHDPath -ChildPath "$vmName.vdi"
@@ -15,38 +15,51 @@ if (!(Test-Path -Path $vmVHDPath) -or !(Test-Path -Path $fullVHDPath)) {
 # Download and install VirtualBox silently
 $virtualBoxInstallerUrl = "https://download.virtualbox.org/virtualbox/7.0.12/VirtualBox-7.0.12-159484-Win.exe"  # Update to the latest version
 $virtualBoxInstallerPath = "$env:TEMP\VirtualBox-Installer.exe"
-Invoke-WebRequest -Uri $virtualBoxInstallerUrl -OutFile $virtualBoxInstallerPath
-Start-Process -FilePath $virtualBoxInstallerPath -ArgumentList "/S" -Wait
+$isoPath = "$env:TEMP\ubuntu20.04.6-server-amd64.iso"
+Write-Output "Downloading VirtualBox Installer..."
+# Invoke-WebRequest -Uri $virtualBoxInstallerUrl -OutFile $virtualBoxInstallerPath
 
+Write-Output "Installing VirtualBox..."
+# Assuming $virtualBoxInstallerPath contains the path to your installer
+Start-Process -FilePath $virtualBoxInstallerPath -ArgumentList "-extract", "-silent" -Wait
+
+# Using msiexec for installation
+msiexec -i VirtualBox-7.0.12-r159484.msi -passive -norestart
+
+Write-Output "Downloading Ubuntu ISO..."
+# Invoke-WebRequest -Uri $isoUrl -OutFile $isoPath
+
+
+Write-Output "Intializing VM..."
 # Create VM with VirtualBox
-VBoxManage createvm --name $vmName --ostype "Ubuntu_64" --register
-VBoxManage modifyvm $vmName --memory $vmMemoryMB
-VBoxManage createhd --filename "$fullVHDPath" --size $vmDiskSizeMB --format VDI
-VBoxManage storagectl $vmName --name "SATA Controller" --add sata --controller IntelAhci
-VBoxManage storageattach $vmName --storagectl "SATA Controller" --port 0 --device 0 --type hdd --medium "$fullVHDPath"
-VBoxManage storageattach $vmName --storagectl "SATA Controller" --port 1 --device 0 --type dvddrive --medium $isoURL
+# Check if the VM exists
+$vmExists = & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" showvminfo $vmName --machinereadable | Select-String -Pattern '^name='
+
+# If the VM exists, delete it
+if ($vmExists) {
+    & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" unregistervm $vmName --delete
+}
+
+& "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" createvm --name $vmName --ostype "Ubuntu_64" --register
+& "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" modifyvm $vmName --memory $vmMemoryMB
+& "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" createhd --filename "$fullVHDPath" --size $vmDiskSizeMB --format VDI
+& "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" storagectl $vmName --name "SATA Controller" --add sata --controller IntelAhci
+& "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" storageattach $vmName --storagectl "SATA Controller" --port 0 --device 0 --type hdd --medium "$fullVHDPath"
+& "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" storageattach $vmName --storagectl "SATA Controller" --port 1 --device 0 --type dvddrive --medium $isoPath
 
 # Set the VM's network adapter to Bridged mode
+# Retrieve all running network adapters excluding those with "Virtual"
+$nonVirtualAdapters = Get-NetAdapter | Where-Object { $_.InterfaceDescription -notlike '*Virtual*' -and $_.Status -eq 'Up' }
 
-# Retrieve all network adapters excluding those with "Virtual" in their name and that are up
-$nonVirtualAdapters = Get-NetAdapter | Where-Object { $_.Name -notlike '*Virtual*' -and $_.Status -eq 'Up' }
+# Select fastest adapter by link speed
+$preferredAdapter = $nonVirtualAdapters | Sort-Object -Property LinkSpeed -Descending | Select-Object -First 1
 
-# Select Ethernet adapter if available, otherwise select Wi-Fi
-$preferredAdapter = $nonVirtualAdapters | Where-Object { $_.Name -like '*Ethernet*' } | Select-Object -First 1
-
-if (-not $preferredAdapter) {
-    $preferredAdapter = $nonVirtualAdapters | Where-Object { $_.Name -like '*Wi-Fi*' } | Select-Object -First 1
-}
-
-# Save the name of the preferred adapter in the adapterName variable
 $adapterName = $null
 if ($preferredAdapter) {
-    $adapterName = $preferredAdapter.Name
+    $adapterName = $preferredAdapter.InterfaceDescription
 }
-
-# Output the name of the preferred adapter
 if ($adapterName) {
-    VBoxManage modifyvm $vmName --nic1 bridged --bridgeadapter1 $adapterName
+    & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" modifyvm $vmName --nic1 bridged --bridgeadapter1 "$adapterName"
 } else {
-    Write-Output "No suitable adapter found."
+    Write-Output "No suitable network adapter found. Update within VirtualBox."
 }
