@@ -2,7 +2,7 @@
 $vmName = "ParallexProviderVM"
 $vmMemoryMB = 2048  # Memory in megabytes
 $vmDiskSizeMB = 8960  # Disk size in megabytes
-$isoURL = "https://releases.ubuntu.com/focal/ubuntu-20.04.6-live-server-amd64.iso"  # Ubuntu ISO URL
+$isoURL = "https://releases.ubuntu.com/focal/ubuntu-18.04.6-desktop-amd64.iso"  # Ubuntu ISO URL
 # Combine directory path and file name
 $vmVHDPath = "$env:USERPROFILE\VirtualBox VMs"
 $fullVHDPath = Join-Path -Path $vmVHDPath -ChildPath "$vmName.vdi"
@@ -15,7 +15,7 @@ if (!(Test-Path -Path $vmVHDPath) -or !(Test-Path -Path $fullVHDPath)) {
 # Download and install VirtualBox silently
 $virtualBoxInstallerUrl = "https://download.virtualbox.org/virtualbox/7.0.12/VirtualBox-7.0.12-159484-Win.exe"  # Update to the latest version
 $virtualBoxInstallerPath = "$env:TEMP\VirtualBox-Installer.exe"
-$isoPath = "C:\Users\aniru\AppData\Local\Temp\ubuntu-20.04.6-live-server-amd64.iso"
+$isoPath = "C:\Users\aniru\AppData\Local\Temp\ubuntu-18.04.6-desktop-amd64.iso"
 Write-Output "Downloading VirtualBox Installer..."
 # Invoke-WebRequest -Uri $virtualBoxInstallerUrl -OutFile $virtualBoxInstallerPath
 
