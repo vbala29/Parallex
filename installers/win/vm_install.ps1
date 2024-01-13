@@ -74,6 +74,4 @@ if ($adapterName) {
 & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" unattended install $vmName --iso=$isoPath --user=parallexprovider --password=parallex --full-user-name="ParallexProvider" --time-zone=UTC --install-additions
 & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" startvm $vmName
 
-# NEED TO WAIT FOR SETUP TO FINISH, HOW AUTOMATIC?
-# COPY ADD SUDO USER AND SETUP SSH TO VM (in /tmp/)
-# RUN USING GUESTCONTROL (echo parallex | sudo -S bash setup_ssh.sh) 
+
