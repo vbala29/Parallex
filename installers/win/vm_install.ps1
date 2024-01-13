@@ -15,7 +15,7 @@ if (!(Test-Path -Path $vmVHDPath) -or !(Test-Path -Path $fullVHDPath)) {
 # Download and install VirtualBox silently
 $virtualBoxInstallerUrl = "https://download.virtualbox.org/virtualbox/7.0.12/VirtualBox-7.0.12-159484-Win.exe"  # Update to the latest version
 $virtualBoxInstallerPath = "$env:TEMP\VirtualBox-Installer.exe"
-$isoPath = "C:\Users\aniru\AppData\Local\Temp\ubuntu-18.04.6-desktop-amd64.iso"
+$isoPath = "$vmVHDPath\ubuntu-18.04.6-desktop-amd64.iso"
 Write-Output "Downloading VirtualBox Installer..."
 # Invoke-WebRequest -Uri $virtualBoxInstallerUrl -OutFile $virtualBoxInstallerPath
 
@@ -49,6 +49,8 @@ if ($vmExists) {
 & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" modifyvm $vmName --memory $vmMemoryMB
 & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" modifyvm $vmName --ioapic on
 & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" modifyvm $vmName --boot1 dvd --boot2 disk --boot3 none --boot4 none
+& "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" modifyvm $vmName --graphicscontroller vvmsvga
+
 
 
 # Set the VM's network adapter to Bridged mode
@@ -69,5 +71,9 @@ if ($adapterName) {
 }
 
 # Setup OS on Provider
-& "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" unattended install $vmName --iso=$isoPath --user=parallexprovider --password=parallex --full-user-name="ParallexProvider" --time-zone=UTC
+& "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" unattended install $vmName --iso=$isoPath --user=parallexprovider --password=parallex --full-user-name="ParallexProvider" --time-zone=UTC --install-additions
 & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" startvm $vmName
+
+# NEED TO WAIT FOR SETUP TO FINISH, HOW AUTOMATIC?
+# COPY ADD SUDO USER AND SETUP SSH TO VM (in /tmp/)
+# RUN USING GUESTCONTROL (echo parallex | sudo -S bash setup_ssh.sh) 
