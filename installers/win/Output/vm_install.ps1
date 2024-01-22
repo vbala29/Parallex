@@ -73,3 +73,6 @@ if ($adapterName) {
 # Setup OS on Provider
 & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" unattended install $vmName --iso=$isoPath --user=parallexprovider --password=parallex --full-user-name="ParallexProvider" --time-zone=UTC --install-additions
 & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" startvm $vmName
+
+Write-Output "Waiting for Unattended VM Installation to Finish..."
+Start-Sleep -Seconds 600

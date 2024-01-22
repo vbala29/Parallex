@@ -12,6 +12,18 @@ if (!(Test-Path -Path $plinkFolderPath)) {
     New-Item -Path $pLinkFolderPath -ItemType Directory -Force
 }
 
+
+$scriptDirectory = $PSScriptRoot
+$sudoToCopy = Join-Path $scriptDirectory -ChildPath "add_sudo_user.sh"
+$sudoFile = Join-Path $destinationDirectory -ChildPath "add_sudo_user.sh"
+Copy-Item -Path $sudoToCopy -Destination $sudoFile -Force
+
+$sshToCopy = Join-Path $scriptDirectory -ChildPath "setup_ssh.sh"
+$sshFile = Join-Path $destinationDirectory -ChildPath "setup_ssh.sh"
+
+Copy-Item -Path $sshToCopy -Destination $sshFile -Force
+
+
 Write-Output "Moving files to guest..."
 & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" guestcontrol $vmName copyto --username parallexprovider --password parallex --target-directory /tmp/ "$scriptsPath\add_sudo_user.sh"
 Start-Sleep -Seconds 1
