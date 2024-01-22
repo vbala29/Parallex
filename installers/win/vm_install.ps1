@@ -2,7 +2,7 @@
 $vmName = "ParallexProviderVM"
 $vmMemoryMB = 2048  # Memory in megabytes
 $vmDiskSizeMB = 8960  # Disk size in megabytes
-$isoURL = "https://releases.ubuntu.com/focal/ubuntu-18.04.6-desktop-amd64.iso"  # Ubuntu ISO URL
+$isoURL = "https://releases.ubuntu.com/bionic/ubuntu-18.04.6-desktop-amd64.iso"  # Ubuntu ISO URL
 # Combine directory path and file name
 $vmVHDPath = "$env:USERPROFILE\VirtualBox VMs"
 $fullVHDPath = Join-Path -Path $vmVHDPath -ChildPath "$vmName.vdi"
@@ -17,7 +17,7 @@ $virtualBoxInstallerUrl = "https://download.virtualbox.org/virtualbox/7.0.12/Vir
 $virtualBoxInstallerPath = "$env:TEMP\VirtualBox-Installer.exe"
 $isoPath = "$vmVHDPath\ubuntu-18.04.6-desktop-amd64.iso"
 Write-Output "Downloading VirtualBox Installer..."
-Invoke-WebRequest -Uri $virtualBoxInstallerUrl -OutFile $virtualBoxInstallerPath
+# Invoke-WebRequest -Uri $virtualBoxInstallerUrl -OutFile $virtualBoxInstallerPath
 
 Write-Output "Installing VirtualBox..."
 # Assuming $virtualBoxInstallerPath contains the path to your installer
@@ -27,7 +27,7 @@ Start-Process -FilePath $virtualBoxInstallerPath -ArgumentList "-extract", "-sil
 msiexec -i VirtualBox-7.0.12-r159484.msi -passive -norestart
 
 Write-Output "Downloading Ubuntu ISO..."
-Invoke-WebRequest -Uri $isoUrl -OutFile $isoPath
+# Invoke-WebRequest -Uri $isoUrl -OutFile $isoPath
 
 Write-Output "Intializing VM..."
 # Create VM with VirtualBox
@@ -43,12 +43,15 @@ if ($vmExists) {
 & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" createhd --filename $fullVHDPath --size $vmDiskSizeMB --format VDI
 & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" storagectl $vmName --name "SATA Controller" --add sata --controller IntelAhci
 & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" storageattach $vmName --storagectl "SATA Controller" --port 0 --device 0 --type hdd --medium $fullVHDPAth
+
 & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" storagectl $vmName --name "IDE Controller" --add ide
 
 & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" modifyvm $vmName --memory $vmMemoryMB
 & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" modifyvm $vmName --ioapic on
 & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" modifyvm $vmName --boot1 dvd --boot2 disk --boot3 none --boot4 none
-# & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" modifyvm $vmName --graphicscontroller vmsvga
+& "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" modifyvm $vmName --graphicscontroller vmsvga
+
+
 
 # Set the VM's network adapter to Bridged mode
 # Retrieve all running network adapters excluding those with "Virtual"
@@ -70,5 +73,3 @@ if ($adapterName) {
 # Setup OS on Provider
 & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" unattended install $vmName --iso=$isoPath --user=parallexprovider --password=parallex --full-user-name="ParallexProvider" --time-zone=UTC --install-additions
 & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" startvm $vmName
-
-
