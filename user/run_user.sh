@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Start the daemon on provider node
-cd ../ 
+cd ../
 export PYTHONPATH=$PYTHONPATH:$(pwd)
-cd provider
+cd user
 cd ../protos/build
 export PYTHONPATH=$PYTHONPATH:$(pwd)
-cd ../../provider
-python daemon.py
+cd ../../user
+python user.py

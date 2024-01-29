@@ -1,16 +1,23 @@
 import grpc
-import user_pb2_grpc
-import user_pb2
+import urllib.request
 
-def sendJob():
-    channel = grpc.insecure_channel('localhost:50051')
-    stub = user_pb2_grpc.UserStub(channel)
-    """
-    float lat = 1;
-    float lon = 2;
-    """
-    response = stub.SendJob(user_pb2.Job(lat=100, lon=100))
-    print("Job sent")
+from protos.build import user_pb2_grpc
+from protos.build import user_pb2
 
-if __name__ == '__main__':
-    sendJob()
+
+def SendJob():
+    channel = grpc.insecure_channel("127.0.0.1:50051")
+    grpc.channel_ready_future(channel).result()
+    stub = user_pb2_grpc.JobStub(channel)
+
+    print("Created stub")
+
+    clientIP = urllib.request.urlopen("http://ident.me").read().decode("utf8")
+    headNode = stub.SendJob(
+        user_pb2.JobMetrics(clientIP=clientIP, cpuCount=1, memoryCount=2048)
+    )
+    print(f"Job sent, got headIP: {headNode.headIP}")
+
+
+if __name__ == "__main__":
+    SendJob()

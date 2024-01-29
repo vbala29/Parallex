@@ -4,10 +4,8 @@
 cd ../
 export PYTHONPATH=$(pwd)
 cd command
-cd ../protos/provider_command_protos
+cd ../protos/build
 export PYTHONPATH=$PYTHONPATH:$(pwd)
 cd ../../command
 echo $PYTHONPATH
-source ../test-env/env/bin/activate
-python command.py
-
+python command_node.py

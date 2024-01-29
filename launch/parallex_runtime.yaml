@@ -1,0 +1,10 @@
+# parallex_runtime.yml
+name: parallex_env
+channels:
+  - defaults
+dependencies:
+  - python=3.8
+  - pip
+  - pip:
+    - ray[all]
+    - xgboost_ray
