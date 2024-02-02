@@ -64,9 +64,9 @@ function Projects() {
       <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
         <SoftBox>
           <SoftTypography variant="h6" gutterBottom>
-            Projects
+            Jobs
           </SoftTypography>
-          <SoftBox display="flex" alignItems="center" lineHeight={0}>
+          {/* <SoftBox display="flex" alignItems="center" lineHeight={0}>
             <Icon
               sx={{
                 fontWeight: "bold",
@@ -77,9 +77,9 @@ function Projects() {
               done
             </Icon>
             <SoftTypography variant="button" fontWeight="regular" color="text">
-              &nbsp;<strong>30 done</strong> this month
+              &nbsp;<strong>XXX done</strong> this month
             </SoftTypography>
-          </SoftBox>
+          </SoftBox> */}
         </SoftBox>
         <SoftBox color="text" px={2}>
           <Icon sx={{ cursor: "pointer", fontWeight: "bold" }} fontSize="small" onClick={openMenu}>
@@ -98,7 +98,8 @@ function Projects() {
           },
         }}
       >
-        <Table columns={columns} rows={rows} />
+        {/* we will need some sort of backend call here to get the columns and rows */}
+        <Table columns={columns} rows={rows} /> 
       </SoftBox>
     </Card>
   );

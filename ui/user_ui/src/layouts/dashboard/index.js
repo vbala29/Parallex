@@ -45,6 +45,10 @@ import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
 import gradientLineChartData from "layouts/dashboard/data/gradientLineChartData";
 
 function Dashboard() {
+  // We want the dashboard to contain a chart of all jobs. Ongoing and finished?
+  // We want the dashbaord to contain info on how much money has been spent?
+  // Total number of jobs?
+
   const { size } = typography;
   const { chart, items } = reportsBarChartData;
 
@@ -56,18 +60,18 @@ function Dashboard() {
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard
-                title={{ text: "today's money" }}
-                count="$53,000"
+                title={{ text: "Jobs Run This Month" }}
+                count="100"
                 percentage={{ color: "success", text: "+55%" }}
                 icon={{ color: "info", component: "paid" }}
               />
             </Grid>
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard
-                title={{ text: "today's users" }}
-                count="2,300"
+                title={{ text: "Total Cost" }}
+                count="$2,300"
                 percentage={{ color: "success", text: "+3%" }}
-                icon={{ color: "info", component: "public" }}
+                icon={{ color: "info", component: "paid" }}
               />
             </Grid>
             <Grid item xs={12} sm={6} xl={3}>
@@ -91,7 +95,7 @@ function Dashboard() {
             </Grid>
           </Grid>
         </SoftBox>
-        <SoftBox mb={3}>
+        {/* <SoftBox mb={3}>
           <Grid container spacing={3}>
             <Grid item xs={12} lg={7}>
               <BuildByDevelopers />
@@ -100,8 +104,8 @@ function Dashboard() {
               <WorkWithTheRockets />
             </Grid>
           </Grid>
-        </SoftBox>
-        <SoftBox mb={3}>
+        </SoftBox> */}
+        {/* <SoftBox mb={3}>
           <Grid container spacing={3}>
             <Grid item xs={12} lg={5}>
               <ReportsBarChart
@@ -136,15 +140,15 @@ function Dashboard() {
               />
             </Grid>
           </Grid>
-        </SoftBox>
-        <Grid container spacing={3}>
+        </SoftBox> */}
+        <div>
           <Grid item xs={12} md={6} lg={8}>
             <Projects />
           </Grid>
-          <Grid item xs={12} md={6} lg={4}>
+        </div>
+          {/* <Grid item xs={12} md={6} lg={4}>
             <OrderOverview />
-          </Grid>
-        </Grid>
+          </Grid> */}
       </SoftBox>
       <Footer />
     </DashboardLayout>
