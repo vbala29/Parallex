@@ -11,6 +11,16 @@ conda env create -f environment_xcompat.yml
 conda activate parallex
 ```
 
+### Using MongoDB for local testing
+
+#### Mac
+```(bash)
+brew tap mongodb/brew
+brew install mongodb-community@7.0
+brew services start mongodb-community@7.0
+mongosh
+```
+
 ### Using RabbitMQ for local testing
 
 #### Mac
