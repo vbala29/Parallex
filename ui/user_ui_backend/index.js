@@ -5,14 +5,14 @@ const User = require('./models/user')
 const LocalStrategy = require('passport-local')
 const https = require('https');
 const http = require('http');
+const fs = require('fs');
+const path = require('path')
 const app = express()
 const session = require('express-session') //Adds to req param
 //Cross origin resource sharing needed for front end to access express backend at different domain
 const cors = require('cors'); 
 
 /* ENV variables */
-const port = process.env.PORT || 8000;
-const httpsUse = process.env.HTTPS === 'true';
 const secretKey = process.env.SECRET_KEY;
 
 /* Middleware */
@@ -58,12 +58,24 @@ passport.deserializeUser(User.deserializeUser())
 
 /* Main Logic */
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
     res.send('Hello World!')
 });
 
-app.listen(port, function () {
-    var server = httpsUse ? https.createServer(app) : http.createServer(options, app);
-    console.log("Server starting. Port: " + port + " Protocol: " + `${httpsUse ? 'HTTPS' : 'HTTP'}`);
-    return server.listen.apply(server, arguments)
-}) 
+var key = fs.readFileSync(path.join(__dirname, '/certs/localhost-key.pem'), 'utf8');
+var cert = fs.readFileSync(path.join(__dirname, '/certs/localhost.pem'), 'utf8');
+
+var options = {
+  key: key,
+  cert: cert
+};
+
+var httpServer = http.createServer(app);
+var httpsServer = https.createServer(options, app);
+httpServer.listen(8080, () => {
+    console.log("HTTP Server starting...");
+});
+
+httpsServer.listen(8443, () => {
+    console.log("HTTPS Server starting...");
+});
