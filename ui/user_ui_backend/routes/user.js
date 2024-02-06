@@ -1,10 +1,11 @@
 const express = require('express')
 const router = express.Router();
-const User = require(locals.models + '/user');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const locals = require('../app.locals.js')
-const checkAuth = require(locals.scripts + '/check-auth');
+const User = require(locals.models + '/user');
+const checkAuth = require(locals.scripts + '/checkAuth');
+
 
 /* ENV variables */
 const secretKey = process.env.SECRET_KEY;
@@ -33,17 +34,11 @@ router.post('/login', async (req, res) => {
                 } 
                 else { 
                     const token = jwt.sign({ userId: user._id, username: user.username }, secretKey, { expiresIn: "1h" }); 
-                    res.json({ success: true, message: "Authentication successful", token: token }); 
+                    res.status(200).json({ success: true, message: "Authentication successful", token: token }); 
                 } 
             } 
         })(req, res); 
-
-      // Create a JWT token
-      const token = jwt.sign({ userId: user._id, email: user.email }, secretKey, {
-        expiresIn: '1h',
-      });
-  
-      res.status(200).json({ token, userId: user._id });
+        
     } catch (error) {
       res.status(500).json({ error: 'Authentication failed' });
     }
