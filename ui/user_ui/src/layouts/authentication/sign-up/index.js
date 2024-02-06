@@ -43,8 +43,8 @@ function SignUp() {
 
   return (
     <BasicLayout
-      title="Welcome!"
-      description="Use these awesome forms to login or create new account in your project for free."
+      title="Parallex"
+      description="Accessible Compute For All"
       image={curved6}
     >
       <Card>
@@ -58,7 +58,7 @@ function SignUp() {
         </SoftBox>
         <Separator />
         <SoftBox pt={2} pb={3} px={3}>
-          <SoftBox component="form" role="form">
+          <SoftBox component="form" role="form" action="#" onSubmit={() => {console.log("hi"); return false}}>
             <SoftBox mb={2}>
               <SoftInput placeholder="Name" />
             </SoftBox>
@@ -68,28 +68,9 @@ function SignUp() {
             <SoftBox mb={2}>
               <SoftInput type="password" placeholder="Password" />
             </SoftBox>
-            <SoftBox display="flex" alignItems="center">
-              <Checkbox checked={agreement} onChange={handleSetAgremment} />
-              <SoftTypography
-                variant="button"
-                fontWeight="regular"
-                onClick={handleSetAgremment}
-                sx={{ cursor: "poiner", userSelect: "none" }}
-              >
-                &nbsp;&nbsp;I agree the&nbsp;
-              </SoftTypography>
-              <SoftTypography
-                component="a"
-                href="#"
-                variant="button"
-                fontWeight="bold"
-                textGradient
-              >
-                Terms and Conditions
-              </SoftTypography>
-            </SoftBox>
+
             <SoftBox mt={4} mb={1}>
-              <SoftButton variant="gradient" color="dark" fullWidth>
+              <SoftButton variant="gradient" color="dark" type="submit" fullWidth>
                 sign up
               </SoftButton>
             </SoftBox>
