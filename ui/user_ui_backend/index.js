@@ -27,7 +27,7 @@ app.use(cors({
 
 
 /* Routes */
-
+const userRoutes = require('./routes/user')
 
 /* MongoDB */
 
@@ -57,10 +57,19 @@ passport.serializeUser(User.serializeUser())
 passport.deserializeUser(User.deserializeUser())
 
 /* Main Logic */
+app.use('/', userRoutes);
 
 app.get('/', async (req, res) => {
     res.send('Hello World!')
 });
+
+/* Error Routes */
+app.all('*', (req, res, next) => {
+   res.sendStatus(404);
+})
+
+
+/* HTTPS Setup */ 
 
 var key = fs.readFileSync(path.join(__dirname, '/certs/localhost-key.pem'), 'utf8');
 var cert = fs.readFileSync(path.join(__dirname, '/certs/localhost.pem'), 'utf8');
