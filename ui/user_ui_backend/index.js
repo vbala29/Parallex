@@ -59,6 +59,10 @@ passport.deserializeUser(User.deserializeUser())
 /* Main Logic */
 app.use('/', userRoutes);
 
+router.get('/authorize', checkAuth, (req, res) => {
+    res.json({ authenticated : true });
+});
+
 app.get('/', async (req, res) => {
     res.send('Hello World!')
 });
