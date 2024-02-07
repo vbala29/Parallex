@@ -16,7 +16,7 @@ router.get('/clusters', checkAuth, async (req, res) => {
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify(
                 {
-                    clusters : doc.clusters
+                    clusters_created : doc.clusters_created
                 }
             ));
         }
