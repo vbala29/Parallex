@@ -11,7 +11,8 @@ const app = express()
 const session = require('express-session') //Adds to req param
 //Cross origin resource sharing needed for front end to access express backend at different domain
 const cors = require('cors'); 
-
+const locals = require('./app.locals.js')
+const checkAuth = require(locals.scripts + '/checkAuth');
 /* ENV variables */
 const secretKey = process.env.SECRET_KEY;
 
@@ -59,7 +60,7 @@ passport.deserializeUser(User.deserializeUser())
 /* Main Logic */
 app.use('/', userRoutes);
 
-router.get('/authorize', checkAuth, (req, res) => {
+app.get('/authorize', checkAuth, (req, res) => {
     res.json({ authenticated : true });
 });
 

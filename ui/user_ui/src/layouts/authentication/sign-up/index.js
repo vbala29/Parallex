@@ -50,21 +50,23 @@ function SignUp() {
   const navigate = useNavigate();
 
   const host = "http://localhost:8080";
-  const submitForm = () => {
+  const submitForm = (event) => {
     const data = {
       username: name,
       email: email,
       password: password
     }
-
     axios.post(host + "/register", data)
       .then(response => {
         console.log(response);
         navigate("/authentication/sign-in");
+        // probably add a successfully signed up page
       })
       .catch(error => {
         console.log(error);
       })
+    event.preventDefault();
+    return false;
   };
   return (
     <BasicLayout
@@ -83,7 +85,7 @@ function SignUp() {
         </SoftBox>
         <Separator />
         <SoftBox pt={2} pb={3} px={3}>
-          <SoftBox component="form" role="form" onSubmit={() => submitForm()}>
+          <SoftBox component="form" role="form" onSubmit={(e) => submitForm(e)}>
             <SoftBox mb={2}>
               <SoftInput placeholder="Name" value={name} onChange={(e) => setName(e.target.value)}/>
             </SoftBox>
