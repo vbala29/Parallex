@@ -11,7 +11,6 @@ const checkAuth = require(locals.scripts + '/checkAuth');
 const secretKey = process.env.SECRET_KEY;
 
 router.post('/register', async (req, res) => {
-  console.log("register");
     try {
       const { username, email, password } = req.body;
 
