@@ -1,4 +1,4 @@
-
+Start-Sleep -Seconds 2
 $vmName = "ParallexProviderVM"
 $scriptsPath = "$env:USERPROFILE\VirtualBox VMs\SetupScripts"
 $plinkFolderPath = "$env:USERPROFILE\VirtualBox VMs\PLink"
@@ -13,16 +13,14 @@ if (!(Test-Path -Path $plinkFolderPath)) {
 }
 
 
-$scriptDirectory = $PSScriptRoot
-$sudoToCopy = Join-Path $scriptDirectory -ChildPath "add_sudo_user.sh"
-$sudoFile = Join-Path $destinationDirectory -ChildPath "add_sudo_user.sh"
+$currDirectory = $PSScriptRoot
+$sudoToCopy = Join-Path $currDirectory -ChildPath "add_sudo_user.sh"
+$sudoFile = Join-Path $scriptsPath -ChildPath "add_sudo_user.sh"
 Copy-Item -Path $sudoToCopy -Destination $sudoFile -Force
 
-$sshToCopy = Join-Path $scriptDirectory -ChildPath "setup_ssh.sh"
-$sshFile = Join-Path $destinationDirectory -ChildPath "setup_ssh.sh"
-
+$sshToCopy = Join-Path $currDirectory -ChildPath "setup_ssh.sh"
+$sshFile = Join-Path $scriptsPath -ChildPath "setup_ssh.sh"
 Copy-Item -Path $sshToCopy -Destination $sshFile -Force
-
 
 Write-Output "Moving files to guest..."
 & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" guestcontrol $vmName copyto --username parallexprovider --password parallex --target-directory /tmp/ "$scriptsPath\add_sudo_user.sh"
@@ -38,13 +36,16 @@ Start-Sleep -Seconds 2
 
 # Need to download plink
 $plinkUrl="https://the.earth.li/~sgtatham/putty/latest/w64/plink.exe"
-Write-Output "Downloading PLink..."
+$pscpUrl="https://the.earth.li/~sgtatham/putty/latest/w64/pscp.exe"
+Write-Output "Downloading PLink and Pscp..."
 Invoke-WebRequest -Uri $plinkUrl -OutFile "$plinkFolderPath\plink.exe"
+Invoke-WebRequest -Uri $pscpUrl -OutFile "$plinkFolderPath\pscp.exe"
+
 
 $vmIP = Invoke-Expression -Command "& 'C:\Program Files\Oracle\VirtualBox\VBoxManage.exe' guestproperty get '$vmName' '/VirtualBox/GuestInfo/Net/0/V4/IP'"
 $outputPrefix = "Value: "
 $vmIP = $vmIP -replace $outputPrefix
 
-Write-Output "y" | & "$plinkFolderPath\plink.exe" -ssh parallexprovider@$vmIP -pw parallex "exit"
+Write-Output "y\n" | & "$plinkFolderPath\plink.exe" -ssh parallexprovider@$vmIP -pw parallex "exit"
 Start-Sleep -Seconds 2
 

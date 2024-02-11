@@ -1,7 +1,10 @@
 # Define VM parameters
+Start-Sleep -Seconds 1
 $vmName = "ParallexProviderVM"
+Write-Output "Installing VirtualBox..."
+
 $vmMemoryMB = 2048  # Memory in megabytes
-$vmDiskSizeMB = 8960  # Disk size in megabytes
+$vmDiskSizeMB = 20000  # Disk size in megabytes
 $isoURL = "https://releases.ubuntu.com/bionic/ubuntu-18.04.6-desktop-amd64.iso"  # Ubuntu ISO URL
 # Combine directory path and file name
 $vmVHDPath = "$env:USERPROFILE\VirtualBox VMs"
@@ -75,4 +78,4 @@ if ($adapterName) {
 & "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" startvm $vmName
 
 Write-Output "Waiting for Unattended VM Installation to Finish..."
-Start-Sleep -Seconds 600
+Start-Sleep -Seconds 660
