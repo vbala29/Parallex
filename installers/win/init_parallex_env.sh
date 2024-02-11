@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the environment name
-ENV_NAME="parallex_runtime"
+ENV_NAME="parallex_env"
 
 # Check if Conda is installed
 if ! command -v conda &> /dev/null; then
