@@ -35,6 +35,9 @@ import curved9 from "assets/images/curved-images/curved-6.jpg";
 
 import axios from 'axios';
 
+import Cookies from 'js-cookie';
+
+
 function SignIn() {
   const [rememberMe, setRememberMe] = useState(true);
 
@@ -42,6 +45,7 @@ function SignIn() {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
 
   const navigate = useNavigate();
 
@@ -55,6 +59,10 @@ function SignIn() {
     axios.post(host + "/login", data)
       .then(response => {
         console.log(response);
+        const token = response.data.token;
+        Cookies.set("token", token);
+        Cookies.set("user", username);
+        //Cookies.set("email", email);
         //navigate("/authentication/sign-in");
       })
       .catch(error => {
@@ -64,14 +72,14 @@ function SignIn() {
   return (
     <CoverLayout
       title="Welcome back"
-      description="Enter your email and password to sign in"
+      description="Enter your username and password to sign in"
       image={curved9}
     >
       <SoftBox component="form" role="form">
         <SoftBox mb={2}>
           <SoftBox mb={1} ml={0.5}>
             <SoftTypography component="label" variant="caption" fontWeight="bold">
-              Email
+              Username
             </SoftTypography>
           </SoftBox>
           <SoftInput type="user" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)}/>

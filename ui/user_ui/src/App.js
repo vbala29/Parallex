@@ -48,6 +48,10 @@ import { useSoftUIController, setMiniSidenav, setOpenConfigurator } from "contex
 // Images
 import brand from "assets/images/logo-ct.png";
 
+import axios from "axios";
+
+import Cookies from 'js-cookie';
+
 export default function App() {
   const [controller, dispatch] = useSoftUIController();
   const { miniSidenav, direction, layout, openConfigurator, sidenavColor } = controller;
@@ -131,6 +135,17 @@ export default function App() {
       </Icon>
     </SoftBox>
   );
+
+  if (pathname !== "/authentication/sign-in" && layout !== "/authentication/sign-up"){
+    const host = "http://localhost:8080";
+    axios.get(host + "/authorize", {headers: {
+      authorization: "Basic " + Cookies.get("token")
+    }})
+    .then( response => {
+      console.log(response);
+    }
+    )
+  }
 
   return (
     <ThemeProvider theme={theme}>
