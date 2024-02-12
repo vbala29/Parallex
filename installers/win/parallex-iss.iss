@@ -25,12 +25,29 @@ WizardStyle=modern
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
+[Files]
+Source: "vm_install.ps1"; DestDir: "{app}"; Flags: ignoreversion
+Source: "vm_setup.ps1"; DestDir: "{app}"; Flags: ignoreversion
+Source: "parallex_setup.ps1"; DestDir: "{app}"; Flags: ignoreversion
+Source: "add_sudo_user.sh"; DestDir: "{app}"; Flags: ignoreversion
+Source: "setup_ssh.sh"; DestDir: "{app}"; Flags: ignoreversion
+Source: "init_parallex_env.sh"; DestDir: "{app}"; Flags: ignoreversion
+Source: "parallex_runtime.yml"; DestDir: "{app}"; Flags: ignoreversion
+; Add other files as needed
+
 
 [Run]
-Filename: "powershell.exe"; \
-  Parameters: "-ExecutionPolicy Bypass -File ""{src}\vm_install.ps1"""; \
-  WorkingDir: {src}; Flags: waituntilterminated
+;Filename: "powershell.exe"; \
+  StatusMsg: "Installing Virtual Machine..."; \
+  Parameters: "-ExecutionPolicy Bypass -File ""{app}\vm_install.ps1"""; \
+  WorkingDir: {app}; Flags: waituntilterminated
 
-; Filename: "powershell.exe"; \
-;  Parameters: "-ExecutionPolicy Bypass -File ""{src}\vm_setup.ps1"""; \
-;  WorkingDir: {app}; Flags: waituntilterminated
+;Filename: "powershell.exe"; \
+  StatusMsg: "Setting up Virtual Machine..."; \
+  Parameters: "-ExecutionPolicy Bypass -File ""{app}\vm_setup.ps1"""; \
+  WorkingDir: {app}; Flags: waituntilterminated
+
+Filename: "powershell.exe"; \
+  StatusMsg: "Setting up Parallex Runtime..."; \
+  Parameters: "-ExecutionPolicy Bypass -File ""{app}\parallex_setup.ps1"""; \
+  WorkingDir: {app}; Flags: waituntilterminated

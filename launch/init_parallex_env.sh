@@ -14,7 +14,6 @@ if ! command -v conda &> /dev/null; then
     bash miniconda_installer.sh -b -p $HOME/miniconda
     rm miniconda_installer.sh
 
-    
     # Add Miniconda to PATH
     export PATH="$HOME/miniconda/bin:$PATH"
 
@@ -22,17 +21,14 @@ if ! command -v conda &> /dev/null; then
 
     ~/miniconda/bin/conda init bash
 fi
-
 # Restart shell
 exec bash
-
 # Create the Conda environment in parallex_runtime.yaml
-conda create -f parallex_runtime.yaml
+conda env create -f parallex_runtime.yml
 
-
+conda init
 # Activate the Conda environment
 conda activate $ENV_NAME
 python -c "import ray; print(f'{ray.__version__} successfully imported.')"
-
 
 echo "Parallex environment setup completed."
