@@ -5,17 +5,23 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import StopIcon from '@mui/icons-material/Stop';
 import { useAlert } from 'react-alert';
 import SoftAlert from 'components/SoftAlert';
+import { useSelector } from 'react-redux'
+import { selectCores, selectMemory } from 'examples/Configurator/ProviderState'
+import { calculatePCU } from "utils/format"
 
 function StartStop() {
     const [loading, setLoading] = useState(false);
     const [started, setStarted] = useState(false);
     const alert = useAlert();
+    const cores = useSelector(selectCores);
+    const memory = useSelector(selectMemory);
 
     const startProvider = async () => {
         setLoading(true);
         // Replace this with your actual startProvider function
         await new Promise(resolve => setTimeout(resolve, 2000));
-        alert.show('Provider Successfully Started', {
+
+        alert.show(`Provider Successfully Started with PCU per Hour ${calculatePCU(cores, memory)}`, {
             type: 'success',
             onClose: () => { console.log('alert closed') }
         });

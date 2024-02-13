@@ -14,6 +14,7 @@ Coded by www.creative-tim.com
 */
 
 import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from 'react-redux'
 
 // @mui material components
 import Divider from "@mui/material/Divider";
@@ -39,6 +40,8 @@ import SoftButton from "components/SoftButton";
 
 // Custom styles for the Configurator
 import ConfiguratorRoot from "examples/Configurator/ConfiguratorRoot";
+import { setCores, setMemory, setDuration, selectCores, selectMemory, selectDuration } from "examples/Configurator/ProviderState";
+import { calculatePCU } from "utils/format";
 
 // Soft UI Dashboard React context
 import {
@@ -53,9 +56,6 @@ function memoryText(value) {
   return `${value} MiB`;
 }
 
-function calculatePCU(cores, memory) {
-  return cores != 0 && memory != 0 ? Math.round(memory / 1024) + cores : 0;
-}
 
 
 function Configurator() {
@@ -80,16 +80,18 @@ function Configurator() {
 
 
 
-  const [controller, dispatch] = useSoftUIController();
+
+  const [controller, softui_dispatch] = useSoftUIController();
   const { openConfigurator, transparentSidenav, fixedNavbar, sidenavColor } = controller;
   const [disabled, setDisabled] = useState(false);
   const sidenavColors = ["primary", "dark", "info", "success", "warning", "error"];
-  const [currCores, setCurrCores] = useState(0);
-  const [currMemory, setCurrMemory] = useState(0);
-  const [currDur, setCurrDur] = useState(0); // Seconds
+  const currCores = useSelector(selectCores);
+  const currMemory = useSelector(selectMemory);
+  const currDurration = useSelector(selectDuration);
+  const providerStateDispatch = useDispatch();
 
   const handleTimeChange = (time) => {
-    setCurrDur(time);
+    providerStateDispatch(setDuration(time))
   };
 
   // Use the useEffect hook to change the button state for the sidenav type based on window size.
@@ -109,10 +111,10 @@ function Configurator() {
     return () => window.removeEventListener("resize", handleDisabled);
   }, []);
 
-  const handleCloseConfigurator = () => setOpenConfigurator(dispatch, false);
-  const handleTransparentSidenav = () => setTransparentSidenav(dispatch, true);
-  const handleWhiteSidenav = () => setTransparentSidenav(dispatch, false);
-  const handleFixedNavbar = () => setFixedNavbar(dispatch, !fixedNavbar);
+  const handleCloseConfigurator = () => setOpenConfigurator(softui_dispatch, false);
+  const handleTransparentSidenav = () => setTransparentSidenav(softui_dispatch, true);
+  const handleWhiteSidenav = () => setTransparentSidenav(softui_dispatch, false);
+  const handleFixedNavbar = () => setFixedNavbar(softui_dispatch, !fixedNavbar);
 
   // sidenav type buttons styles
   const sidenavTypeButtonsStyles = ({
@@ -190,7 +192,7 @@ function Configurator() {
                     borderColor: dark.main,
                   },
                 })}
-                onClick={() => setSidenavColor(dispatch, color)}
+                onClick={() => setSidenavColor(softui_dispatch, color)}
               />
             ))}
           </SoftBox> */}
@@ -203,7 +205,7 @@ function Configurator() {
             marks
             min={0}
             max={16}
-            onChange={(event, newValue) => setCurrCores(newValue)}
+            onChange={(event, newValue) => providerStateDispatch(setCores(newValue))}
           />
 
 
@@ -222,7 +224,7 @@ function Configurator() {
             marks
             min={0}
             max={Math.round(totalMemoryMiB)}
-            onChange={(event, newValue) => setCurrMemory(newValue)}
+            onChange={(event, newValue) => providerStateDispatch(setMemory(newValue))}
           />
 
         </SoftBox>
@@ -238,7 +240,7 @@ function Configurator() {
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <TimePicker
               format="hh:mm A"
-              onChange={(newValue) => handleTimeChange(newValue)}
+              onChange={(newValue) => providerStateDispatch(setDuration(newValue))}
             />
           </LocalizationProvider>
         </SoftBox>
@@ -249,7 +251,7 @@ function Configurator() {
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <TimePicker
               format="hh:mm A"
-              onChange={(newValue) => handleTimeChange(newValue)}
+              onChange={(newValue) => providerStateDispatch(setDuration(newValue))}
             />
           </LocalizationProvider>
         </SoftBox>

@@ -9,3 +9,8 @@ export function secondsToTime(seconds) {
 export function pcuToDisplay(pcu) {
     return pcu.toString() + " PCU";
 }
+
+
+export function calculatePCU(cores, memory) {
+    return cores != 0 && memory != 0 ? Math.round(memory / 1024) + cores : 0;
+}

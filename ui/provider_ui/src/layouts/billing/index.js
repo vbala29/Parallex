@@ -34,6 +34,8 @@ import Invoices from "layouts/billing/components/Invoices";
 import BillingInformation from "layouts/billing/components/BillingInformation";
 import Transactions from "layouts/billing/components/Transactions";
 
+import Countdown from 'react-countdown';
+
 function Billing() {
   return (
     <DashboardLayout>
@@ -43,25 +45,34 @@ function Billing() {
           <Grid container spacing={3}>
             <Grid item xs={12} lg={8}>
               <Grid container spacing={3}>
-                <Grid item xs={12} xl={6}>
-                  <MasterCard number={4562112245947852} holder="jack peterson" expires="11/22" />
+                <Grid item xs={12} md={4} xl={4}>
+                  <DefaultInfoCard
+                    icon="hourglass_bottom"
+                    title="Lottery Drawing"
+                    description="Win up to $1000000!"
+                    value={<Countdown date={Date.now() + 10000} />}
+                  >
+                  </DefaultInfoCard>
+                  {/* <Countdown date={Date.now() + 10000} /> */}
+                  {/* <MasterCard number={4562112245947852} holder="jack peterson" expires="11/22" /> */}
                 </Grid>
-                <Grid item xs={12} md={6} xl={3}>
+                <Grid item xs={12} md={4} xl={4}>
+                  <DefaultInfoCard
+                    icon="local_activity"
+                    title="Lottery Entries"
+                    description="90th Percentile"
+                    value="100"
+                  />
+                </Grid>
+                <Grid item xs={12} md={4} xl={4}>
                   <DefaultInfoCard
                     icon="account_balance"
-                    title="salary"
-                    description="Belong Interactive"
-                    value="+$2000"
+                    title="Lifetime Earnings"
+                    description="Top 2% of Parallex Providers"
+                    value="$103.40"
                   />
                 </Grid>
-                <Grid item xs={12} md={6} xl={3}>
-                  <DefaultInfoCard
-                    icon="paypal"
-                    title="paypal"
-                    description="Freelance Payment"
-                    value="$455.00"
-                  />
-                </Grid>
+
                 <Grid item xs={12}>
                   <PaymentMethod />
                 </Grid>

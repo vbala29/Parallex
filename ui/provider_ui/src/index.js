@@ -22,6 +22,9 @@ import AlertTemplate from 'react-alert-template-basic'
 import { transitions, positions, Provider as AlertProvider } from 'react-alert'
 import SoftAlert from "components/SoftAlert";
 
+import store from "./redux/store";
+import { Provider } from "react-redux";
+
 // optional configuration
 const options = {
   // you can also just use 'bottom center'
@@ -61,9 +64,11 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>
     <SoftUIControllerProvider>
-      <AlertProvider template={AlertTemplate} {...options}>
-        <App />
-      </AlertProvider>
+      <Provider store={store}>
+        <AlertProvider template={AlertTemplate} {...options}>
+          <App />
+        </AlertProvider>
+      </Provider>
     </SoftUIControllerProvider>
   </BrowserRouter>
 );
