@@ -23,9 +23,9 @@ import { SoftUIControllerProvider } from "context";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <BrowserRouter>
-    <SoftUIControllerProvider>
-      <App />
-    </SoftUIControllerProvider>
-  </BrowserRouter>
+    <BrowserRouter>
+      <SoftUIControllerProvider>
+        <App />
+      </SoftUIControllerProvider>
+    </BrowserRouter>
 );
