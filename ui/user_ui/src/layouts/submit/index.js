@@ -32,32 +32,95 @@ import Table from "examples/Tables/Table";
 // Data
 // import authorsTableData from "layouts/submit/data/authorsTableData";
 // import projectsTableData from "layouts/tables/data/projectsTableData";
-
+import axios from "axios";
 // Icons
 import { LuUpload } from "react-icons/lu";
 
+import { useCallback } from 'react';
+import { useDropzone } from 'react-dropzone';
+
 function Submit() {
+  const onDrop = useCallback((acceptedFiles) => {
+    // Do something with the uploaded files
+    console.log(acceptedFiles);
+  }, []);
+
+  const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
+    accept: {
+      'application/zip': ['.zip']
+    }, // Accept only image files, you can change this to whatever you need
+    multiple: true, // Enable multiple file selection
+    directory: true, // Enable directory upload
+    onDrop,
+  });
+
+  const acceptedFilesList = acceptedFiles.map(file => (
+    <li key={file.path}>
+      {file.path} - {file.size} bytes
+    </li>
+  ));
+
+  const submitJobs = () => {
+    try {
+      const formData = new FormData();
+      acceptedFiles.map(file => (
+        formData.append(file.path, file)
+      ));
+      axios.post('dummy/endpoint', formData, {
+        headers:{
+          'Content-Type' : 'multipart/form-data',
+        },
+      })
+      .then(response =>{
+        console.log(response);
+      })
+      .catch(error =>{
+        console.log(error);
+      })
+
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    }
+  }
+
+  const dropzoneStyles = {
+    border: '2px dashed #cccccc',
+    borderRadius: '4px',
+    padding: '20px',
+    textAlign: 'center',
+    cursor: 'pointer',
+  };
   return (
     <DashboardLayout>
       <DashboardNavbar/>
       <SoftBox py={3}>
         <Grid container spacing={3}>
-          <Grid item>
+          <Grid item xs={8}>
             <Card>
+            {/* <input type="file" id="filepicker" name="fileList" webkitdirectory="" multiple /> */}
+              <div style={{display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column'}}>
+              {/* <SoftTypography>
               Submit Jobs
-              <LuUpload></LuUpload>
-              <SoftButton>
-                Upload
-              </SoftButton>
+              </SoftTypography> */}
+                <div {...getRootProps()} style={dropzoneStyles}>
+                  <input {...getInputProps()} />
+                  <LuUpload style={{ width: '200px', height: '130px' }}></LuUpload>
+                  <p>Drag and drop some files here, or click to select files</p>
+                </div>
+                <ul>
+                  {acceptedFilesList}
+                </ul>
+              </div>
+              {/* <SoftButton>
+                Browse Files
+              </SoftButton> */}
             </Card>
           </Grid>
-          <Grid item>
-            <Card>
-              Uploaded Files
-            </Card>
-          </Grid>
-          <Grid item>
-            <Card>
+          <Grid item xs={3}>
+            <Card style={{padding: '10px'}}>
+              <SoftTypography>
+                Job Specifications
+              </SoftTypography>
               CPU Cores
               <SoftInput></SoftInput>
               <br/>
@@ -71,53 +134,11 @@ function Submit() {
             </Card>
           </Grid>
         </Grid>
-        <SoftButton>
+        <SoftButton onClick={submitJobs}>
             Submit Job
         </SoftButton>
       </SoftBox>
     </DashboardLayout>
-    // <DashboardLayout>
-    //   <DashboardNavbar />
-    //   <SoftBox py={3}>
-    //     <SoftBox mb={3}>
-    //       <Card>
-    //         <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
-    //           <SoftTypography variant="h6">Authors table</SoftTypography>
-    //         </SoftBox>
-    //         <SoftBox
-    //           sx={{
-    //             "& .MuiTableRow-root:not(:last-child)": {
-    //               "& td": {
-    //                 borderBottom: ({ borders: { borderWidth, borderColor } }) =>
-    //                   `${borderWidth[1]} solid ${borderColor}`,
-    //               },
-    //             },
-    //           }}
-    //         >
-    //           <Table columns={columns} rows={rows} />
-    //         </SoftBox>
-    //       </Card>
-    //     </SoftBox>
-    //     <Card>
-    //       <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
-    //         <SoftTypography variant="h6">Projects table</SoftTypography>
-    //       </SoftBox>
-    //       <SoftBox
-    //         sx={{
-    //           "& .MuiTableRow-root:not(:last-child)": {
-    //             "& td": {
-    //               borderBottom: ({ borders: { borderWidth, borderColor } }) =>
-    //                 `${borderWidth[1]} solid ${borderColor}`,
-    //             },
-    //           },
-    //         }}
-    //       >
-    //         <Table columns={prCols} rows={prRows} />
-    //       </SoftBox>
-    //     </Card>
-    //   </SoftBox>
-    //   <Footer />
-    // </DashboardLayout>
   );
 }
 

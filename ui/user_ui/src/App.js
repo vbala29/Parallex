@@ -16,7 +16,7 @@ Coded by www.creative-tim.com
 import { useState, useEffect, useMemo } from "react";
 
 // react-router components
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 
 // @mui material components
 import { ThemeProvider } from "@mui/material/styles";
@@ -58,6 +58,7 @@ export default function App() {
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [rtlCache, setRtlCache] = useState(null);
   const { pathname } = useLocation();
+  const navigate = useNavigate();
 
   // Cache for the rtl
   useMemo(() => {
@@ -136,7 +137,8 @@ export default function App() {
     </SoftBox>
   );
 
-  if (pathname !== "/authentication/sign-in" && layout !== "/authentication/sign-up"){
+  console.log(pathname)
+  if (pathname !== "/authentication/sign-in" && pathname !== "/authentication/sign-up"){
     const host = "http://localhost:8080";
     axios.get(host + "/authorize", {headers: {
       authorization: "Basic " + Cookies.get("token")
@@ -145,6 +147,9 @@ export default function App() {
       console.log(response);
     }
     )
+    .catch( response => {
+      navigate("/authentication/sign-up");
+    })
   }
 
   return (
