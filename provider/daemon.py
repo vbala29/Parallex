@@ -34,7 +34,6 @@ _COMMAND_IP_PORT: str = f"{_COMMAND_IP}:{_COMMAND_PORT}"
 
 _RAY_PORT: int = 6379
 
-
 def sendStaticMetrics():
     """Sends the following information to the command node:
     1. Number of CPU cores
@@ -119,7 +118,7 @@ def _get_local_ip() -> str:
         return s.getsockname()[0]
 
 def setupUUID():
-    global UUID
+    global UUID 
     UUID = str(uuid.uuid4())
 
 

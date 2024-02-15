@@ -13,6 +13,7 @@ const session = require('express-session') //Adds to req param
 const cors = require('cors'); 
 const locals = require('./app.locals.js')
 const checkAuth = require(locals.scripts + '/checkAuth');
+
 /* ENV variables */
 const secretKey = process.env.SECRET_KEY;
 
@@ -29,7 +30,7 @@ app.use(cors({
 
 /* Routes */
 const userRoutes = require('./routes/user')
-const userRoutes = require('./routes/jobs')
+const jobRoutes = require('./routes/jobs')
 
 /* MongoDB */
 
@@ -60,6 +61,7 @@ passport.deserializeUser(User.deserializeUser())
 
 /* Main Logic */
 app.use('/', userRoutes);
+app.use('/', jobRoutes);
 
 app.get('/authorize', checkAuth, (req, res) => {
     res.json({ authenticated : true });

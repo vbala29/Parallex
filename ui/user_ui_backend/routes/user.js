@@ -43,4 +43,5 @@ router.post('/login', async (req, res) => {
       res.status(500).json({ error: 'Authentication failed' });
     }
   });
-  module.exports = router;
+
+module.exports = router;
