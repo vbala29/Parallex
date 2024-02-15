@@ -10,7 +10,7 @@ var protoLoader = require('@grpc/proto-loader');
 var aqmp = require(locals.aqmp + "/aqmp")
 
 /* gRPC protos */
-var PROTO_PATH = '../../protos/user.proto';
+var PROTO_PATH = '/../../../protos/user.proto';
 // Suggested options for similarity to existing grpc.load behavior
 const options = {
     keepCase: true,
@@ -19,13 +19,15 @@ const options = {
     defaults: true,
     oneofs: true,
 };
-var packageDefinition = protoLoader.loadSync(PROTO_PATH)
-const job = grpc.loadPackageDefinition(packageDefinition).Job;
 
+var packageDefinition = protoLoader.loadSync(__dirname + PROTO_PATH)
+const job = grpc.loadPackageDefinition(packageDefinition).job.Job;
 const client = new job(
   "localhost:50051",
   grpc.credentials.createInsecure()
 );
+
+/* Routes */
 
 router.get('/job-list', checkAuth, async (req, res) => {
     await User.findOne({'email' : req.userData.email}).exec(async (err, doc) => {
