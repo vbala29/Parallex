@@ -61,9 +61,7 @@ function SignIn() {
         console.log(response);
         const token = response.data.token;
         Cookies.set("token", token);
-        Cookies.set("user", username);
-        //Cookies.set("email", email);
-        //navigate("/authentication/sign-in");
+        navigate("/dashboard");
       })
       .catch(error => {
         console.log(error);
