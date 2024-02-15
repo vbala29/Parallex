@@ -29,6 +29,7 @@ app.use(cors({
 
 /* Routes */
 const userRoutes = require('./routes/user')
+const userRoutes = require('./routes/jobs')
 
 /* MongoDB */
 
