@@ -12,18 +12,20 @@ var aqmp = require(locals.aqmp + "/aqmp")
 /* gRPC protos */
 var PROTO_PATH = '../../protos/user.proto';
 // Suggested options for similarity to existing grpc.load behavior
-var packageDefinition = protoLoader.loadSync(
-    PROTO_PATH,
-    {keepCase: true,
-     longs: String,
-     enums: String,
-     defaults: true,
-     oneofs: true
-    });
-var protoDescriptor = grpc.loadPackageDefinition(packageDefinition);
-// The protoDescriptor object has the full package hierarchy
-var routeGuide = protoDescriptor.routeguide;
-var stub = new routeGuide.RouteGuide('127.0.0.1:50051', grpc.credentials.createInsecure());
+const options = {
+    keepCase: true,
+    longs: String,
+    enums: String,
+    defaults: true,
+    oneofs: true,
+};
+var packageDefinition = protoLoader.loadSync(PROTO_PATH)
+const job = grpc.loadPackageDefinition(packageDefinition).Job;
+
+const client = new job(
+  "localhost:50051",
+  grpc.credentials.createInsecure()
+);
 
 router.get('/job-list', checkAuth, async (req, res) => {
     await User.findOne({'email' : req.userData.email}).exec(async (err, doc) => {
@@ -53,7 +55,7 @@ router.put('/create-job', checkAuth, async (req, res) => {
             res.sendStatus(500);
         } else {
             var dummyIP = "8.8.8.8"; //Ipv4 Google DNS
-            stub.sendJob({
+            client.sendJob({
                 clientIP : dummyIP, 
                 cpuCount : cpu_count, 
                 memoryCount : memory_count

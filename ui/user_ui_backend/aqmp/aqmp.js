@@ -1,6 +1,6 @@
 // https://www.freecodecamp.org/news/how-to-use-rabbitmq-with-nodejs/
 
-import amqp from "amqplib";
+const amqp = require("amqplib");
 const _SERVER_IP = 'localhost'
 const _DEFAULT_USER = 'test'
 const _DEFAULT_PASS = 'test'
