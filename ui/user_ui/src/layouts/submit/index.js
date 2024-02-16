@@ -69,11 +69,10 @@ function Submit() {
       formData.append('cpu_count', "3")
       formData.append('memory_count', "100")
       acceptedFiles.map(file => (
-        formData.append(file.path, file)
+        formData.append('file', file)
       ));
       axios.put('http://localhost:8080/create-job', formData, {
         headers:{
-          'Content-Type' : 'multipart/form-data',
           authorization: "Basic " + Cookies.get("token")
         },
       })
