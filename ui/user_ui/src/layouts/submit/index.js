@@ -39,6 +39,8 @@ import { LuUpload } from "react-icons/lu";
 import { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 
+import Cookies from 'js-cookie';
+
 function Submit() {
   const onDrop = useCallback((acceptedFiles) => {
     // Do something with the uploaded files
@@ -63,12 +65,16 @@ function Submit() {
   const submitJobs = () => {
     try {
       const formData = new FormData();
+      formData.append('name', "test")
+      formData.append('cpu_count', "3")
+      formData.append('memory_count', "100")
       acceptedFiles.map(file => (
         formData.append(file.path, file)
       ));
-      axios.post('dummy/endpoint', formData, {
+      axios.put('http://localhost:8080/create-job', formData, {
         headers:{
           'Content-Type' : 'multipart/form-data',
+          authorization: "Basic " + Cookies.get("token")
         },
       })
       .then(response =>{

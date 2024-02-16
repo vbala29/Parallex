@@ -51,7 +51,7 @@ router.put('/create-job', checkAuth, async (req, res) => {
     const memory_count = req.query.memory_count;
     var head_node_ip = null;
 
-    await User.findOne({'email' : req.userData.email}).exec(async (err, doc) => {
+    await User.findOne({'email' : req.userData.email}).then (async (err, doc) => {
         if (err) {
             console.error("Error in PUT for /create-job: " + err);
             res.sendStatus(500);
