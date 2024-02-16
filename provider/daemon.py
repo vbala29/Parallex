@@ -134,4 +134,4 @@ if __name__ == "__main__":
     aqmp.loop.run_until_complete(aqmp.initializeQueue(UUID))
     t = Thread(target=start_background_loop, args=(aqmp.loop,), daemon=True)
     t.start()
-    startDaemon()
+    startDaemon() 
