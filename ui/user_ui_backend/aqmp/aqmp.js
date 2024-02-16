@@ -7,7 +7,7 @@ const _DEFAULT_PASS = 'test'
 
 const queue = "ray_job_startup";
 
-var push_job = async (job_name, head_node_url) => {
+var make_job_submission_request = async (job_name, head_node_url) => {
   const msg = {
     job_name : job_name,
     head_node_url : head_node_url
