@@ -7,7 +7,7 @@ keys: job_name [string]
       head_node_url [string]
 """
 
-class job_submission:
+class job_submission_request:
     def __init__(self, job_name, head_node_url):
         self.job_name = job_name
         self.head_node_url = head_node_url
