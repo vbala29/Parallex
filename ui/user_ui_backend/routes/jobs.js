@@ -27,7 +27,7 @@ const options = {
 var packageDefinition = protoLoader.loadSync(__dirname + PROTO_PATH)
 const job = grpc.loadPackageDefinition(packageDefinition).job.Job;
 const client = new job(
-  "localhost:50051",
+  "127.0.0.1:50051",
   grpc.credentials.createInsecure()
 );
 
@@ -53,8 +53,8 @@ router.get('/job-list', checkAuth, async (req, res) => {
   });
 
 router.put('/create-job', checkAuth, async (req, res, next) => {
-    var cpu_count = 1 ; //req.query.cpu_count;
-    var memory_count = 2048; // req.query.memory_count;
+    var cpu_count = 1 ;
+    var memory_count = 2048; 
     const form = formidable.formidable({ multiples: false });
     const uniqueID = uuidv4();
 
@@ -121,7 +121,7 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
                     // var head_node_url = "http://127.0.0.1:8265"
                     await doc.jobs_created.push(
                         {
-                            name : "default_name", 
+                            name : uniqueID, 
                             url : head_node_url, 
                             running : false,
                             creation_time : Date.now(), 
