@@ -18,7 +18,7 @@ from aqmp_tools.AQMPProducerConnection import AQMPProducerConnection
 HEAD_NODE_CPUS = 1
 HEAD_NODE_RAM = 2048
 
-_COMMAND_IP = 'localhost'
+_COMMAND_IP = '0.0.0.0'
 
 
 class Job:

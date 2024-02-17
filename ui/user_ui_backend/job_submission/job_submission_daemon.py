@@ -36,9 +36,9 @@ async def handleJobSubmissionRequest(msg):
             # Entrypoint shell command to execute
             entrypoint="python job_script.py",
             # Path to the local directory that contains the script.py file, parallex env name
-            runtime_env={"working_dir": f"../extracted/{job_name}/", "conda": "parallex_env"},
+            runtime_env={"working_dir": f"../extracted/{job_name}/working_dir", "conda": "parallex_runtime"},
         )
-        print("Job ID = {job_id}")
+        print(f"Job ID = {job_id}")
 
         wait_until_status(client, job_id, {JobStatus.SUCCEEDED, JobStatus.STOPPED, JobStatus.FAILED})   
         logs = client.get_job_logs(job_id)
