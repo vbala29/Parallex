@@ -61,35 +61,31 @@ function Dashboard() {
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard
                 title={{ text: "Jobs Run This Month" }}
-                count="100"
-                percentage={{ color: "success", text: "+55%" }}
+                count="7"
                 icon={{ color: "info", component: "paid" }}
               />
             </Grid>
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard
                 title={{ text: "Total Cost" }}
-                count="$2,300"
-                percentage={{ color: "success", text: "+3%" }}
+                count="$18.90"
                 icon={{ color: "info", component: "paid" }}
               />
             </Grid>
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard
-                title={{ text: "new clients" }}
-                count="+3,462"
-                percentage={{ color: "error", text: "-2%" }}
+                title={{ text: "Average Job Duration" }}
+                count="62.2 Minutes"
                 icon={{ color: "info", component: "emoji_events" }}
               />
             </Grid>
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard
-                title={{ text: "sales" }}
-                count="$103,430"
-                percentage={{ color: "success", text: "+5%" }}
+                title={{ text: "Average Job Cost" }}
+                count="$2.70"
                 icon={{
                   color: "info",
-                  component: "shopping_cart",
+                  component: "paid",
                 }}
               />
             </Grid>

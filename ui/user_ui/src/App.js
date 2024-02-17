@@ -161,7 +161,7 @@ export default function App() {
             color={sidenavColor}
             brand={brand}
             brandName="Parallex"
-            routes={routes}
+            routes={routes.slice(0,4)}
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}
           />

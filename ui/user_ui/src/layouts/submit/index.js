@@ -15,7 +15,10 @@ Coded by www.creative-tim.com
 
 // @mui material components
 import Card from "@mui/material/Card";
+import CardHeader from "@mui/material/CardHeader";
 import Grid from "@mui/material/Grid";
+import TextField from '@mui/material/TextField';
+import Box from '@mui/material/Box';
 
 // Soft UI Dashboard React components
 import SoftBox from "components/SoftBox";
@@ -36,27 +39,31 @@ import axios from "axios";
 // Icons
 import { LuUpload } from "react-icons/lu";
 
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 
 import Cookies from 'js-cookie';
+import { CardContent } from "@mui/material";
 
 function Submit() {
-  const onDrop = useCallback((acceptedFiles) => {
-    // Do something with the uploaded files
-    console.log(acceptedFiles);
-  }, []);
+  const [cores, setCores] = useState(0);
+  const [ram, setRam] = useState(0);
+  const [status, setStatus] = useState("");
+  const [myFiles, setMyFiles] = useState([]);
 
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
+  const onDrop = useCallback(acceptedFiles => {
+    setMyFiles([...myFiles, ...acceptedFiles])
+  }, [myFiles]);
+
+  const { getRootProps, getInputProps } = useDropzone({
     accept: {
       'application/zip': ['.zip']
     }, // Accept only image files, you can change this to whatever you need
-    multiple: true, // Enable multiple file selection
-    directory: true, // Enable directory upload
+    multiple: false, // Enable multiple file selection
     onDrop,
   });
 
-  const acceptedFilesList = acceptedFiles.map(file => (
+  const acceptedFilesList = myFiles.map(file => (
     <li key={file.path}>
       {file.path} - {file.size} bytes
     </li>
@@ -68,7 +75,7 @@ function Submit() {
       formData.append('name', "test")
       formData.append('cpu_count', "3")
       formData.append('memory_count', "100")
-      acceptedFiles.map(file => (
+      myFiles.map(file => (
         formData.append('file', file)
       ));
       axios.put('http://localhost:8080/create-job', formData, {
@@ -78,9 +85,13 @@ function Submit() {
       })
       .then(response =>{
         console.log(response);
+        setStatus("Job successfully submitted!");
+        setMyFiles([]);
       })
       .catch(error =>{
         console.log(error);
+        setStatus("Job failed to submit!");
+        setMyFiles([]);
       })
 
     } catch (error) {
@@ -94,7 +105,8 @@ function Submit() {
     padding: '20px',
     textAlign: 'center',
     cursor: 'pointer',
-    width: '100%'
+    width: '100%',
+    height: '100%'
   };
   return (
     <DashboardLayout>
@@ -102,12 +114,8 @@ function Submit() {
       <SoftBox py={3}>
         <Grid container spacing={3}>
           <Grid item xs={8}>
-            <Card>
-            {/* <input type="file" id="filepicker" name="fileList" webkitdirectory="" multiple /> */}
-              <div style={{display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', padding:'5px'}}>
-              {/* <SoftTypography>
-              Submit Jobs
-              </SoftTypography> */}
+            <Card style={{height:'100%'}}>
+              <div style={{display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', padding:'5px', height:'100%'}}>
                 <div {...getRootProps()} style={dropzoneStyles}>
                   <input {...getInputProps()} />
                   <LuUpload style={{ width: '200px', height: '250px' }}></LuUpload>
@@ -117,42 +125,40 @@ function Submit() {
                   {acceptedFilesList}
                 </ul>
               </div>
-              {/* <SoftButton>
-                Browse Files
-              </SoftButton> */}
             </Card>
           </Grid>
           <Grid item xs={3}>
             <Card style={{
                   padding: '10px', 
-                  'font-family': ["Roboto","Helvetica","Arial","sans-serif"],
-                  "font-size": "1.25rem",
-                  "font-weight": "400",
-                  "line-height": "1.625",
-                  "letter-spacing": "0.00938em",
                   height: '100%'
                 }} >
-              <SoftTypography>
-                Job Specifications
-              </SoftTypography>
-              <p>
-              CPU Cores
-              </p>
-
-              <SoftInput></SoftInput>
-              <br/>
-              MiB RAM
-              <SoftInput></SoftInput>
-              <br/>
-              Estimated Cost Per Hour: 5 USD
-              <br/>
+                <Box
+                  component="form"
+                  sx={{
+                    '& > :not(style)': { m: 1 },
+                  }}
+                  noValidate
+                  autoComplete="off"
+                >
+              <CardHeader title="Job Specifications"/>
+                <TextField required  id="outlined-cores" variant="outlined" label="CPU Cores" defaultValue="0" margin="normal" value={cores} onChange={(e) => setCores(e.target.value)}></TextField>  
+                <div style={{height:"8px"}}></div>
+                <TextField required  id="outlined-ram" variant="outlined" label="MiB RAM" defaultValue="0" margin="normal" value={ram} onChange={(e) => setRam(e.target.value)}></TextField>
+                <div style={{height:"6px"}}></div>
+                <SoftTypography variant="body2">
+                  Estimated Cost Per Hour: {ram * cores / 100}
+                </SoftTypography>
+              </Box>
             </Card> 
           </Grid>
         </Grid>
-        <div style={{display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', padding:'5px', width:'90%'}}>
+        <div style={{display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', padding:'5px', width:'90%', color:'green'}}>
           <SoftButton onClick={submitJobs} style={{'margin':'10px'}} size="large" color="gray">
               Submit Job
           </SoftButton>
+          <SoftTypography>
+            {status}
+          </SoftTypography>
         </div>
       </SoftBox>
     </DashboardLayout>
