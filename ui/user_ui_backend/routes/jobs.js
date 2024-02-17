@@ -34,18 +34,21 @@ const client = new job(
 /* Routes */
 
 router.get('/job-list', checkAuth, async (req, res) => {
-    await User.findOne({'email' : req.userData.email}).exec(async (err, doc) => {
-        if (err) {
-            console.error("Error in Query for /job-list: " + err);
-            res.sendStatus(500);
-        } else {
-            res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify(
-                {
-                    jobs_created : doc.jobs_created
-                }
-            ));
+    await User.findOne({'email' : req.userData.email}).exec().then((async (doc) => {
+        if (!doc) {
+            throw "Undefined Document Error";
         }
+
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(
+            {
+                jobs_created : doc.jobs_created
+            }
+        ));
+
+    })).catch((err) => {
+        console.error("Error in Query for /job-list: " + err);
+        res.sendStatus(500);
     });
   });
 
@@ -134,6 +137,7 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
         });
     }).catch((err) => {
         console.error("Error in PUT for /create-job: " + err);
+        res.sendStatus(500);
     })
     
 });
