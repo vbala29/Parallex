@@ -23,5 +23,5 @@ transformed_ds = ds.map_batches(compute_area)
 for batch in transformed_ds.iter_batches(batch_size=4):
     print(batch)
 
-# Save dataset contents to on-disk files or cloud storage.
-transformed_ds.write_parquet("local:///tmp/iris/")
+# # Save dataset contents to on-disk files or cloud storage.
+# transformed_ds.write_parquet("local:///tmp/iris/")
