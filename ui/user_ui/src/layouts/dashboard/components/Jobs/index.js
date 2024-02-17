@@ -35,6 +35,10 @@ import axios from 'axios';
 
 import Cookies from 'js-cookie';
 
+import { FaCheckCircle } from "react-icons/fa";
+import { LuClock3 } from "react-icons/lu";
+import { green } from "@mui/material/colors";
+
 function Jobs() {
   const { columns } = data();
   const [menu, setMenu] = useState(null);
@@ -74,9 +78,10 @@ function Jobs() {
       const new_jobs = jobs_list.map((job) => {
         const job_obj = {
           job: job.name,
+          'status' : job.termination_time ? (<div style={{color: "green"}}><FaCheckCircle/> Done</div>) : (<div style={{color: "orange"}}><LuClock3/> Running</div>),
           'start time': new Date(job.creation_time).toLocaleString(),
           'end time' : job.termination_time ? new Date(job.termination_time).toLocaleString() : null,
-          'cost' : '10USD'
+          'cost' : Math.floor(Math.random() * 1000)/ 100 + " USD"
         }
         return job_obj;
       });
