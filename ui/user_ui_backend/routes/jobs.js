@@ -49,17 +49,22 @@ router.get('/job-list', checkAuth, async (req, res) => {
   });
 
 router.put('/create-job', checkAuth, async (req, res, next) => {
+    const name = req.query.name;
+    const cpu_count = req.query.cpu_count;
+    const memory_count = req.query.memory_count;
     const form = formidable.formidable({ multiples: false });
 
-    form.parse(req, (err, fields, files) => {
+    new Promise ((resolve, reject) => form.parse(req, async (err, fields, files) => {
         if (err) {
-          return res.status(500).json({ error: 'Error parsing form data' });
+            reject("Error parsing form data")
+            return;
         }
-        console.log(files);
-        console.log(fields);
+
         // Check if a file was uploaded
         if (!files) {
-          return res.status(400).json({ error: 'No file uploaded' });
+            console.log('No file uploaded');
+            reject('No file uploaded');
+            return;
         }
     
         const zipFilePath = files.file[0].filepath;
@@ -75,63 +80,59 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
         fs.createReadStream(zipFilePath)
           .pipe(unzipper.Extract({ path: extractionPath }))
           .on('finish', () => {
-            res.status(200).json({ message: 'Zip file extracted successfully' });
+            resolve('Zip file extracted successfully');
           })
           .on('error', (err) => {
-            console.error('Error extracting zip file:', err);
-            res.status(500).json({ error: 'Error extracting zip file' });
+            reject('Error extracting zip file: ' + err);
           });
-      });
-    // const name = req.query.name;
-    // const cpu_count = req.query.cpu_count;
-    // const memory_count = req.query.memory_count;
-    // console.log(req.body)
-    // console.log(req.files)
-    // source = req.files[0]
-    // await extract(source, { dir: "/" })
-    // console.log('Extraction complete')
-    // var head_node_ip = null;
 
-    // await User.findOne({'email' : req.userData.email}).then (async (err, doc) => {
-    //     if (err) {
-    //         console.error("Error in PUT for /create-job: " + err);
-    //         res.sendStatus(500);
-    //     } else {
-    //         var dummyIP = "8.8.8.8"; //Ipv4 Google DNS
-    //         // client.sendJob({
-    //         //     clientIP : dummyIP, 
-    //         //     cpuCount : cpu_count, 
-    //         //     memoryCount : memory_count
-    //         // }, function(err, head_node) {
-    //         //     if (err) {
-    //         //         console.error("Error in PUT for /create-job: " + err);
-    //         //         res.sendStatus(500)
-    //         //     } else {
-    //         //         head_node_ip = head_node.headIP
-    //         //     }
-    //         // });
-            
-    //         // if (head_node_ip) {
-    //         //     var head_node_url = "http://" + head_node_ip + ":8625";
-    //         //     await doc.jobs_created.push(
-    //         //         {
-    //         //             name : name, 
-    //         //             url : "http://" + head_node_ip + ":8625", 
-    //         //             running : false,
-    //         //             creation_time : Date.now(), 
-    //         //             termination_time : null, 
-    //         //             cpu_count : cpu_count,
-    //         //             memory_count : memory_count
-    //         //         });
-                
-    //         //     //aqmp.push_job(name, head_node_url)
-    //         //     res.sendStatus(201);
-    //         // } else {
-    //         //     res.sendStatus(500)
-    //         // }
-    //         res.sendStatus(201);
-    //     }
-    // });
+    })).then(async (msg) => {
+        console.log(msg);
+
+        await User.findOne({'email' : req.userData.email}).then (async (err, doc) => {
+            if (err) {
+                console.error("Error in PUT for /create-job: " + err);
+               // res.sendStatus(500).end();
+            } else {
+                var dummyIP = "8.8.8.8"; //Ipv4 Google DNS
+                new Promise ((resolve, reject) => client.sendJob(
+                    {
+                        clientIP : dummyIP, 
+                        cpuCount : cpu_count, 
+                        memoryCount : memory_count
+                    }, 
+                    (err, head_node) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(head_node.headIP);
+                        }
+                    }
+                )).then(async (head_node_ip) => {
+                    var head_node_url = "http://" + head_node_ip + ":8625";
+                    await doc.jobs_created.push(
+                        {
+                            name : name, 
+                            url : "http://" + head_node_ip + ":8625", 
+                            running : false,
+                            creation_time : Date.now(), 
+                            termination_time : null, 
+                            cpu_count : cpu_count,
+                            memory_count : memory_count
+                        });
+                    
+                    aqmp.make_job_submission_request(name, head_node_url)
+                    res.sendStatus(201);
+                }).catch((err) => {
+                    console.error("Error in PUT for /create-job @ gRPC: " + err);
+                    res.sendStatus(500).end();
+                })
+            }
+        });
+    }).catch((err) => {
+        console.err(err);
+    })
+    
 });
 
 module.exports = router;

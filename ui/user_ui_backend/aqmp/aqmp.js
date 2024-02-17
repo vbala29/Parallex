@@ -29,4 +29,4 @@ var make_job_submission_request = async (job_name, head_node_url) => {
   }
 }
 
-module.exports.push_job = push_job
+module.exports.make_job_submission_request = make_job_submission_request
