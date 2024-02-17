@@ -11,6 +11,7 @@ var aqmp = require(locals.aqmp + "/aqmp");
 const formidable = require('formidable');
 const fs = require('fs');
 const unzipper = require('unzipper');
+const { v4: uuidv4 } = require('uuid');
 
 /* gRPC protos */
 var PROTO_PATH = '/../../../protos/user.proto';
@@ -49,10 +50,12 @@ router.get('/job-list', checkAuth, async (req, res) => {
   });
 
 router.put('/create-job', checkAuth, async (req, res, next) => {
-    const name = req.query.name;
-    const cpu_count = req.query.cpu_count;
-    const memory_count = req.query.memory_count;
+    const cpu_count = 3 ; //req.query.cpu_count;
+    const memory_count = 1000; // req.query.memory_count;
     const form = formidable.formidable({ multiples: false });
+    const uniqueID = uuidv4();
+
+    console.log("Request with cpu_count of: " + cpu_count)
 
     new Promise ((resolve, reject) => form.parse(req, async (err, fields, files) => {
         if (err) {
@@ -61,15 +64,14 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
         }
 
         // Check if a file was uploaded
-        if (!files) {
-            console.log('No file uploaded');
+        if (!files.file) {
             reject('No file uploaded');
             return;
         }
-    
+
         const zipFilePath = files.file[0].filepath;
 
-        const extractionPath = './extracted/' + files.file[0].originalFilename;
+        const extractionPath = './extracted/' + uniqueID;
     
         // Create directory to extract files if it doesn't exist
         if (!fs.existsSync(extractionPath)) {
@@ -89,10 +91,9 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
     })).then(async (msg) => {
         console.log(msg);
 
-        await User.findOne({'email' : req.userData.email}).then (async (err, doc) => {
-            if (err) {
-                console.error("Error in PUT for /create-job: " + err);
-               // res.sendStatus(500).end();
+        User.findOne({'email' : req.userData.email}).exec().then((doc) => {
+            if (!doc) {
+                throw "Undefined Document Error";
             } else {
                 var dummyIP = "8.8.8.8"; //Ipv4 Google DNS
                 new Promise ((resolve, reject) => client.sendJob(
@@ -112,25 +113,27 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
                     var head_node_url = "http://" + head_node_ip + ":8625";
                     await doc.jobs_created.push(
                         {
-                            name : name, 
+                            name : "default_name", 
                             url : "http://" + head_node_ip + ":8625", 
                             running : false,
                             creation_time : Date.now(), 
                             termination_time : null, 
                             cpu_count : cpu_count,
-                            memory_count : memory_count
+                            memory_count : memory_count,
+                            unique_id : uniqueID
                         });
+                    await doc.save();
                     
-                    aqmp.make_job_submission_request(name, head_node_url)
+                    aqmp.make_job_submission_request(uniqueID, head_node_url)
                     res.sendStatus(201);
                 }).catch((err) => {
-                    console.error("Error in PUT for /create-job @ gRPC: " + err);
+                    console.error("Error in PUT for /create-job: " + err);
                     res.sendStatus(500).end();
                 })
             }
         });
     }).catch((err) => {
-        console.err(err);
+        console.error("Error in PUT for /create-job: " + err);
     })
     
 });

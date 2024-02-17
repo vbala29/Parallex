@@ -145,6 +145,7 @@ class DaemonHandler(daemon_pb2_grpc.MetricsServicer):
         return daemon_pb2.Empty()
 
     def SendDynamicMetrics(self, request, context):
+        print("IN HERE")
         ip = request.clientIP
         if ip not in self.cm.providers:
             print(f"Received dynamic metrics from unknown provider: {request.uuid}")
@@ -168,6 +169,7 @@ class JobHandler(user_pb2_grpc.JobServicer):
     def SendJob(self, request, context):
         cpuCount = request.cpuCount
         memoryCount = request.memoryCount
+        print("CPUs = " + str(cpuCount))
 
         headNode = self.cm.select_and_reserve_head()
 

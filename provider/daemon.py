@@ -63,14 +63,17 @@ def sendDynamicMetrics():
     channel = grpc.insecure_channel(_COMMAND_IP_PORT)
     stub = daemon_pb2_grpc.MetricsStub(channel)
 
+    time.sleep(DYNAMIC_METRIC_INTERVAL_SEC)
     MiBRamUsage = psutil.virtual_memory().used / (BYTES_IN_MEBIBYTE)
     CPUUsage = psutil.cpu_percent(interval=CPU_FREQ_INTERVAL_SEC)
-    time.sleep(DYNAMIC_METRIC_INTERVAL_SEC)
-    response = stub.SendDynamicMetrics(
-        daemon_pb2.DynamicMetrics(
-            CPUUsage=CPUUsage, MiBRamUsage=MiBRamUsage, clientIP=IP, uuid=UUID
+    try:
+        response = stub.SendDynamicMetrics(
+            daemon_pb2.DynamicMetrics(
+                CPUUsage=CPUUsage, MiBRamUsage=MiBRamUsage, clientIP=IP, uuid=UUID
+            )
         )
-    )
+    except Exception as e:
+        print(e)
 
 
 async def handleClusterJoinRequest(msg):

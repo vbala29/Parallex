@@ -15,12 +15,12 @@ var make_job_submission_request = async (job_name, head_node_url) => {
 
   let connection;
   try {
-    connection = await amqp.connect(`amqp://${_DEFAULT_USER}:${DEFAULT_PASS}@${_SERVER_IP}/`);
+    connection = await amqp.connect(`amqp://${_DEFAULT_USER}:${_DEFAULT_PASS}@${_SERVER_IP}/`);
     const channel = await connection.createChannel();
 
     await channel.assertQueue(queue, { durable: false });
-    channel.sendToQueue(queue, Buffer.from(JSON.stringify(text)));
-    console.log(" [x] Sent '%s' over AQMP", text);
+    channel.sendToQueue(queue, Buffer.from(JSON.stringify(msg)));
+    console.log(" [x] Sent '%s' over AQMP", msg);
     await channel.close();
   } catch (err) {
     console.warn(err);

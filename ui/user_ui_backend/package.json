@@ -27,6 +27,7 @@
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^8.0.0",
-    "unzipper": "^0.10.14"
+    "unzipper": "^0.10.14",
+    "uuid": "^9.0.1"
   }
 }
