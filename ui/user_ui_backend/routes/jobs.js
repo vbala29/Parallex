@@ -53,8 +53,8 @@ router.get('/job-list', checkAuth, async (req, res) => {
   });
 
 router.put('/create-job', checkAuth, async (req, res, next) => {
-    const cpu_count = 3 ; //req.query.cpu_count;
-    const memory_count = 1000; // req.query.memory_count;
+    var cpu_count = 1 ; //req.query.cpu_count;
+    var memory_count = 2048; // req.query.memory_count;
     const form = formidable.formidable({ multiples: false });
     const uniqueID = uuidv4();
 
@@ -65,6 +65,9 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
             reject("Error parsing form data")
             return;
         }
+
+        cpu_count = fields.cpu_count[0]
+        memory_count = fields.memory_count[0]
 
         // Check if a file was uploaded
         if (!files.file) {
@@ -113,11 +116,13 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
                         }
                     }
                 )).then(async (head_node_ip) => {
-                    var head_node_url = "http://" + head_node_ip + ":8625";
+                    console.log("Head node ip: " + head_node_ip)
+                    var head_node_url = "http://" + head_node_ip + ":8265";
+                    // var head_node_url = "http://127.0.0.1:8265"
                     await doc.jobs_created.push(
                         {
                             name : "default_name", 
-                            url : "http://" + head_node_ip + ":8625", 
+                            url : head_node_url, 
                             running : false,
                             creation_time : Date.now(), 
                             termination_time : null, 

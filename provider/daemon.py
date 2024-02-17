@@ -73,7 +73,7 @@ def sendDynamicMetrics():
             )
         )
     except Exception as e:
-        print(e)
+        print(f"Exception in sendDynamicMetrics: {e}")
 
 
 async def handleClusterJoinRequest(msg):

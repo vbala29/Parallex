@@ -16,7 +16,7 @@ class job_submission_request:
     def initFromDict(infoDict):
         job_name = infoDict["job_name"]
         head_node_url = infoDict["head_node_url"]
-        return job_submission(job_name, head_node_url)
+        return job_submission_request(job_name, head_node_url)
 
     def dumps(self):
         return json.dumps({"job_name" : self.job_name,

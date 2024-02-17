@@ -3,6 +3,7 @@ env
 .vscode/*
 **/__pycache__
 access_tokens/*
+ui/user_ui_backend/extracted/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
