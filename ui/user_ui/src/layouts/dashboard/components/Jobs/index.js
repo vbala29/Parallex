@@ -13,7 +13,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -29,15 +29,19 @@ import SoftTypography from "components/SoftTypography";
 import Table from "examples/Tables/Table";
 
 // Data
-import data from "layouts/dashboard/components/Projects/data";
+import data from "layouts/dashboard/components/Jobs/data";
 
-function Projects() {
-  const { columns, rows } = data();
+import axios from 'axios';
+
+import Cookies from 'js-cookie';
+
+function Jobs() {
+  const { columns } = data();
   const [menu, setMenu] = useState(null);
 
   const openMenu = ({ currentTarget }) => setMenu(currentTarget);
   const closeMenu = () => setMenu(null);
-
+  const [rows, setRows] = useState([]);
   const renderMenu = (
     <Menu
       id="simple-menu"
@@ -58,6 +62,47 @@ function Projects() {
       <MenuItem onClick={closeMenu}>Something else</MenuItem>
     </Menu>
   );
+
+  const updateJobs = () => {
+    const host = "http://localhost:8080";
+    axios.get(host + "/job-list", {headers: {
+      authorization: "Basic " + Cookies.get("token")
+    }})
+    .then(response => {
+      console.log(response)
+      const jobs_list = response.data.jobs_created;
+      const new_jobs = jobs_list.map((job) => {
+        const job_obj = {
+          job: job.name,
+          'start time': new Date(job.creation_time).toLocaleString(),
+          'end time' : job.termination_time ? new Date(job.termination_time).toLocaleString() : null,
+          'cost' : '10USD'
+        }
+        return job_obj;
+      });
+      setRows(new_jobs);
+    })
+    .catch( error => {
+      console.log(error)
+    });
+
+    // const jobs = [{
+    //   job: 'test',
+    //   'start time': 'today',
+    //   'end time': 'who knows',
+    //   'cost': 'a lot'
+    // }];
+
+    // setRows(jobs);
+
+    setTimeout(() => {
+      updateJobs();
+    }, 30000);
+  }
+
+  useEffect (() => {
+    updateJobs();
+  }, []);
 
   return (
     <Card>
@@ -105,4 +150,4 @@ function Projects() {
   );
 }
 
-export default Projects;
+export default Jobs;

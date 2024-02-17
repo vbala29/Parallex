@@ -90,10 +90,11 @@ function Submit() {
 
   const dropzoneStyles = {
     border: '2px dashed #cccccc',
-    borderRadius: '4px',
+    borderRadius: '15px',
     padding: '20px',
     textAlign: 'center',
     cursor: 'pointer',
+    width: '100%'
   };
   return (
     <DashboardLayout>
@@ -103,13 +104,13 @@ function Submit() {
           <Grid item xs={8}>
             <Card>
             {/* <input type="file" id="filepicker" name="fileList" webkitdirectory="" multiple /> */}
-              <div style={{display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column'}}>
+              <div style={{display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', padding:'5px'}}>
               {/* <SoftTypography>
               Submit Jobs
               </SoftTypography> */}
                 <div {...getRootProps()} style={dropzoneStyles}>
                   <input {...getInputProps()} />
-                  <LuUpload style={{ width: '200px', height: '130px' }}></LuUpload>
+                  <LuUpload style={{ width: '200px', height: '250px' }}></LuUpload>
                   <p>Drag and drop some files here, or click to select files</p>
                 </div>
                 <ul>
@@ -122,26 +123,37 @@ function Submit() {
             </Card>
           </Grid>
           <Grid item xs={3}>
-            <Card style={{padding: '10px'}}>
+            <Card style={{
+                  padding: '10px', 
+                  'font-family': ["Roboto","Helvetica","Arial","sans-serif"],
+                  "font-size": "1.25rem",
+                  "font-weight": "400",
+                  "line-height": "1.625",
+                  "letter-spacing": "0.00938em",
+                  height: '100%'
+                }} >
               <SoftTypography>
                 Job Specifications
               </SoftTypography>
+              <p>
               CPU Cores
+              </p>
+
               <SoftInput></SoftInput>
               <br/>
               MiB RAM
               <SoftInput></SoftInput>
               <br/>
-              Estimated Cost Per Hour
+              Estimated Cost Per Hour: 5 USD
               <br/>
-              Terminate Job after X Dollars
-              <SoftInput></SoftInput>
-            </Card>
+            </Card> 
           </Grid>
         </Grid>
-        <SoftButton onClick={submitJobs}>
-            Submit Job
-        </SoftButton>
+        <div style={{display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', padding:'5px', width:'90%'}}>
+          <SoftButton onClick={submitJobs} style={{'margin':'10px'}} size="large" color="gray">
+              Submit Job
+          </SoftButton>
+        </div>
       </SoftBox>
     </DashboardLayout>
   );

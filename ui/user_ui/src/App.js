@@ -148,7 +148,7 @@ export default function App() {
     }
     )
     .catch( response => {
-      navigate("/authentication/sign-up");
+      navigate("/authentication/sign-in");
     })
   }
 
@@ -165,8 +165,6 @@ export default function App() {
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}
           />
-          <Configurator />
-          {configsButton}
         </>
       )}
       <Routes>

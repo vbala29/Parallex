@@ -84,7 +84,6 @@ function BasicLayout({ title, description, image, children }) {
           </Grid>
         </Grid>
       </SoftBox>
-      <Footer />
     </PageLayout>
   );
 }
