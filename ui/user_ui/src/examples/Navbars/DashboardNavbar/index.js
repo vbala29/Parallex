@@ -163,16 +163,16 @@ function DashboardNavbar({ absolute, light, isMini }) {
                   >
                     account_circle
                   </Icon>
-                  <SoftTypography
+                  {/* <SoftTypography
                     variant="button"
                     fontWeight="medium"
                     color={light ? "white" : "dark"}
                   >
                     Sign in
-                  </SoftTypography>
+                  </SoftTypography> */}
                 </IconButton>
               </Link>
-              <IconButton
+              {/* <IconButton
                 size="small"
                 color="inherit"
                 sx={navbarMobileMenu}
@@ -200,7 +200,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 onClick={handleOpenMenu}
               >
                 <Icon className={light ? "text-white" : "text-dark"}>notifications</Icon>
-              </IconButton>
+              </IconButton> */}
               {renderMenu()}
             </SoftBox>
           </SoftBox>

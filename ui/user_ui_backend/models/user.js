@@ -13,9 +13,9 @@ const UserSchema = new Schema({
         required: true,
         unique: true
     },
-    clusters_created: [{name: {type: String, required: true}, url: {type: String, required: true}, alive: {type: Boolean, required: true},
-        creation_time: {type: Number, required: true}, termination_time: {type: Number, required: true}, 
-        cpu_count: {type: Number, required: true}, memoryCount: {type: Number, required: true}}]
+    jobs_created: [{name: {type: String, required: true}, url: {type: String, required: true}, running: {type: Boolean, required: true},
+        creation_time: {type: Number, required: true}, termination_time: {type: Number, required: false}, 
+        cpu_count: {type: Number, required: true}, memory_count: {type: Number, required: true}, unique_id: {type: String, required: true}}]
 
 })
 

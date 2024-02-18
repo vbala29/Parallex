@@ -31,7 +31,7 @@ import SoftButton from "components/SoftButton";
 import CoverLayout from "layouts/authentication/components/CoverLayout";
 
 // Images
-import curved9 from "assets/images/curved-images/curved-6.jpg";
+import curved6 from "assets/images/curved-images/curved14.jpg";
 
 import axios from 'axios';
 
@@ -50,6 +50,11 @@ function SignIn() {
   const navigate = useNavigate();
 
   const host = "http://localhost:8080";
+  const checkKeyPress = (e) => {
+    if(e.key === 'Enter'){
+      submitForm();
+    }
+  }
   const submitForm = () => {
     const data = {
       username: username,
@@ -61,9 +66,7 @@ function SignIn() {
         console.log(response);
         const token = response.data.token;
         Cookies.set("token", token);
-        Cookies.set("user", username);
-        //Cookies.set("email", email);
-        //navigate("/authentication/sign-in");
+        navigate("/dashboard");
       })
       .catch(error => {
         console.log(error);
@@ -73,7 +76,7 @@ function SignIn() {
     <CoverLayout
       title="Welcome back"
       description="Enter your username and password to sign in"
-      image={curved9}
+      image={curved6}
     >
       <SoftBox component="form" role="form">
         <SoftBox mb={2}>
@@ -90,7 +93,7 @@ function SignIn() {
               Password
             </SoftTypography>
           </SoftBox>
-          <SoftInput type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}/>
+          <SoftInput type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyPress={(e) => checkKeyPress(e)}/>
         </SoftBox>
         <SoftBox display="flex" alignItems="center">
           <Switch checked={rememberMe} onChange={handleSetRememberMe} />

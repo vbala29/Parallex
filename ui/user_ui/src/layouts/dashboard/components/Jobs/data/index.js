@@ -47,8 +47,9 @@ export default function data() {
 
   return {
     columns: [
-      { name: "jobs", align: "left" },
-      { name: "start time", align: "left" },
+      { name: "job", align: "center" },
+      { name: "status", align: "center"},
+      { name: "start time", align: "center" },
       { name: "end time", align: "center" },
       { name: "cost", align: "center" },
     ],

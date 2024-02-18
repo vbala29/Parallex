@@ -2,8 +2,9 @@ from typing import Dict
 import numpy as np
 import ray
 
-_HEAD_ADDRESS_PORT: str = "192.168.1.50:6000"
-ray.init(_HEAD_ADDRESS_PORT)
+# _HEAD_ADDRESS_PORT: str = "192.168.1.50:6000"
+# ray.init(_HEAD_ADDRESS_PORT)
+ray.init()
 
 # Create datasets from on-disk files, Python objects, and cloud storage like S3.
 ds = ray.data.read_csv("s3://anonymous@ray-example-data/iris.csv")
@@ -23,5 +24,5 @@ transformed_ds = ds.map_batches(compute_area)
 for batch in transformed_ds.iter_batches(batch_size=4):
     print(batch)
 
-# Save dataset contents to on-disk files or cloud storage.
-transformed_ds.write_parquet("local:///tmp/iris/")
+# # Save dataset contents to on-disk files or cloud storage.
+# transformed_ds.write_parquet("local:///tmp/iris/")

@@ -13,4 +13,4 @@ def launch_head(port: int):
     """
     print(f"Starting Parallex head on port: {port}")
 
-    subprocess.run(f"ray start --head --port={port}".split(), check=True)
+    subprocess.run(f"ray start --head --port={port} --dashboard-host=0.0.0.0".split(), check=True)

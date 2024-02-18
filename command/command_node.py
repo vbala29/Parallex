@@ -18,7 +18,7 @@ from aqmp_tools.AQMPProducerConnection import AQMPProducerConnection
 HEAD_NODE_CPUS = 1
 HEAD_NODE_RAM = 2048
 
-_COMMAND_IP = 'localhost'
+_COMMAND_IP = '0.0.0.0'
 
 
 class Job:
@@ -168,6 +168,7 @@ class JobHandler(user_pb2_grpc.JobServicer):
     def SendJob(self, request, context):
         cpuCount = request.cpuCount
         memoryCount = request.memoryCount
+        print("CPUs = " + str(cpuCount))
 
         headNode = self.cm.select_and_reserve_head()
 

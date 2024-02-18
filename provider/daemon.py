@@ -28,12 +28,12 @@ IP: str = ""
 
 _HEAD_START_DELAY_SECS:int = 5
 
-_COMMAND_IP: str = "192.168.1.35"
+# Assumes AMQP and gRPC are on same node.
+_COMMAND_IP: str = "127.0.0.1"
 _COMMAND_PORT: int = 50051
 _COMMAND_IP_PORT: str = f"{_COMMAND_IP}:{_COMMAND_PORT}"
 
 _RAY_PORT: int = 6379
-
 
 def sendStaticMetrics():
     """Sends the following information to the command node:
@@ -64,14 +64,17 @@ def sendDynamicMetrics():
     channel = grpc.insecure_channel(_COMMAND_IP_PORT)
     stub = daemon_pb2_grpc.MetricsStub(channel)
 
+    time.sleep(DYNAMIC_METRIC_INTERVAL_SEC)
     MiBRamUsage = psutil.virtual_memory().used / (BYTES_IN_MEBIBYTE)
     CPUUsage = psutil.cpu_percent(interval=CPU_FREQ_INTERVAL_SEC)
-    time.sleep(DYNAMIC_METRIC_INTERVAL_SEC)
-    response = stub.SendDynamicMetrics(
-        daemon_pb2.DynamicMetrics(
-            CPUUsage=CPUUsage, MiBRamUsage=MiBRamUsage, clientIP=IP, uuid=UUID
+    try:
+        response = stub.SendDynamicMetrics(
+            daemon_pb2.DynamicMetrics(
+                CPUUsage=CPUUsage, MiBRamUsage=MiBRamUsage, clientIP=IP, uuid=UUID
+            )
         )
-    )
+    except Exception as e:
+        print(f"Exception in sendDynamicMetrics: {e}")
 
 
 async def handleClusterJoinRequest(msg):
@@ -119,7 +122,7 @@ def _get_local_ip() -> str:
         return s.getsockname()[0]
 
 def setupUUID():
-    global UUID
+    global UUID 
     UUID = str(uuid.uuid4())
 
 
@@ -135,4 +138,4 @@ if __name__ == "__main__":
     aqmp.loop.run_until_complete(aqmp.initializeQueue(UUID))
     t = Thread(target=start_background_loop, args=(aqmp.loop,), daemon=True)
     t.start()
-    startDaemon()
+    startDaemon() 
