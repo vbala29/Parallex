@@ -5,28 +5,38 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import StopIcon from '@mui/icons-material/Stop';
 import { useAlert } from 'react-alert';
 import SoftAlert from 'components/SoftAlert';
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+
 import { selectCores, selectMemory } from 'examples/Configurator/ProviderState'
+import { setIsStarted, selectIsStarted } from 'layouts/dashboard/components/StartStop/startState'
 import { calculatePCU } from "utils/format"
 
 function StartStop() {
     const [loading, setLoading] = useState(false);
-    const [started, setStarted] = useState(false);
     const alert = useAlert();
     const cores = useSelector(selectCores);
     const memory = useSelector(selectMemory);
+    const isStarted = useSelector(selectIsStarted);
+
+    const startStateDispatch = useDispatch();
+
+    // const [isStarted, setIsStarted] = useState(false);
 
     const startProvider = async () => {
         setLoading(true);
         // Replace this with your actual startProvider function
         await new Promise(resolve => setTimeout(resolve, 2000));
+        console.log('running start Provider')
 
-        alert.show(`Provider Successfully Started with PCU per Hour ${calculatePCU(cores, memory)}`, {
+        alert.show(`Started Provider with ${calculatePCU(cores, memory)} PCU per Hour`, {
             type: 'success',
             onClose: () => { console.log('alert closed') }
         });
         setLoading(false);
-        setStarted(true);
+        const newIsStarted = true;
+        startStateDispatch(setIsStarted(newIsStarted));
+        console.log(`starting - isStarted ${isStarted}`)
+
     };
 
     const stopProvider = async () => {
@@ -42,7 +52,9 @@ function StartStop() {
 
         setLoading(false);
         console.log('Provider stopped');
-        setStarted(false);
+        startStateDispatch(setIsStarted(!isStarted));
+        console.log(`ending = isStarted ${isStarted}`)
+        // setIsStarted(false);
     };
 
     return (
@@ -50,10 +62,10 @@ function StartStop() {
             {loading ? (
                 <CircularProgress />
             ) : (
-                <SoftButton variant="contained" color="dark" size="large" onClick={started ? stopProvider : startProvider}>
-                    {started ? <StopIcon /> : <PlayArrowIcon />}
+                <SoftButton variant="contained" color="dark" size="large" onClick={isStarted ? stopProvider : startProvider }>
+                    {isStarted ?  <StopIcon /> : <PlayArrowIcon />}
                 </SoftButton>
-            )}
+            )} 
         </div>
     );
 }

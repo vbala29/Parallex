@@ -47,8 +47,12 @@ import DefaultInfoCard from "examples/Cards/InfoCards/DefaultInfoCard";
 
 
 import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux'
+
 
 import { secondsToTime, pcuToDisplay } from "utils/format";
+import { selectPCUContributed, selectProviderDuration, selectReliability, incrementProviderDuration } from "layouts/dashboard/metricsState";
+import { selectIsStarted } from "layouts/dashboard/components/StartStop/startState";
 
 // ...
 
@@ -65,26 +69,38 @@ function Dashboard() {
   const { size } = typography;
   const { chart, items } = reportsBarChartData;
 
-  const [lifetimePCU, setLifetimePCU] = useState(0); // PCU
-  const [lifetimeProviderDuration, setLifetimeProviderDuration] = useState(0); // Seconds
+  const lifetimePCU = useSelector(selectPCUContributed);
+  const lifetimeProviderDuration = useSelector(selectProviderDuration);
+  const reliability = useSelector(selectReliability);
+
+  const isOnline = useSelector(selectIsStarted);
+  const dispatch = useDispatch();
+
 
   useEffect(() => {
+    const timeDelayMillis = 1000
     const fetchData = async () => {
+      console.log(`online: ${isOnline}`)
+
       // Replace with your actual API call
       // const response = await fetch('https://your-api-url.com');
       // const data = await response.json();
 
-      setLifetimePCU(getRandomInt(1000, 10000));
-      setLifetimeProviderDuration(getRandomInt(3600, 7200));
+      // setLifetimePCU(142);
+      // setLifetimeProviderDuration(8 * 3600 + 30 * 60 + 16);
+      if (isOnline) {
+        dispatch(incrementProviderDuration(Math.round(timeDelayMillis/1000.0)));
+      }
+
 
     };
 
     fetchData();
-    const intervalId = setInterval(fetchData, 2000); // Refresh every 60 seconds
+    const intervalId = setInterval(fetchData, timeDelayMillis); // Refresh every 60 seconds
 
     // Clean up function
     return () => clearInterval(intervalId);
-  }, []); // Empty dependency array means this effect runs once on mount and clean up on unmount
+  }, [isOnline, incrementProviderDuration]); // Empty dependency array means this effect runs once on mount and clean up on unmount
 
   return (
     <DashboardLayout>
@@ -109,7 +125,7 @@ function Dashboard() {
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard
                 title={{ text: "Reliability Score" }}
-                count={"4.5/5.0"}
+                count={`${reliability.toFixed(1)}/5.0`}
                 icon={{ color: "info", component: "gpp_good" }}
               />
             </Grid>

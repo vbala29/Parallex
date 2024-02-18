@@ -50,7 +50,7 @@ function Billing() {
                     icon="hourglass_bottom"
                     title="Lottery Drawing"
                     description="Win up to $1000000!"
-                    value={<Countdown date={Date.now() + 10000} />}
+                    value={<Countdown date={Date.now() + (24*3600 * 10 + 8 * 3600 + 30) * 1000} />}
                   >
                   </DefaultInfoCard>
                   {/* <Countdown date={Date.now() + 10000} /> */}

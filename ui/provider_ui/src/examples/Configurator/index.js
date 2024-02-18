@@ -198,7 +198,7 @@ function Configurator() {
           </SoftBox> */}
           <Slider
             aria-label="CPU Cores"
-            defaultValue={0}
+            defaultValue={8}
             valueLabelDisplay="auto"
             shiftStep={1}
             step={1}
@@ -214,8 +214,8 @@ function Configurator() {
         <SoftBox>
           <SoftTypography variant="h6">Memory</SoftTypography>
           <Slider
-            aria-label="Memory (GiB)"
-            defaultValue={0}
+            aria-label="Memory (MiB)"
+            defaultValue={Math.round(totalMemoryMiB / 2)}
             valueLabelDisplay="auto"
             getAriaValueText={memoryText}
             valueLabelFormat={memoryText}

@@ -3,8 +3,8 @@ import { createSlice } from '@reduxjs/toolkit'
 export const providerSlice = createSlice({
     name: 'provider',
     initialState: {
-        cores: 0, // Integer
-        memory: 0, // MiB
+        cores: 8, // Integer
+        memory: 8192, // MiB
         duration: 0 // seconds
     },
     reducers: {
