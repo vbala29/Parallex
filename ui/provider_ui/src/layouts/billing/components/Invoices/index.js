@@ -37,11 +37,11 @@ function Invoices() {
       </SoftBox>
       <SoftBox p={2}>
         <SoftBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
-          <Invoice date="March, 01, 2020" id="#MS-415646" price="$180" />
-          <Invoice date="February, 10, 2021" id="#RV-126749" price="$250" />
-          <Invoice date="April, 05, 2020" id="#QW-103578" price="$120" />
-          <Invoice date="June, 25, 2019" id="#MS-415646" price="$180" />
-          <Invoice date="March, 01, 2019" id="#AR-803481" price="$300" noGutter />
+          <Invoice date="2024-02-15" id="#MS-415646" price="$1.50" />
+          <Invoice date="2024-02-15" id="#RV-126749" price="$0.70" />
+          <Invoice date="2024-02-15" id="#QW-103578" price="$0.98" />
+          <Invoice date="2024-02-15" id="#MS-415646" price="$0.43" />
+          <Invoice date="2024-02-15" id="#AR-803481" price="$2.50" noGutter />
         </SoftBox>
       </SoftBox>
     </Card>

@@ -7,7 +7,7 @@
 * Copyright 2023 Creative Tim (https://www.creative-tim.com)
 
 Coded by www.creative-tim.com
-
+  
  =========================================================
 
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
@@ -68,7 +68,7 @@ function Billing() {
                   <DefaultInfoCard
                     icon="account_balance"
                     title="Lifetime Earnings"
-                    description="Top 2% of Parallex Providers"
+                    description="Top 2%!"
                     value="$103.40"
                   />
                 </Grid>
@@ -84,14 +84,14 @@ function Billing() {
           </Grid>
         </SoftBox>
         <SoftBox my={3}>
-          <Grid container spacing={3}>
+          {/* <Grid container spacing={3}>
             <Grid item xs={12} md={7}>
               <BillingInformation />
             </Grid>
             <Grid item xs={12} md={5}>
               <Transactions />
             </Grid>
-          </Grid>
+          </Grid> */}
         </SoftBox>
       </SoftBox>
       <Footer />

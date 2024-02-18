@@ -109,7 +109,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
       onClose={handleCloseMenu}
       sx={{ mt: 2 }}
     >
-      <NotificationItem
+      {/* <NotificationItem
         image={<img src={team2} alt="person" />}
         title={["New message", "from Laur"]}
         date="13 minutes ago"
@@ -131,7 +131,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
         title={["", "Payment successfully completed"]}
         date="2 days"
         onClick={handleCloseMenu}
-      />
+      /> */}
     </Menu>
   );
 
@@ -154,7 +154,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
               />
             </SoftBox>
             <SoftBox color={light ? "white" : "inherit"}>
-              <Link to="/authentication/sign-in">
+              {/* <Link to="/authentication/sign-in">
                 <IconButton sx={navbarIconButton} size="small">
                   <Icon
                     sx={({ palette: { dark, white } }) => ({
@@ -168,10 +168,9 @@ function DashboardNavbar({ absolute, light, isMini }) {
                     fontWeight="medium"
                     color={light ? "white" : "dark"}
                   >
-                    Sign in
                   </SoftTypography>
                 </IconButton>
-              </Link>
+              </Link> */}
               <IconButton
                 size="small"
                 color="inherit"

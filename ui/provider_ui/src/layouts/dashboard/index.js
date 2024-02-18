@@ -43,6 +43,9 @@ import StartStop from "layouts/dashboard/components/StartStop";
 import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
 import gradientLineChartData from "layouts/dashboard/data/gradientLineChartData";
 
+import DefaultInfoCard from "examples/Cards/InfoCards/DefaultInfoCard";
+
+
 import React, { useState, useEffect } from 'react';
 
 import { secondsToTime, pcuToDisplay } from "utils/format";
@@ -91,23 +94,23 @@ function Dashboard() {
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard
-                title={{ text: "Lifetime PCU Contributed" }}
+                title={{ text: "PCU Contributed" }}
                 count={pcuToDisplay(lifetimePCU)}
                 icon={{ color: "info", component: "memory" }}
               />
             </Grid>
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard
-                title={{ text: "Lifetime Provider Duration" }}
+                title={{ text: "Provider Duration" }}
                 count={secondsToTime(lifetimeProviderDuration)}
                 icon={{ color: "info", component: "access_time" }}
               />
             </Grid>
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard
-                title={{ text: "Average PCU per Hour" }}
-                count={`${Math.round(lifetimePCU / lifetimeProviderDuration * 3600)} PCU per Hour`}
-                icon={{ color: "info", component: "timeline" }}
+                title={{ text: "Reliability Score" }}
+                count={"4.5/5.0"}
+                icon={{ color: "info", component: "gpp_good" }}
               />
             </Grid>
           </Grid>
