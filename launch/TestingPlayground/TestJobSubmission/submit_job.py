@@ -7,7 +7,7 @@ job_id = client.submit_job(
     # Entrypoint shell command to execute
     entrypoint="python job_script.py",
     # Path to the local directory that contains the script.py file, parallex env name
-    runtime_env={"working_dir": "./working_dir/", "conda": "parallex_env"},
+    runtime_env={"working_dir": "./working_dir/", "conda": "parallex_runtime"},
 )
 print(job_id)
 

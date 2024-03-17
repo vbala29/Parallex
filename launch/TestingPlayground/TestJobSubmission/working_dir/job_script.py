@@ -72,5 +72,6 @@ def predict_xgboost(result: Result):
     predicted_labels.show()
 
 if __name__ == "__main__":
-    result = train_xgboost(num_workers=1, use_gpu=False)
+    result = train_xgboost(num_workers=2, use_gpu=False)
     predict_xgboost(result)
+
