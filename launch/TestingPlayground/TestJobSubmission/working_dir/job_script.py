@@ -16,7 +16,8 @@ def prepare_data() -> Tuple[Dataset, Dataset, Dataset]:
     test_dataset = valid_dataset.drop_columns(["target"])
     return train_dataset, valid_dataset, test_dataset
 
-def train_xgboost(num_workers: int, use_gpu: bool = False) -> Result:
+def train_xgboost(
+_workers: int, use_gpu: bool = False) -> Result:
     train_dataset, valid_dataset, _ = prepare_data()
 
     # Scale some random columns
@@ -72,5 +73,5 @@ def predict_xgboost(result: Result):
     predicted_labels.show()
 
 if __name__ == "__main__":
-    result = train_xgboost(num_workers=1, use_gpu=False)
+    result = train_xgboost(num_workers=2, use_gpu=False)
     predict_xgboost(result)

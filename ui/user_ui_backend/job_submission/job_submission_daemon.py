@@ -10,7 +10,7 @@ from aqmp_tools.formats.job_submission_request import job_submission_request
 import subprocess
 
 QUEUE_NAME: str = "ray_job_startup"
-_HEAD_START_DELAY_SECS: int = 5
+_HEAD_START_DELAY_SECS: int = 20
 _EXPRESS_SERVER_IP: str = "127.0.0.1"
 
 
@@ -28,9 +28,10 @@ def submit_ray_job(
     working_dir: str, head_node_ip: str, runtime_name: str, job_script_name: str
 ):
     activate_conda_command = f"conda activate {runtime_name}"
-    submit_job_command = f"RAY_ADDRESS='{head_node_ip}' ray job submit --working-dir {working_dir} -- python {job_script_name}"
-
-    full_command = f"{activate_conda_command}; {submit_job_command}"
+    runtime_env_json = '\'{"conda": "parallex_runtime"}\''
+    submit_job_command = f"RAY_ADDRESS='{head_node_ip}' ray job submit --runtime-env-json={runtime_env_json} --working-dir {working_dir} -- python {job_script_name}"
+    print(f'submit job: {submit_job_command}')
+    full_command = f"{submit_job_command}"
     subprocess.run(
         full_command,
         shell=True,
