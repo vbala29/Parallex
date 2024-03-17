@@ -13,5 +13,5 @@ def launch_head(port: int):
     """
     print(f"Starting Parallex head on port: {port}")
     conda_activate_command = "conda init; conda activate parallex_runtime"
-    head_start_command = "ray start --head --port={port} --dashboard-host=0.0.0.0"
+    head_start_command = f"ray start --head --port={port} --dashboard-host=0.0.0.0"
     subprocess.run(f"{conda_activate_command}; {head_start_command}", shell=True, check=True)
