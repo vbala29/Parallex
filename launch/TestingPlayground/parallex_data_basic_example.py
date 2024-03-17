@@ -1,6 +1,7 @@
 from typing import Dict
 import numpy as np
 import ray
+import xgboost_ray
 
 # _HEAD_ADDRESS_PORT: str = "192.168.1.50:6000"
 # ray.init(_HEAD_ADDRESS_PORT)

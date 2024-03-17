@@ -75,3 +75,4 @@ def predict_xgboost(result: Result):
 if __name__ == "__main__":
     result = train_xgboost(num_workers=2, use_gpu=False)
     predict_xgboost(result)
+
