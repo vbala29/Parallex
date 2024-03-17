@@ -5,5 +5,5 @@ dependencies:
   - python=3.8
   - pip
   - pip:
-    - ray[all]
+    - ray[data,train,tune,serve]
     - xgboost_ray
