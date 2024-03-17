@@ -1,4 +1,5 @@
 """ Launches a Parallex cluster worker node. """
+
 import subprocess
 
 
@@ -12,5 +13,6 @@ def launch_worker(head_ip: str, port: int):
     Raises:
         CalledProcessError: If cluster fails to launch
     """
-
-    subprocess.run(f"ray start --address={head_ip}:{port}".split(), check=True)
+    conda_activate_command = "conda activate parallex_runtime"
+    start_command = f"ray start --address={head_ip}:{port}"
+    subprocess.run(f"{conda_activate_command}; {start_command}", shell=True, check=True)

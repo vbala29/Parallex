@@ -29,7 +29,7 @@ IP: str = ""
 _HEAD_START_DELAY_SECS:int = 5
 
 # Assumes AMQP and gRPC are on same node.
-_COMMAND_IP: str = "10.0.0.94"
+_COMMAND_IP: str = "10.0.0.212"
 _COMMAND_PORT: int = 50051
 _COMMAND_IP_PORT: str = f"{_COMMAND_IP}:{_COMMAND_PORT}"
 
