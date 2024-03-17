@@ -13,6 +13,10 @@ def launch_worker(head_ip: str, port: int):
     Raises:
         CalledProcessError: If cluster fails to launch
     """
-    conda_activate_command = "conda init; conda activate parallex_runtime"
     start_command = f"ray start --address={head_ip}:{port}"
-    subprocess.run(f"{conda_activate_command}; {start_command}", shell=True, check=True)
+
+
+    conda_activate_command = f"""
+    conda run -n parallex_runtime bash -c "{start_command}"
+    """
+    subprocess.run(conda_activate_command, shell=True, check=True, executable='/bin/bash')
