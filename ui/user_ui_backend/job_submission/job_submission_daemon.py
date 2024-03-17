@@ -28,7 +28,8 @@ def submit_ray_job(
     working_dir: str, head_node_ip: str, runtime_name: str, job_script_name: str
 ):
     activate_conda_command = f"conda activate {runtime_name}"
-    submit_job_command = f"RAY_ADDRESS='{head_node_ip}' ray job submit --working-dir {working_dir} -- python {job_script_name}"
+    runtime_env_json = '{"conda": "parallex_runtime"}'
+    submit_job_command = f"RAY_ADDRESS='{head_node_ip}' ray job submit --runtime-env-json={runtime_env_json} --working-dir {working_dir} -- python {job_script_name}"
 
     full_command = f"{activate_conda_command}; {submit_job_command}"
     subprocess.run(
