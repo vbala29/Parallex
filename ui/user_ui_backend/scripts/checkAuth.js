@@ -6,8 +6,9 @@ const secretKey = process.env.SECRET_KEY;
 module.exports = (req, res, next) => {
   try {
     const token = req.headers.authorization.split(' ')[1];
+    console.log("HERE 2: " + token)
     const decodedToken = jwt.verify(token, secretKey);
-    req.userData = { userId: decodedToken.userId, email: decodedToken.email };
+    req.userData = { userId: decodedToken.userId, username: decodedToken.username };
     next();
   } catch (error) {
     return res.status(401).json({ error: 'Authentication failed' });

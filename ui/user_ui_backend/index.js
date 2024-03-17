@@ -10,7 +10,7 @@ const path = require('path')
 const app = express()
 const session = require('express-session') //Adds to req param
 //Cross origin resource sharing needed for front end to access express backend at different domain
-const cors = require('cors'); 
+const cors = require('cors');
 const locals = require('./app.locals.js')
 const checkAuth = require(locals.scripts + '/checkAuth');
 
@@ -18,7 +18,7 @@ const checkAuth = require(locals.scripts + '/checkAuth');
 const secretKey = process.env.SECRET_KEY;
 
 /* Middleware */
-app.use(express.urlencoded({extended : true})) //Use extended true b/c qs library has more security. 
+app.use(express.urlencoded({extended : true})) //Use extended true b/c qs library has more security.
 app.use(session({secret: secretKey, resave: false, saveUninitialized: false}))
 app.use(express.static('public')); //Serve CSS and JS statics
 app.use(express.text()) //Parses text/
@@ -77,7 +77,7 @@ app.all('*', (req, res, next) => {
 })
 
 
-/* HTTPS Setup */ 
+/* HTTPS Setup */
 
 var key = fs.readFileSync(path.join(__dirname, '/certs/localhost-key.pem'), 'utf8');
 var cert = fs.readFileSync(path.join(__dirname, '/certs/localhost.pem'), 'utf8');

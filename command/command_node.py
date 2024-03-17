@@ -20,7 +20,6 @@ HEAD_NODE_RAM = 2048
 
 _COMMAND_IP = '0.0.0.0'
 
-
 class Job:
     def __init__(self, ip):
         self.ip = ip

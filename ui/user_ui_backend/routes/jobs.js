@@ -34,7 +34,7 @@ const client = new job(
 /* Routes */
 
 router.get('/job-list', checkAuth, async (req, res) => {
-    await User.findOne({'email' : req.userData.email}).exec().then((async (doc) => {
+    await User.findOne({'_id' : req.userData.userId}).exec().then((async (doc) => {
         if (!doc) {
             throw "Undefined Document Error";
         }
@@ -96,8 +96,8 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
 
     })).then(async (msg) => {
         console.log(msg);
-
-        User.findOne({'email' : req.userData.email}).exec().then((doc) => {
+        console.log("lookup user with username: " + req.userData.username)
+        User.findOne({'_id' : req.userData.userId}).exec().then((doc) => {
             if (!doc) {
                 throw "Undefined Document Error";
             } else {
