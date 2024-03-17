@@ -7,10 +7,12 @@ from ray.job_submission import JobSubmissionClient, JobStatus
 from aqmp_tools.AQMPConsumerConnection import AQMPConsumerConnection
 from aqmp_tools.formats.job_submission_request import job_submission_request
 
+import subprocess
 
-QUEUE_NAME : str = "ray_job_startup"
-_HEAD_START_DELAY_SECS : int = 5
-_EXPRESS_SERVER_IP : str = "127.0.0.1"
+QUEUE_NAME: str = "ray_job_startup"
+_HEAD_START_DELAY_SECS: int = 5
+_EXPRESS_SERVER_IP: str = "127.0.0.1"
+
 
 def wait_until_status(client, job_id, status_to_wait_for, timeout_seconds=5):
     start = time.time()
@@ -21,32 +23,62 @@ def wait_until_status(client, job_id, status_to_wait_for, timeout_seconds=5):
             break
         time.sleep(1)
 
+
+def submit_ray_job(
+    working_dir: str, head_node_ip: str, runtime_name: str, job_script_name: str
+):
+    activate_conda_command = f"conda activate {runtime_name}"
+    submit_job_command = f"RAY_ADDRESS='{head_node_ip}' ray job submit --working-dir {working_dir} -- python {job_script_name}"
+
+    full_command = f"{activate_conda_command}; {submit_job_command}"
+    subprocess.run(
+        full_command,
+        shell=True,
+        check=True,
+    )
+
+
 async def handleJobSubmissionRequest(msg):
     async with msg.process():
         req = job_submission_request.initFromDict(json.loads(msg.body))
         job_name = req.get_job_name()
         head_node_url = req.get_head_node_url()
-        print(f"Received job startup request. Params: job_name = {job_name}, head_node_url = {head_node_url}")
-        print(f' Sleeping for {_HEAD_START_DELAY_SECS}')
+        print(
+            f"Received job startup request. Params: job_name = {job_name}, head_node_url = {head_node_url}"
+        )
+        print(f" Sleeping for {_HEAD_START_DELAY_SECS}")
         time.sleep(_HEAD_START_DELAY_SECS)
 
+        working_dir = f"../extracted/{job_name}/working_dir"
+        conda_name = "parallex_runtime"
+        head_node_ip = head_node_url
+        job_script_name = "job_script.py"
+        submit_ray_job(working_dir, head_node_ip, conda_name, job_script_name)
+        print("Successfully started ray job")
 
-        client = JobSubmissionClient(head_node_url)
-        job_id = client.submit_job(
-            # Entrypoint shell command to execute
-            entrypoint="python job_script.py",
-            # Path to the local directory that contains the script.py file, parallex env name
-            runtime_env={"working_dir": f"../extracted/{job_name}/working_dir", "conda": "parallex_runtime"},
-        )
-        print(f"Job ID = {job_id}")
+        # client = JobSubmissionClient(head_node_url)
+        # job_id = client.submit_job(
+        #     # Entrypoint shell command to execute
+        #     entrypoint="python job_script.py",
+        #     # Path to the local directory that contains the script.py file, parallex env name
+        #     runtime_env={
+        #         "working_dir": f"../extracted/{job_name}/working_dir",
+        #         "conda": "parallex_runtime",
+        #     },
+        # )
+        # print(f"Job ID = {job_id}")
 
-        wait_until_status(client, job_id, {JobStatus.SUCCEEDED, JobStatus.STOPPED, JobStatus.FAILED})   
-        logs = client.get_job_logs(job_id)
-        print(logs)
-        
+        # wait_until_status(
+        #     client, job_id, {JobStatus.SUCCEEDED, JobStatus.STOPPED, JobStatus.FAILED}
+        # )
+        # logs = client.get_job_logs(job_id)
+        # print(logs)
+
+
 def start_background_loop(loop):
     asyncio.set_event_loop(loop)
     loop.run_forever()
+
 
 if __name__ == "__main__":
     aqmp = AQMPConsumerConnection(_EXPRESS_SERVER_IP)
