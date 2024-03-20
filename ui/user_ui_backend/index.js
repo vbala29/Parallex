@@ -2,6 +2,8 @@ const express = require('express')
 const mongoose = require('mongoose')
 const passport = require('passport')
 const User = require('./models/user')
+const Provider = require('./models/provider')
+
 const LocalStrategy = require('passport-local')
 const https = require('https');
 const http = require('http');
@@ -31,6 +33,7 @@ app.use(cors({
 /* Routes */
 const userRoutes = require('./routes/user')
 const jobRoutes = require('./routes/jobs')
+const providerRoutes = require('./routes/providers')
 
 /* MongoDB */
 
@@ -54,14 +57,39 @@ db.once("open", () => {
 
 app.use(passport.initialize());
 app.use(passport.session());
-passport.use(new LocalStrategy(User.authenticate()))
 
-passport.serializeUser(User.serializeUser())
-passport.deserializeUser(User.deserializeUser())
+// Define `user` and `provider` login strategies.
+passport.use('user', new LocalStrategy(User.authenticate()))
+passport.use('provider', new LocalStrategy(Provider.authenticate()))
+
+
+// Support User and Provider account objects - will pass through to provider deserialization upon user failure.
+passport.serializeUser((obj, done) => {
+    User.serializeUser(obj)
+        .then((user) => done(null, user))
+        .catch((err) => done('pass'));
+});
+
+passport.serializeUser((obj, done) => {
+    Provider.serializeUser(obj).then((provider) => done(null, provider))
+});
+
+// Support User and Provider account objects - will pass through to provider deserialization upon user failure.
+passport.deserializeUser((obj, done) => {
+    User.deserialize(obj)
+        .then((user) => done(null, user))
+        .catch((err) => done('pass'));
+});
+
+passport.deserializeUser((obj, done) => {
+    Provider.deserialize(obj).then((provider) => done(null, provider))
+});
 
 /* Main Logic */
 app.use('/', userRoutes);
 app.use('/', jobRoutes);
+app.use('/', providerRoutes);
+
 
 app.get('/authorize', checkAuth, (req, res) => {
     res.json({ authenticated : true });
@@ -73,7 +101,7 @@ app.get('/', async (req, res) => {
 
 /* Error Routes */
 app.all('*', (req, res, next) => {
-   res.sendStatus(404);
+    res.sendStatus(404);
 })
 
 
@@ -83,8 +111,8 @@ var key = fs.readFileSync(path.join(__dirname, '/certs/localhost-key.pem'), 'utf
 var cert = fs.readFileSync(path.join(__dirname, '/certs/localhost.pem'), 'utf8');
 
 var options = {
-  key: key,
-  cert: cert
+    key: key,
+    cert: cert
 };
 
 var httpServer = http.createServer(app);
