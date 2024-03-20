@@ -14,11 +14,16 @@ router.post('/register', async (req, res) => {
     try {
       const { username, email, password } = req.body;
 
-      const user = new User({email : email, username : username, password : password});
+      const user = new User({
+        email : email, 
+        username : username, 
+        password : password, 
+        available_pcu_count : 0
+      });
       const registeredUser = await User.register(user, password);
       res.status(201).json({ message: 'Registration successful' });
     } catch (error) {
-      res.status(500).json({ error: 'Registration failed' });
+      res.status(500).json({ error: 'Registration failed: ' + error });
     }
   });
 
