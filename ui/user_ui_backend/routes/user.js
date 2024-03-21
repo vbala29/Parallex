@@ -6,7 +6,6 @@ const locals = require('../app.locals.js')
 const User = require(locals.models + '/user');
 const checkAuth = require(locals.scripts + '/checkAuth');
 
-
 /* ENV variables */
 const secretKey = process.env.SECRET_KEY;
 

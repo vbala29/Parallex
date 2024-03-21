@@ -1,0 +1,17 @@
+{
+    "ip_addresses" : {
+        "command_server": "127.0.0.1",
+        "web_backend_server": "127.0.0.1",
+        "rabbitmq_broker": "127.0.0.1"
+    },
+    "ports" : {
+        "ray_dashboard": 8265,
+        "ray": 6379,
+        "command_server": 50051
+    },
+    "rabbitmq" : {
+        "username": "test",
+        "password": "test",
+        "job_submission_queue_name": "ray_job_startup"
+    }
+}

@@ -2,17 +2,20 @@ import time
 import asyncio
 import json
 from threading import Thread
+import subprocess
+from pathlib import Path
 from ray.job_submission import JobSubmissionClient, JobStatus
 
 from aqmp_tools.AQMPConsumerConnection import AQMPConsumerConnection
 from aqmp_tools.formats.job_submission_request import job_submission_request
 
-import subprocess
+base_path = Path(__file__).parent
+file_path = (base_path / '../../../config/config.json').resolve()
+config = json.load(open(file_path))
 
-QUEUE_NAME: str = "ray_job_startup"
+_QUEUE_NAME: str = config["rabbitmq"]["job_submission_queue_name"]
 _HEAD_START_DELAY_SECS: int = 20
-_EXPRESS_SERVER_IP: str = "127.0.0.1"
-
+_EXPRESS_SERVER_IP: str = config["ip_addresses"]["web_backend_server"]
 
 def wait_until_status(client, job_id, status_to_wait_for, timeout_seconds=5):
     start = time.time()
@@ -84,12 +87,12 @@ def start_background_loop(loop):
 if __name__ == "__main__":
     aqmp = AQMPConsumerConnection(_EXPRESS_SERVER_IP)
     aqmp.loop.run_until_complete(aqmp.setupAQMP())
-    aqmp.loop.run_until_complete(aqmp.initializeQueue(QUEUE_NAME))
+    aqmp.loop.run_until_complete(aqmp.initializeQueue(_QUEUE_NAME))
     t = Thread(target=start_background_loop, args=(aqmp.loop,), daemon=True)
     t.start()
 
     asyncio.run_coroutine_threadsafe(
-        aqmp.receive_messages(QUEUE_NAME, lambda msg: handleJobSubmissionRequest(msg)),
+        aqmp.receive_messages(_QUEUE_NAME, lambda msg: handleJobSubmissionRequest(msg)),
         aqmp.loop,
     )
 

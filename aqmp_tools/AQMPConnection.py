@@ -1,9 +1,14 @@
 import aio_pika
 import asyncio
+import json
+from pathlib import Path
 
-# TODO(vikbala): CHANGE, INSECURE.
-_DEFAULT_USER = 'test'
-_DEFAULT_PASS = 'test'
+base_path = Path(__file__).parent
+file_path = (base_path / '../config/config.json').resolve()
+config = json.load(open(file_path))
+
+_DEFAULT_USER = config["rabbitmq"]["username"]
+_DEFAULT_PASS = config["rabbitmq"]["password"]
 
 class AQMPConnection:
     def __init__(self, host):

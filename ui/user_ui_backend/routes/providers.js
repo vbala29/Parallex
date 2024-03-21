@@ -7,7 +7,6 @@ const Provider = require(locals.models + '/provider');
 const checkAuth = require(locals.scripts + '/checkAuth');
 const User = require(locals.models + '/user');
 
-
 /* ENV variables */
 const secretKey = process.env.SECRET_KEY;
 

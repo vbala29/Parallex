@@ -9,6 +9,7 @@ from threading import Thread
 import asyncio
 import json
 import socket
+from pathlib import Path
 
 import daemon_pb2_grpc
 import daemon_pb2
@@ -21,6 +22,10 @@ from aqmp_tools.formats.join_cluster_request import join_cluster_request
 from launch import launch_head
 from launch import launch_worker
 
+base_path = Path(__file__).parent
+file_path = (base_path / '../config/config.json').resolve()
+config = json.load(open(file_path))
+
 DYNAMIC_METRIC_INTERVAL_SEC: int = 1
 BYTES_IN_MEBIBYTE: int = 2 ^ 20
 CPU_FREQ_INTERVAL_SEC: int = 1
@@ -29,12 +34,9 @@ IP: str = ""
 
 _HEAD_START_DELAY_SECS: int = 5
 
-# Assumes AMQP and gRPC are on same node.
-_COMMAND_IP: str = "127.0.0.1"
-_COMMAND_PORT: int = 50051
-_COMMAND_IP_PORT: str = f"{_COMMAND_IP}:{_COMMAND_PORT}"
-
-_RAY_PORT: int = 6379
+_COMMAND_IP_PORT: str = f"{config['ip_addresses']['command_server']}:{config['ports']['command_server']}"
+_RAY_PORT: str = config["ports"]["ray"]
+_BROKER_IP : str = config["ip_addresses"]["rabbitmq_broker"]
 
 
 def sendStaticMetrics():
@@ -137,7 +139,7 @@ def start_background_loop(loop):
 
 
 if __name__ == "__main__":
-    aqmp = AQMPConsumerConnection(_COMMAND_IP)
+    aqmp = AQMPConsumerConnection(_BROKER_IP)
     setupUUID()
     aqmp.loop.run_until_complete(aqmp.setupAQMP())
     aqmp.loop.run_until_complete(aqmp.initializeQueue(UUID))

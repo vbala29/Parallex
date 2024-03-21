@@ -14,6 +14,8 @@ const unzipper = require('unzipper');
 const { v4: uuidv4 } = require('uuid');
 const Provider = require('../models/provider.js');
 
+var config = JSON.parse(fs.readFileSync(__dirname + '/../../../config/config.json', 'utf8'));
+
 /* gRPC protos */
 var PROTO_PATH = '/../../../protos/user.proto';
 // Suggested options for similarity to existing grpc.load behavior
@@ -28,7 +30,7 @@ const options = {
 var packageDefinition = protoLoader.loadSync(__dirname + PROTO_PATH)
 const job = grpc.loadPackageDefinition(packageDefinition).job.Job;
 const client = new job(
-    "127.0.0.1:50051",
+    config.ip_addresses.command_server + ":" + config.ports.command_server,
     grpc.credentials.createInsecure()
 );
 
@@ -136,8 +138,7 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
                     }
 
                     console.log("Head node ip: " + head_node_ip);
-                    var head_node_url = "http://" + head_node_ip + ":8265";
-                    // var head_node_url = "http://127.0.0.1:8265"
+                    var head_node_url = "http://" + head_node_ip + ":" + config.ports.ray_dashboard;
 
                     providers_assigned = [
                         {
