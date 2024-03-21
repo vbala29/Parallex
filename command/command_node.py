@@ -18,7 +18,8 @@ from aqmp_tools.AQMPProducerConnection import AQMPProducerConnection
 HEAD_NODE_CPUS = 1
 HEAD_NODE_RAM = 2048
 
-_COMMAND_IP = '0.0.0.0'
+_COMMAND_IP = "0.0.0.0"
+
 
 class Job:
     def __init__(self, ip):
@@ -39,14 +40,15 @@ class CommandNode:
         self.active_heads = []
 
     def add_provider(self, provider, uuid):
+        # I think `uuid` is irrelevant because it should be stored in `provider` already
         self.providers[provider.ip][uuid] = provider
         self.add_headnode(provider)
         asyncio.run_coroutine_threadsafe(aqmp.initializeQueue(provider.uuid), aqmp.loop)
 
-    def add_headnode(self, provider):
+    def add_headnode(self, provider: Provider):
         self.headNodes.append(provider)
 
-    def select_and_reserve_head(self):
+    def select_and_reserve_head(self) -> Provider:
         head = None
         for i, provider in enumerate(self.headNodes):
             if (
@@ -175,7 +177,10 @@ class JobHandler(user_pb2_grpc.JobServicer):
 
         if headNode is None:
             print("No head nodes available")
-            return user_pb2.HeadNode(headIP="INVALID_IP")
+            dummy_provider = user_pb2.Provider(
+                providerIP="INVALID_IP", providerID="INVALID_ID"
+            )
+            return user_pb2.JobSpec(headProvider=dummy_provider)
 
         # Send request right away to give head node time to initialize cluster
         print(f"Sending cluster head join request to provider: {headNode.uuid}")
@@ -186,7 +191,7 @@ class JobHandler(user_pb2_grpc.JobServicer):
         job = Job(headNode.ip)
         findLocation(job)
         print(f"Received a job from IP: {request.clientIP}")
-        providers = cm.select_providers((job.lat, job.lon), cpuCount, memoryCount)
+        providers = self.cm.select_providers((job.lat, job.lon), cpuCount, memoryCount)
         print(f"{len(providers)} provider(s) selected")
         print(f"providers nodes selected for job: {providers}")
 
@@ -197,7 +202,10 @@ class JobHandler(user_pb2_grpc.JobServicer):
                 aqmp.sendClusterJoinRequest(provider.uuid, req.dumps()), aqmp.loop
             )
 
-        return user_pb2.HeadNode(headIP=headNode.ip)
+        return user_pb2.JobSpec(
+            headProvider=headNode.to_proto(),
+            providers=[provider.to_proto() for provider in providers],
+        )
 
 
 def serve(cm):

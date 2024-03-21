@@ -104,14 +104,15 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
                         cpuCount : cpu_count, 
                         memoryCount : memory_count
                     }, 
-                    (err, head_node) => {
+                    (err, job_spec) => {
                         if (err) {
                             reject(err);
                         } else {
-                            resolve(head_node.headIP);
+                            resolve(job_spec);
                         }
                     }
-                )).then(async (head_node_ip) => {
+                )).then(async (job_spec) => {
+                    head_node_ip = job_spec.headProvider.providerIP
                     console.log("Head node ip: " + head_node_ip)
                     var head_node_url = "http://" + head_node_ip + ":8265";
                     // var head_node_url = "http://127.0.0.1:8265"

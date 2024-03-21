@@ -1,4 +1,6 @@
 import time
+from protos.build import daemon_pb2
+from protos.build import user_pb2
 
 
 class Provider:
@@ -31,6 +33,10 @@ class Provider:
         return "Provider uuid: {}, ip: {}, lat: {}, lon: {}".format(
             self.uuid, self.ip, self.lat, self.lon
         )
+
+    def to_proto(self):
+        """Converts the provider to a protobuf object."""
+        return user_pb2.Provider(providerIP=self.ip, providerID=self.uuid)
 
 
 class ProviderCandidate:

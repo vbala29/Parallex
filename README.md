@@ -79,7 +79,8 @@ Run build.sh from Parallex/ directory
 Run start_command_node.sh from command directory
 
 **Run Provider Daemon**
-Run run_daemon.sh from provider directory
+Inject env variable `PARALLEX_PROVIDER_ID` to be consistent with backend provider._id in model.
+Run run_daemon.sh from provider directory.
 
 ## Miscellaneous
 

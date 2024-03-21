@@ -2,6 +2,7 @@ import psutil
 import grpc
 import time
 import urllib.request
+import os
 import uuid
 from cpuinfo import get_cpu_info
 from threading import Thread
@@ -26,14 +27,15 @@ CPU_FREQ_INTERVAL_SEC: int = 1
 UUID: str = ""
 IP: str = ""
 
-_HEAD_START_DELAY_SECS:int = 5
+_HEAD_START_DELAY_SECS: int = 5
 
 # Assumes AMQP and gRPC are on same node.
-_COMMAND_IP: str = "10.0.0.136"
+_COMMAND_IP: str = "172.17.207.62"
 _COMMAND_PORT: int = 50051
 _COMMAND_IP_PORT: str = f"{_COMMAND_IP}:{_COMMAND_PORT}"
 
 _RAY_PORT: int = 6379
+
 
 def sendStaticMetrics():
     """Sends the following information to the command node:
@@ -84,14 +86,14 @@ async def handleClusterJoinRequest(msg):
 
         if typeStr == join_cluster_request.getTypeStr():
             print("Received join_cluster_request")
-            print(f' Sleeping for {_HEAD_START_DELAY_SECS}')
+            print(f" Sleeping for {_HEAD_START_DELAY_SECS}")
             time.sleep(_HEAD_START_DELAY_SECS)
             req = join_cluster_request.loadFromJson(jsonMsg)
             head_ip = req.getHeadIP()
             launch_worker.launch_worker(head_ip, _RAY_PORT)
 
         elif typeStr == head_node_join_cluster_request.getTypeStr():
-            print('Starting node as head')
+            print("Starting node as head")
             req = head_node_join_cluster_request.loadFromJson(jsonMsg)
             launch_head.launch_head(_RAY_PORT)
 
@@ -121,9 +123,12 @@ def _get_local_ip() -> str:
         s.connect(("8.8.8.8", 80))
         return s.getsockname()[0]
 
+
 def setupUUID():
-    global UUID 
-    UUID = str(uuid.uuid4())
+    global UUID
+    UUID = os.environ.get("PARALLEX_PROVIDER_ID")
+    if UUID is None:
+        UUID = str(uuid.uuid4())
 
 
 def start_background_loop(loop):
@@ -138,4 +143,4 @@ if __name__ == "__main__":
     aqmp.loop.run_until_complete(aqmp.initializeQueue(UUID))
     t = Thread(target=start_background_loop, args=(aqmp.loop,), daemon=True)
     t.start()
-    startDaemon() 
+    startDaemon()

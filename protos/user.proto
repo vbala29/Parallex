@@ -3,8 +3,7 @@ syntax = "proto3";
 package job;
 
 service Job {
-    rpc SendJob (JobMetrics) returns (HeadNode) {}
-
+    rpc SendJob (JobMetrics) returns (JobSpec) {}
 }
 
 message JobMetrics {
@@ -13,9 +12,16 @@ message JobMetrics {
     int32 memoryCount = 4;
 }
 
-message HeadNode {
-    string headIP = 1;
+message Provider {
+    string providerID = 1;
+    string providerIP = 2;
 }
+
+message JobSpec {
+    Provider headProvider = 1;
+    repeated Provider providers = 2;
+}
+
 
 message Empty {}
 
