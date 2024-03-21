@@ -28,7 +28,7 @@ const options = {
 var packageDefinition = protoLoader.loadSync(__dirname + PROTO_PATH)
 const job = grpc.loadPackageDefinition(packageDefinition).job.Job;
 const client = new job(
-    "172.17.207.62:50051",
+    "127.0.0.1:50051",
     grpc.credentials.createInsecure()
 );
 
