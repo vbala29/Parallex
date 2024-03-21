@@ -247,7 +247,6 @@ router.get('/available-pcu-count', checkAuth, async (req, res) => {
 })
 
 router.post('/buy-pcu', checkAuth, async (req, res) => {
-    console.log(req)
     await User.findOneAndUpdate(
         { '_id': req.userData.userId },
         { $inc: { available_pcu_count: req.body.pcu_bought } }
