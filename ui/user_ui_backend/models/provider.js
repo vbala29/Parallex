@@ -14,8 +14,8 @@ const ProviderSchema = new Schema({
         unique: true
     },
     jobs_running: [{
-        user: { type: String, required: true },
-        id: { type: Number, required: true },
+        userID: { type: String, required: true },
+        jobID: { type: String, required: true },
         time_start: { type: Number, required: true }, // Unix time
         time_end: { type: Number, required: false }, // Unix time
         pcu_consumed: { type: Number, required: true, default: 0 }

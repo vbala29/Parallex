@@ -12,6 +12,7 @@ const formidable = require('formidable');
 const fs = require('fs');
 const unzipper = require('unzipper');
 const { v4: uuidv4 } = require('uuid');
+const Provider = require('../models/provider.js');
 
 /* gRPC protos */
 var PROTO_PATH = '/../../../protos/user.proto';
@@ -51,6 +52,22 @@ router.get('/job-list', checkAuth, async (req, res) => {
         res.sendStatus(500);
     });
 });
+
+async function updateProvider(providerID, jobID, userID) {
+    console.log("updateProvider called with " + providerID + " " + jobID + " " + userID)
+    // Find the provider and add the new job to the runningJobs array
+    try {
+        await Provider.findOneAndUpdate(
+            { '_id': providerID },
+            { $push: { jobs_running: { jobID: jobID, userID: userID } } },
+            { new: true, useFindAndModify: false }
+        );
+
+    } catch (err) {
+        console.error("Error in Query for /create-job: " + err);
+    }
+}
+
 
 router.put('/create-job', checkAuth, async (req, res, next) => {
     const form = formidable.formidable({ multiples: false });
@@ -100,10 +117,10 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
                 var dummyIP = "8.8.8.8"; //Ipv4 Google DNS
                 new Promise((resolve, reject) => client.sendJob(
                     {
-                        clientIP : dummyIP, 
-                        cpuCount : cpu_count, 
-                        memoryCount : memory_count
-                    }, 
+                        clientIP: dummyIP,
+                        cpuCount: cpu_count,
+                        memoryCount: memory_count
+                    },
                     (err, job_spec) => {
                         if (err) {
                             reject(err);
@@ -112,10 +129,17 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
                         }
                     }
                 )).then(async (job_spec) => {
-                    head_node_ip = job_spec.headProvider.providerIP
-                    console.log("Head node ip: " + head_node_ip)
+                    head_node_ip = job_spec.headProvider.providerIP;
+
+                    if (head_node_ip.toLowerCase().includes("invalid")) {
+                        throw new Error("Invalid head node IP");
+                    }
+
+                    console.log("Head node ip: " + head_node_ip);
                     var head_node_url = "http://" + head_node_ip + ":8265";
                     // var head_node_url = "http://127.0.0.1:8265"
+
+                    // Update Jobs DB
                     await doc.jobs_created.push(
                         {
                             name: uniqueID,
@@ -126,9 +150,29 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
                             memory_count: memory_count,
                             unique_id: uniqueID,
                             job_cost: 0,
+                            providers_assigned: [
+                                {
+                                    provider_id: job_spec.headProvider.providerID,
+                                    status: "pending"
+                                },
+                                ...job_spec.providers.map(provider => {
+                                    return {
+                                        provider_id: provider.providerID,
+                                        status: "pending"
+                                    }
+                                })
+                            ]
                         });
                     await doc.save();
+                    console.log('created jobs')
 
+                    await updateProvider(job_spec.headProvider.providerID, uniqueID, req.userData.userId);
+
+                    await Promise.all(job_spec.providers.map(provider =>
+                        updateProvider(provider.providerID, uniqueID, req.userData.userId)
+                    ));
+
+                    // Send job submission request to head node
                     aqmp.make_job_submission_request(uniqueID, head_node_url)
                     res.sendStatus(201);
                 }).catch((err) => {
