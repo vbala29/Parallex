@@ -139,6 +139,18 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
                     var head_node_url = "http://" + head_node_ip + ":8265";
                     // var head_node_url = "http://127.0.0.1:8265"
 
+                    providers_assigned = [
+                        {
+                            providerID: job_spec.headProvider.providerID,
+                            status: "pending"
+                        },
+                        ...(job_spec.providers.length > 0 ? job_spec.providers.map(provider => {
+                            return {
+                                providerID: provider.providerID,
+                                status: "pending"
+                            }
+                        }) : [])
+                    ]
                     // Update Jobs DB
                     await doc.jobs_created.push(
                         {
@@ -150,27 +162,18 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
                             memory_count: memory_count,
                             unique_id: uniqueID,
                             job_cost: 0,
-                            providers_assigned: [
-                                {
-                                    provider_id: job_spec.headProvider.providerID,
-                                    status: "pending"
-                                },
-                                ...job_spec.providers.map(provider => {
-                                    return {
-                                        provider_id: provider.providerID,
-                                        status: "pending"
-                                    }
-                                })
-                            ]
+                            providers_assigned: providers_assigned
                         });
                     await doc.save();
                     console.log('created jobs')
 
                     await updateProvider(job_spec.headProvider.providerID, uniqueID, req.userData.userId);
 
-                    await Promise.all(job_spec.providers.map(provider =>
-                        updateProvider(provider.providerID, uniqueID, req.userData.userId)
-                    ));
+                    if (job_spec.providers.length > 0) {
+                        await Promise.all(job_spec.providers.map(provider =>
+                            updateProvider(provider.providerID, uniqueID, req.userData.userId)
+                        ));
+                    }
 
                     // Send job submission request to head node
                     aqmp.make_job_submission_request(uniqueID, head_node_url)
