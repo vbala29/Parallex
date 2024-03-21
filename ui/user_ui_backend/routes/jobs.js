@@ -144,7 +144,7 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
                             providerID: job_spec.headProvider.providerID,
                             status: "pending"
                         },
-                        ...(job_spec.providers.length > 0 ? job_spec.providers.map(provider => {
+                        ...(job_spec.providers ? job_spec.providers.map(provider => {
                             return {
                                 providerID: provider.providerID,
                                 status: "pending"
@@ -169,7 +169,7 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
 
                     await updateProvider(job_spec.headProvider.providerID, uniqueID, req.userData.userId);
 
-                    if (job_spec.providers.length > 0) {
+                    if (job_spec.providers > 0) {
                         await Promise.all(job_spec.providers.map(provider =>
                             updateProvider(provider.providerID, uniqueID, req.userData.userId)
                         ));
