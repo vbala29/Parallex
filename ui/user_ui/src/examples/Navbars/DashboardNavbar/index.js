@@ -16,7 +16,7 @@ Coded by www.creative-tim.com
 import { useState, useEffect } from "react";
 
 // react-router components
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
@@ -36,6 +36,10 @@ import SoftInput from "components/SoftInput";
 // Soft UI Dashboard React examples
 import Breadcrumbs from "examples/Breadcrumbs";
 import NotificationItem from "examples/Items/NotificationItem";
+
+import Cookies from 'js-cookie';
+
+import axios from 'axios';
 
 // Custom styles for DashboardNavbar
 import {
@@ -58,12 +62,23 @@ import {
 import team2 from "assets/images/team-2.jpg";
 import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
 
+
 function DashboardNavbar({ absolute, light, isMini }) {
   const [navbarType, setNavbarType] = useState();
   const [controller, dispatch] = useSoftUIController();
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator } = controller;
   const [openMenu, setOpenMenu] = useState(false);
+  const [username, setUsername] = useState("");
   const route = useLocation().pathname.split("/").slice(1);
+  const navigate = useNavigate();
+  const [availablePCUs, setAvailablePCUs] = useState(0);
+  const [PCUPrice, setPCUPrice] = useState("5.24");
+
+
+  const logout = () => {
+    Cookies.set("token", "");
+    navigate("/authentication/sign-in");
+  }
 
   useEffect(() => {
     // Setting the navbar type
@@ -72,11 +87,24 @@ function DashboardNavbar({ absolute, light, isMini }) {
     } else {
       setNavbarType("static");
     }
+    setUsername(Cookies.get("username"))
 
     // A function that sets the transparent state of the navbar.
     function handleTransparentNavbar() {
       setTransparentNavbar(dispatch, (fixedNavbar && window.scrollY === 0) || !fixedNavbar);
     }
+
+    const host = "http://localhost:8080";
+    axios.get(host + "/available-pcu-count", {headers: {
+      authorization: "Basic " + Cookies.get("token")
+    }})
+      .then(response => {
+        setAvailablePCUs(response.data.available_pcu_count)
+      })
+      .catch(error => {
+        alert(error);
+      })
+
 
     /** 
      The event listener that's calling the handleTransparentNavbar function when 
@@ -91,9 +119,9 @@ function DashboardNavbar({ absolute, light, isMini }) {
     return () => window.removeEventListener("scroll", handleTransparentNavbar);
   }, [dispatch, fixedNavbar]);
 
-  const handleMiniSidenav = () => setMiniSidenav(dispatch, !miniSidenav);
-  const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
-  const handleOpenMenu = (event) => setOpenMenu(event.currentTarget);
+  // const handleMiniSidenav = () => setMiniSidenav(dispatch, !miniSidenav);
+  // const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
+  // const handleOpenMenu = (event) => setOpenMenu(event.currentTarget);
   const handleCloseMenu = () => setOpenMenu(false);
 
   // Render the notifications menu
@@ -145,16 +173,33 @@ function DashboardNavbar({ absolute, light, isMini }) {
         <SoftBox color="inherit" mb={{ xs: 1, md: 0 }} sx={(theme) => navbarRow(theme, { isMini })}>
           <Breadcrumbs icon="home" title={route[route.length - 1]} route={route} light={light} />
         </SoftBox>
+        <SoftBox display="flex" flex-direction="row">
+          <SoftBox pr={15}>
+            <Link to="/billing">
+              <SoftTypography variant="h6">
+                PCU: XXX USD
+              </SoftTypography>
+            </Link>
+          </SoftBox>
+          <SoftBox pr={0}>
+            <Link to="/billing">
+              <SoftTypography variant="h6">
+                Available PCUs: {availablePCUs}
+              </SoftTypography>
+            </Link>
+          </SoftBox>
+        </SoftBox>
         {isMini ? null : (
           <SoftBox sx={(theme) => navbarRow(theme, { isMini })}>
             <SoftBox pr={1}>
-              <SoftInput
-                placeholder="Type here..."
-                icon={{ component: "search", direction: "left" }}
-              />
+              <Link to="/dashboard">
+                <SoftTypography variant="h5">
+                  {username}
+                </SoftTypography>
+              </Link>
             </SoftBox>
             <SoftBox color={light ? "white" : "inherit"}>
-              <Link to="/authentication/sign-in">
+              <Link to="/dashboard">
                 <IconButton sx={navbarIconButton} size="small">
                   <Icon
                     sx={({ palette: { dark, white } }) => ({
@@ -163,45 +208,14 @@ function DashboardNavbar({ absolute, light, isMini }) {
                   >
                     account_circle
                   </Icon>
-                  {/* <SoftTypography
-                    variant="button"
-                    fontWeight="medium"
-                    color={light ? "white" : "dark"}
-                  >
-                    Sign in
-                  </SoftTypography> */}
                 </IconButton>
               </Link>
-              {/* <IconButton
-                size="small"
-                color="inherit"
-                sx={navbarMobileMenu}
-                onClick={handleMiniSidenav}
-              >
-                <Icon className={light ? "text-white" : "text-dark"}>
-                  {miniSidenav ? "menu_open" : "menu"}
-                </Icon>
-              </IconButton>
-              <IconButton
-                size="small"
-                color="inherit"
-                sx={navbarIconButton}
-                onClick={handleConfiguratorOpen}
-              >
-                <Icon>settings</Icon>
-              </IconButton>
-              <IconButton
-                size="small"
-                color="inherit"
-                sx={navbarIconButton}
-                aria-controls="notification-menu"
-                aria-haspopup="true"
-                variant="contained"
-                onClick={handleOpenMenu}
-              >
-                <Icon className={light ? "text-white" : "text-dark"}>notifications</Icon>
-              </IconButton> */}
               {renderMenu()}
+            </SoftBox>
+            <SoftBox pr={1} onClick={logout} style={{ cursor: 'pointer' }}>
+              <SoftTypography variant="h6">
+                logout
+              </SoftTypography>
             </SoftBox>
           </SoftBox>
         )}

@@ -43,6 +43,9 @@ import OrderOverview from "layouts/dashboard/components/OrderOverview";
 // Data
 import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
 import gradientLineChartData from "layouts/dashboard/data/gradientLineChartData";
+import { useEffect, useState } from "react";
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
 function Dashboard() {
   // We want the dashboard to contain a chart of all jobs. Ongoing and finished?
@@ -51,6 +54,21 @@ function Dashboard() {
 
   const { size } = typography;
   const { chart, items } = reportsBarChartData;
+  const [dashboardData, setDashboardData] = useState({});
+
+  useEffect(() => {
+    const host = "http://localhost:8080";
+    axios.get(host + "/dashboard-info", {headers: {
+      authorization: "Basic " + Cookies.get("token")
+    }})
+      .then(response => {
+        setDashboardData(response.data);
+        console.log(response.data);
+      })
+      .catch(error => {
+        alert(error);
+    })
+  },[]);
 
   return (
     <DashboardLayout>
@@ -61,28 +79,28 @@ function Dashboard() {
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard
                 title={{ text: "Jobs Run This Month" }}
-                count="7"
+                count= {dashboardData.one_month_job_count ? dashboardData.one_month_job_count : 0}
                 icon={{ color: "info", component: "paid" }}
               />
             </Grid>
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard
                 title={{ text: "Total Cost" }}
-                count="$18.90"
+                count={dashboardData.total_cost ? "$" + dashboardData.total_cost :"$" +  0}
                 icon={{ color: "info", component: "paid" }}
               />
             </Grid>
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard
                 title={{ text: "Average Job Duration" }}
-                count="62.2 Minutes"
+                count={dashboardData.avg_duration ? dashboardData.avg_duration : 0 + " minutes"}
                 icon={{ color: "info", component: "emoji_events" }}
               />
             </Grid>
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard
                 title={{ text: "Average Job Cost" }}
-                count="$2.70"
+                count={dashboardData.avg_cost ? "$" +  dashboardData.avg_cost : "$" +  0}
                 icon={{
                   color: "info",
                   component: "paid",

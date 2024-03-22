@@ -6,6 +6,7 @@ from concurrent import futures
 import asyncio
 from threading import Thread
 import urllib
+from pathlib import Path
 
 from command.provider import Provider, ProviderCandidate
 from protos.build import daemon_pb2
@@ -18,7 +19,10 @@ from aqmp_tools.AQMPProducerConnection import AQMPProducerConnection
 HEAD_NODE_CPUS = 1
 HEAD_NODE_RAM = 2048
 
-_COMMAND_IP = "0.0.0.0"
+base_path = Path(__file__).paren
+file_path = (base_path / '../config/config.json').resolve()
+config = json.load(open(file_path))
+_RABBITMQ_BROKER = config["ip_addresses"]["rabbitmq_broker"]
 
 
 class Job:
@@ -239,7 +243,7 @@ def start_background_loop(loop):
 
 if __name__ == "__main__":
     cm = CommandNode()
-    aqmp = AQMPProducerConnection(_COMMAND_IP)
+    aqmp = AQMPProducerConnection(_RABBITMQ_BROKER)
     aqmp.loop.run_until_complete(aqmp.setupAQMP())
     t = Thread(target=start_background_loop, args=(aqmp.loop,), daemon=True)
     t.start()

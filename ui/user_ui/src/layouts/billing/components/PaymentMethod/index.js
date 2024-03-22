@@ -31,11 +31,14 @@ import borders from "assets/theme/base/borders";
 import masterCardLogo from "assets/images/logos/mastercard.png";
 import visaLogo from "assets/images/logos/visa.png";
 
+import {FormControl, FormLabel, RadioGroup, FormControlLabel, Radio} from "@mui/material";
+
+
 function PaymentMethod() {
   const { borderWidth, borderColor } = borders;
 
   return (
-    <Card id="delete-account">
+    <Card id="delete-account" sx={{flexGrow:1}}>
       <SoftBox pt={2} px={2} display="flex" justifyContent="space-between" alignItems="center">
         <SoftTypography variant="h6" fontWeight="medium">
           Payment Method
@@ -45,10 +48,16 @@ function PaymentMethod() {
           &nbsp;add new card
         </SoftButton>
       </SoftBox>
-      <SoftBox p={2}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
-            <SoftBox
+      <SoftBox p={10}>
+        <Grid container display="flex" flexDirection="column" spacing={3}>
+        <FormControl >
+          <FormLabel id="demo-radio-buttons-group-label"></FormLabel>
+          <RadioGroup
+            aria-labelledby="demo-radio-buttons-group-label"
+            defaultValue="female"
+            name="radio-buttons-group"
+          >
+            <FormControlLabel value="female" control={<Radio />} label={<SoftBox
               border={`${borderWidth[1]} solid ${borderColor}`}
               borderRadius="lg"
               display="flex"
@@ -67,10 +76,8 @@ function PaymentMethod() {
                   </Icon>
                 </Tooltip>
               </SoftBox>
-            </SoftBox>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <SoftBox
+            </SoftBox>} />
+            <FormControlLabel value="male" control={<Radio />} label={<SoftBox
               border={`${borderWidth[1]} solid ${borderColor}`}
               borderRadius="lg"
               display="flex"
@@ -89,8 +96,9 @@ function PaymentMethod() {
                   </Icon>
                 </Tooltip>
               </SoftBox>
-            </SoftBox>
-          </Grid>
+            </SoftBox>} />
+          </RadioGroup>
+        </FormControl>
         </Grid>
       </SoftBox>
     </Card>

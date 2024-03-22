@@ -20,7 +20,6 @@ import Grid from "@mui/material/Grid";
 import SoftBox from "components/SoftBox";
 
 // Soft UI Dashboard React components
-import MasterCard from "examples/Cards/MasterCard";
 import DefaultInfoCard from "examples/Cards/InfoCards/DefaultInfoCard";
 
 // Soft UI Dashboard React examples
@@ -31,58 +30,46 @@ import Footer from "examples/Footer";
 // Billing page components
 import PaymentMethod from "layouts/billing/components/PaymentMethod";
 import Invoices from "layouts/billing/components/Invoices";
-import BillingInformation from "layouts/billing/components/BillingInformation";
-import Transactions from "layouts/billing/components/Transactions";
+import BuyPCU from "./components/BuyPCU";
+
+import {useEffect, useState} from 'react';
+
+import axios from 'axios';
+
+import Cookies from 'js-cookie';
 
 function Billing() {
+  const [availablePCUs, setAvailablePCUs] = useState(0);
+  const getPCUs = () => {
+    const host = "http://localhost:8080";
+    axios.get(host + "/available-pcu-count", {headers: {
+      authorization: "Basic " + Cookies.get("token")
+    }})
+      .then(response => {
+        setAvailablePCUs(response.data.available_pcu_count)
+      })
+      .catch(error => {
+        alert(error);
+      })
+  }
+  useEffect(() => {
+    getPCUs();
+  },[]);
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      <SoftBox mt={4}>
-        <SoftBox mb={1.5}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} lg={8}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} xl={6}>
-                  <MasterCard number={4562112245947852} holder="jack peterson" expires="11/22" />
-                </Grid>
-                <Grid item xs={12} md={6} xl={3}>
-                  <DefaultInfoCard
-                    icon="account_balance"
-                    title="salary"
-                    description="Belong Interactive"
-                    value="+$2000"
-                  />
-                </Grid>
-                <Grid item xs={12} md={6} xl={3}>
-                  <DefaultInfoCard
-                    icon="paypal"
-                    title="paypal"
-                    description="Freelance Payment"
-                    value="$455.00"
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <PaymentMethod />
-                </Grid>
-              </Grid>
-            </Grid>
-            <Grid item xs={12} lg={4}>
-              <Invoices />
-            </Grid>
-          </Grid>
+        <SoftBox display="flex" flex-direction="row">
+          <PaymentMethod/>
+          <Invoices />
         </SoftBox>
-        <SoftBox my={3}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={7}>
-              <BillingInformation />
-            </Grid>
-            <Grid item xs={12} md={5}>
-              <Transactions />
-            </Grid>
-          </Grid>
+        <SoftBox display="flex" flex-direction="row">
+          <DefaultInfoCard
+            icon="account_balance"
+            title="PCUs"
+            value={availablePCUs}
+          />
+          <BuyPCU/>
         </SoftBox>
-      </SoftBox>
       <Footer />
     </DashboardLayout>
   );
