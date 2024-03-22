@@ -8,8 +8,10 @@ service Job {
 
 message JobMetrics {
     string clientIP = 1;
-    int32 cpuCount = 3;
-    int32 memoryCount = 4;
+    string jobID = 2;
+    string jobUserID = 3;
+    int32 cpuCount = 4;
+    int32 memoryCount = 5;
 }
 
 message Provider {

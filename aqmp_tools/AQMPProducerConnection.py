@@ -11,8 +11,14 @@ class AQMPProducerConnection(AQMPConnection):
         message = aio_pika.Message(body=jsonMessage.encode())
         await self.channel.default_exchange.publish(message, routing_key=queueName)
 
-    async def sendHeadNodeClusterJoinRequest(self, queueName):
+    async def sendHeadNodeClusterJoinRequest(
+        self, provider_map: dict[str, str], job_id: str, job_userid: str, queueName: str
+    ):
         message = aio_pika.Message(
-            body=head_node_join_cluster_request.createNewRequest().dumps().encode()
+            body=head_node_join_cluster_request.createNewRequest(
+                job_id, job_userid, provider_map
+            )
+            .dumps()
+            .encode()
         )
         await self.channel.default_exchange.publish(message, routing_key=queueName)
