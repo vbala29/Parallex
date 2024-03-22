@@ -29,9 +29,7 @@ def run_script(script, host, scriptArg=None):
     if script == "install_mongodb.sh":
         os.system(f"scp -i Parallex-prod.pem scripts/amzn23-mongo.yum {user}@{host}:~")
     os.system(f"ssh -i Parallex-prod.pem {user}@{host} \"chmod +x {script}\"")
-    print("IN HERE 1")
     os.system(f"ssh -i Parallex-prod.pem {user}@{host} \"./{script} {scriptArg}\"")
-    print("IN HERE 2")
 
 def install_git_redhat(host):
     if not args.install_dependencies:
@@ -99,7 +97,6 @@ def run_service(service_name, host, scriptArg=None):
         install_conda_debian(host)
         install_command_server(host)
         install_and_start_rabbitmq(rabbitmq_broker) # Will be on same machine as command server
-        print("IN HERE")
     if service_name == "web_backend_server":
         install_git_redhat(host)
         install_conda_redhat(host)
@@ -111,8 +108,9 @@ def run_service(service_name, host, scriptArg=None):
 
 command_server = data["ip_addresses"]['command_server']
 rabbitmq_broker = data["ip_addresses"]['rabbitmq_broker']
-web_backend_server = data["ip_addresses"]['web_backend_server']
+web_backend_server = data["ip_addresses"]['web_backend_server'] # Frontend will run on same server
 
-run_service("command_server", command_server)
-run_service("web_backend_server", web_backend_server)
-run_service("web_frontend", web_backend_server)
+install_service("command_server", command_server)
+install_service("web_backend_server", web_backend_server)
+
+run_services(command_server, web_backend_server)

@@ -270,7 +270,7 @@ def send_static_metrics():
     CPUName = cpu_info["brand_raw"] + " " + cpu_info["arch"]
     MiBRam = psutil.virtual_memory().total / (BYTES_IN_MEBIBYTE)
 
-    response = stub.send_static_metrics(
+    response = stub.SendStaticMetrics(
         daemon_pb2.StaticMetrics(
             CPUNumCores=CPUNumCores,
             CPUName=CPUName,
@@ -289,7 +289,7 @@ def send_dynamic_metrics():
     MiBRamUsage = psutil.virtual_memory().used / (BYTES_IN_MEBIBYTE)
     CPUUsage = psutil.cpu_percent(interval=CPU_FREQ_INTERVAL_SEC)
     try:
-        response = stub.send_dynamic_metrics(
+        response = stub.SendDynamicMetrics(
             daemon_pb2.DynamicMetrics(
                 CPUUsage=CPUUsage, MiBRamUsage=MiBRamUsage, clientIP=IP, uuid=UUID
             )
