@@ -9,3 +9,4 @@ export PYTHONPATH=$PYTHONPATH:$(pwd)
 cd ../../command
 echo $PYTHONPATH
 python command_node.py &
+echo "HI"
