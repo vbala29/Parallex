@@ -26,10 +26,9 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useState } from "react";
 
-import fs from 'fs';
+import config from "../../../../config.json"
 
 function BuyPCU() {
-  var config = JSON.parse(fs.readFileSync(__dirname + '/../../../../config/config.json', 'utf8'));
   const [numPCUs, setNumPCUs] = useState(0);
   const purchase = () => {
     const host = config.ip_addresses.web_backend_server;

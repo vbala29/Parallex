@@ -38,10 +38,9 @@ import curved6 from "assets/images/curved-images/curved14.jpg";
 
 import axios from 'axios';
 
-import fs from 'fs';
+import config from "../../../config.json"
 
 function SignUp() {
-  var config = JSON.parse(fs.readFileSync(__dirname + '/../../../config/config.json', 'utf8'));
   const [agreement, setAgremment] = useState(true);
 
   const handleSetAgremment = () => setAgremment(!agreement);

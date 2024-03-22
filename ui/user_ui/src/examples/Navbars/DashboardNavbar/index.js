@@ -62,7 +62,7 @@ import {
 import team2 from "assets/images/team-2.jpg";
 import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
 
-import fs from "fs";
+import config from "../../../config.json"
 
 
 function DashboardNavbar({ absolute, light, isMini }) {
@@ -96,7 +96,6 @@ function DashboardNavbar({ absolute, light, isMini }) {
       setTransparentNavbar(dispatch, (fixedNavbar && window.scrollY === 0) || !fixedNavbar);
     }
 
-    var config = JSON.parse(fs.readFileSync(__dirname + '/../../../config/config.json', 'utf8'));
     const host = config.ip_addresses.web_backend_server;
     axios.get(host + "/available-pcu-count", {headers: {
       authorization: "Basic " + Cookies.get("token")

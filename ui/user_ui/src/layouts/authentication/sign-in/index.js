@@ -37,11 +37,10 @@ import axios from 'axios';
 
 import Cookies from 'js-cookie';
 
-import fs from 'fs';
+import config from "../../../config.json"
 
 
 function SignIn() {
-  var config = JSON.parse(fs.readFileSync(__dirname + '/../../../config/config.json', 'utf8'));
 
   const [rememberMe, setRememberMe] = useState(true);
 

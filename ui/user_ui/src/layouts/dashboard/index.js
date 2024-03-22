@@ -47,7 +47,7 @@ import { useEffect, useState } from "react";
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-import fs from 'fs';
+import config from "../../config.json"
 
 function Dashboard() {
   // We want the dashboard to contain a chart of all jobs. Ongoing and finished?
@@ -59,7 +59,6 @@ function Dashboard() {
   const [dashboardData, setDashboardData] = useState({});
 
   useEffect(() => {
-    var config = JSON.parse(fs.readFileSync(__dirname + '/../../../config/config.json', 'utf8'));
     const host = config.ip_addresses.web_backend_server;
     axios.get(host + "/dashboard-info", {headers: {
       authorization: "Basic " + Cookies.get("token")

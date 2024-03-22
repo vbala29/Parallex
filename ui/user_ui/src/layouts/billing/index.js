@@ -38,12 +38,11 @@ import axios from 'axios';
 
 import Cookies from 'js-cookie';
 
-import fs from 'fs';
+import config from "../../config.json"
 
 function Billing() {
   const [availablePCUs, setAvailablePCUs] = useState(0);
   const getPCUs = () => {
-    var config = JSON.parse(fs.readFileSync(__dirname + '/../../../config/config.json', 'utf8'));
     const host = config.ip_addresses.web_backend_server;
     axios.get(host + "/available-pcu-count", {headers: {
       authorization: "Basic " + Cookies.get("token")
