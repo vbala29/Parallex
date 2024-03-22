@@ -80,7 +80,7 @@ command_server = data["ip_addresses"]['command_server']
 rabbitmq_broker = data["ip_addresses"]['rabbitmq_broker']
 web_backend_server = data["ip_addresses"]['web_backend_server']
 
-run_service("rabbitmq_broker", rabbitmq_broker)
+# run_service("rabbitmq_broker", rabbitmq_broker)
 run_service("command_server", command_server)
 run_service("web_backend_server", web_backend_server)
 run_service("web_frontend", web_backend_server)

@@ -1,7 +1,7 @@
 {
     "ip_addresses" : {
-        "command_server": "3.83.243.23",
-        "web_backend_server": "34.207.129.79",
+        "command_server": "54.152.29.28",
+        "web_backend_server": "3.87.12.135",
         "rabbitmq_broker": "34.239.130.32"
     },
     "ports" : {
