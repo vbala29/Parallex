@@ -21,7 +21,7 @@ HEAD_NODE_CPUS = 1
 HEAD_NODE_RAM = 2048
 
 base_path = Path(__file__).parent
-file_path = (base_path / '../config/config.json').resolve()
+file_path = (base_path / "../config/config.json").resolve()
 config = json.load(open(file_path))
 _RABBITMQ_BROKER = config["ip_addresses"]["rabbitmq_broker"]
 
@@ -167,8 +167,10 @@ class DaemonHandler(daemon_pb2_grpc.MetricsServicer):
         return daemon_pb2.Empty()
 
 
-def _build_provider_map(providers: list[Provider]) -> dict[str, str]:
-    return {provider.ip: provider.uuid for provider in providers}
+def _build_provider_map(head: Provider, providers: list[Provider]) -> dict[str, str]:
+    provider_map = {provider.ip: provider.uuid for provider in providers}
+    provider_map[head.ip] = head.uuid
+    return provider_map
 
 
 class JobHandler(user_pb2_grpc.JobServicer):
@@ -176,6 +178,7 @@ class JobHandler(user_pb2_grpc.JobServicer):
         self.cm = cm
 
     def SendJob(self, request, context):
+        print(f"Received request: {request}")
         job_id = request.jobID
         job_userid = request.jobUserID
         cpuCount = request.cpuCount
@@ -185,7 +188,6 @@ class JobHandler(user_pb2_grpc.JobServicer):
         headNode = self.cm.select_and_reserve_head()
 
         print(f"Selected and reserved head: {headNode}")
-
         if headNode is None:
             print("No head nodes available")
             dummy_provider = user_pb2.Provider(
@@ -193,25 +195,27 @@ class JobHandler(user_pb2_grpc.JobServicer):
             )
             return user_pb2.JobSpec(headProvider=dummy_provider)
 
-        # Send request right away to give head node time to initialize cluster
-        print(f"Sending cluster head join request to provider: {headNode.uuid}")
-
-        asyncio.run_coroutine_threadsafe(
-            aqmp.sendHeadNodeClusterJoinRequest(
-                provider_map=_build_provider_map(providers),
-                job_id=job_id,
-                job_userid=job_userid,
-                queueName=headNode.uuid,
-            ),
-            aqmp.loop,
-        )
-
         job = Job(headNode.ip)
         findLocation(job)
         print(f"Received a job from IP: {request.clientIP}")
         providers = self.cm.select_providers((job.lat, job.lon), cpuCount, memoryCount)
         print(f"{len(providers)} provider(s) selected")
         print(f"providers nodes selected for job: {providers}")
+
+        # Send request right away to give head node time to initialize cluster
+        print(f"Sending cluster head join request to provider: {headNode.uuid}")
+        provider_map = _build_provider_map(headNode, providers)
+        print(f'provider map: {provider_map}')
+
+        asyncio.run_coroutine_threadsafe(
+            aqmp.sendHeadNodeClusterJoinRequest(
+                provider_map=provider_map,
+                job_id=job_id,
+                job_userid=job_userid,
+                queueName=headNode.uuid,
+            ),
+            aqmp.loop,
+        )
 
         for provider in providers:
             print(f"Sending cluster join request to provider: {provider.uuid}")

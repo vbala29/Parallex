@@ -138,6 +138,8 @@ class ResourceUpdateRunner:
             "job_userid": self.job_userid,
             "pcu_increment": pcu,
         }
+
+        print(f"sending resource: {data}")
         if time_end is not None:
             data["time_end"] = time_end
 
@@ -153,7 +155,7 @@ class ResourceUpdateRunner:
             self._send_resource(provider_id, cpu, ram)
 
     def _get_ray_node_map(self):
-        ray_command = f"ray list nodes --format=json"
+        ray_command = "ray list nodes --format=json"
 
         node_info = json.loads(
             subprocess.check_output(
@@ -214,6 +216,8 @@ class ResourceUpdateRunner:
         ).decode("utf8")
 
         ray_node_map = self._get_ray_node_map()
+
+        print(f"ray node map: {ray_node_map}")
 
         # Parse the output.
         # First identify the entries for each node, uniquely prefixed by Node: followed by a new line
@@ -302,6 +306,7 @@ async def handle_cluster_join_request(msg):
             print("Starting node as head")
             req = head_node_join_cluster_request.loadFromJson(jsonMsg)
             launch_head.launch_head(_RAY_PORT)
+            print(f"provider map: {req.provider_map()}")
             resource_update_runner = ResourceUpdateRunner(
                 _BACKEND_IP,
                 req.provider_map(),
