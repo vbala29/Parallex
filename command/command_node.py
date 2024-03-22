@@ -167,8 +167,10 @@ class DaemonHandler(daemon_pb2_grpc.MetricsServicer):
         return daemon_pb2.Empty()
 
 
-def _build_provider_map(providers: list[Provider]) -> dict[str, str]:
-    return {provider.ip: provider.uuid for provider in providers}
+def _build_provider_map(head: Provider, providers: list[Provider]) -> dict[str, str]:
+    provider_map = {provider.ip: provider.uuid for provider in providers}
+    provider_map[head.ip] = head.uuid
+    return provider_map
 
 
 class JobHandler(user_pb2_grpc.JobServicer):
@@ -202,17 +204,18 @@ class JobHandler(user_pb2_grpc.JobServicer):
 
         # Send request right away to give head node time to initialize cluster
         print(f"Sending cluster head join request to provider: {headNode.uuid}")
+        provider_map = _build_provider_map(headNode, providers)
+        print(f'provider map: {provider_map}')
 
         asyncio.run_coroutine_threadsafe(
             aqmp.sendHeadNodeClusterJoinRequest(
-                provider_map=_build_provider_map(providers),
+                provider_map=provider_map,
                 job_id=job_id,
                 job_userid=job_userid,
                 queueName=headNode.uuid,
             ),
             aqmp.loop,
         )
-
 
         for provider in providers:
             print(f"Sending cluster join request to provider: {provider.uuid}")
