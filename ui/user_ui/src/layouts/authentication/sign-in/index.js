@@ -66,10 +66,11 @@ function SignIn() {
         console.log(response);
         const token = response.data.token;
         Cookies.set("token", token);
+        Cookies.set("username", username);
         navigate("/dashboard");
       })
       .catch(error => {
-        console.log(error);
+        alert(error);
       })
   }
   return (

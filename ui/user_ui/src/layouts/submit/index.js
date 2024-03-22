@@ -50,6 +50,7 @@ function Submit() {
   const [ram, setRam] = useState(0);
   const [status, setStatus] = useState("");
   const [myFiles, setMyFiles] = useState([]);
+  const [jobName, setJobName] = useState("test");
 
   const onDrop = useCallback(acceptedFiles => {
     setMyFiles([...myFiles, ...acceptedFiles])
@@ -72,9 +73,9 @@ function Submit() {
   const submitJobs = () => {
     try {
       const formData = new FormData();
-      formData.append('name', "test")
-      formData.append('cpu_count', "3")
-      formData.append('memory_count', "100")
+      formData.append('name', jobName)
+      formData.append('cpu_count', cores)
+      formData.append('memory_count', ram)
       myFiles.map(file => (
         formData.append('file', file)
       ));
@@ -141,6 +142,8 @@ function Submit() {
                   autoComplete="off"
                 >
               <CardHeader title="Job Specifications"/>
+                <TextField required  id="outlined-name" variant="outlined" label="Job Name" defaultValue="test" margin="normal" value={jobName} onChange={(e) => setJobName(e.target.value)}></TextField>  
+                <div style={{height:"8px"}}></div>
                 <TextField required  id="outlined-cores" variant="outlined" label="CPU Cores" defaultValue="0" margin="normal" value={cores} onChange={(e) => setCores(e.target.value)}></TextField>  
                 <div style={{height:"8px"}}></div>
                 <TextField required  id="outlined-ram" variant="outlined" label="MiB RAM" defaultValue="0" margin="normal" value={ram} onChange={(e) => setRam(e.target.value)}></TextField>

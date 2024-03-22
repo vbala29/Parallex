@@ -63,7 +63,7 @@ function SignUp() {
         // probably add a successfully signed up page
       })
       .catch(error => {
-        console.log(error);
+        alert(error);
       })
     event.preventDefault();
     return false;
