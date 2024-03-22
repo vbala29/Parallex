@@ -84,6 +84,8 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
         cpu_count = fields.cpu_count[0]
         memory_count = fields.memory_count[0]
 
+        console.log('cpu count', cpu_count, 'memory count', memory_count)
+
         // Check if a file was uploaded
         if (!files.file) {
             reject('No file uploaded');
@@ -117,20 +119,29 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
                 throw "Undefined Document Error";
             } else {
                 var dummyIP = "8.8.8.8"; //Ipv4 Google DNS
+                console.log('sending job request')
+                console.log(client)
+                console.log(client.sendJob)
+                job_request = {
+                    clientIP: String(dummyIP),
+                    jobID: String(uniqueID),
+                    jobUserID: String(req.userData.userId),
+                    cpuCount: Number(cpu_count),
+                    memoryCount: Number(memory_count),
+                }
+                console.log('request', job_request)
                 new Promise((resolve, reject) => client.sendJob(
-                    {
-                        clientIP: dummyIP,
-                        cpuCount: cpu_count,
-                        memoryCount: memory_count
-                    },
+                    job_request,
                     (err, job_spec) => {
                         if (err) {
+                            console.log('errored on command', err)
                             reject(err);
                         } else {
                             resolve(job_spec);
                         }
                     }
                 )).then(async (job_spec) => {
+                    console.log('got job spec', job_spec)
                     head_node_ip = job_spec.headProvider.providerIP;
 
                     if (head_node_ip.toLowerCase().includes("invalid")) {

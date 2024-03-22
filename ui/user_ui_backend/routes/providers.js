@@ -60,7 +60,7 @@ time_end: Optional[Number], in Unix time
 */
 router.post('/provider/update', async (req, res) => {
     /* This is insecure for now. Ideally every daemon is linked up with the JWT and reports its own metrics, but only the head node runs the metrics agent for now. */
-
+    console.log("Received update provider request: " + JSON.stringify(req.body));
     try {
         const providerId = req.body.provider_id;
         const job_id = req.body.job_id;
