@@ -11,6 +11,10 @@ git clone https://github.com/vbala29/Parallex.git
 mkdir Parallex/access_tokens
 cd Parallex
 
+# Install conda enviornment
+conda env create -f environment_xcompat.yml
+conda activate parallex
+
 chmod +x build.sh
 ./build.sh
 

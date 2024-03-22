@@ -8,6 +8,10 @@ mkdir Parallex/access_tokens
 mv ipinfo Parallex/access_tokens
 cd Parallex
 
+# Instal conda enviornment
+conda env create -f environment_xcompat.yml
+conda activate parallex
+
 # Build gRPC protos
 chmod +x build.sh
 ./build.sh

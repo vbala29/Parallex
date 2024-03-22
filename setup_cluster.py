@@ -17,12 +17,12 @@ with open(json_config, 'r') as file:
 
 def run_script(script, host, scriptArg=None):
     os.system(f"scp -i Parallex-prod.pem scripts/{script} ec2-user@{host}:~")
-    if script == "run_command_server.sh":
+    if script == "install_command_server.sh":
         os.system(f"scp -i Parallex-prod.pem access_tokens/ipinfo ec2-user@{host}:~")
     if script == "install_mongodb.sh":
         os.system(f"scp -i Parallex-prod.pem scripts/amzn23-mongo.yum ec2-user@{host}:~")
     os.system(f"ssh -i Parallex-prod.pem ec2-user@{host} \"chmod +x {script}\"")
-    os.system(f"ssh -i Parallex-prod.pem ec2-user@{host} \"./{script} {scriptArg}\"")
+    os.system(f"ssh -i Parallex-prod.pem ec2-user@{host} \"source {script} {scriptArg}\"")
 
 def install_git_python(host):
     if not args.install_dependencies:
@@ -79,6 +79,7 @@ command_server = data["ip_addresses"]['command_server']
 rabbitmq_broker = data["ip_addresses"]['rabbitmq_broker']
 web_backend_server = data["ip_addresses"]['web_backend_server']
 
+run_service("rabbitmq_broker", rabbitmq_broker)
 run_service("command_server", command_server)
 run_service("web_backend_server", web_backend_server)
 run_service("web_frontend", web_backend_server)

@@ -1,6 +1,5 @@
 #!/bin/bash
 
-cd Parallex/command
-conda env create -f environment_xcompat.yml
 conda activate parallex
+cd Parallex/command
 ./start_command_node.sh
