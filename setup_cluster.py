@@ -46,12 +46,19 @@ def install_git_debian(host):
     run_script("install_git_debian.sh", host)
 
 
-def install_conda(host):
+def install_conda_debian(host):
     if not args.install_dependencies:
         return
 
     print("Installing conda on " + host)
-    run_script("install_conda.sh", host)
+    run_script("install_conda_debian.sh", host)
+
+def install_conda_redhat(host):
+    if not args.install_dependencies:
+        return
+
+    print("Installing conda on " + host)
+    run_script("install_conda_redhat.sh", host)
 
 
 def install_command_server(host):
@@ -75,11 +82,11 @@ def install_mongodb(host):
     print("Installing mongodb on " + host)
     run_script("install_mongodb.sh", host)
 
-def install_rabbitmq(host):
+def install_and_start_rabbitmq(host):
     if not args.install_dependencies:
         return
 
-    print("Installing rabbitmq on " + host)
+    print("Installing and starting rabbitmq on " + host)
     run_script("install_rabbitmq.sh", host)
 
 def run_service(service_name, host, scriptArg=None):
@@ -87,15 +94,14 @@ def run_service(service_name, host, scriptArg=None):
 
     if service_name == "command_server":
         install_git_debian(host)
-        install_conda(host)
+        install_conda_debian(host)
         install_command_server(host)
+        install_and_start_rabbitmq(rabbitmq_broker) # Will be on same machine as command server
     if service_name == "web_backend_server":
         install_git_redhat(host)
+        install_conda_redhat(host)
         install_ui_frontend_backend(host)
         install_mongodb(host)
-    if service_name == "rabbitmq_broker":
-        # Will be on same machine as command server
-        install_rabbitmq(host)
 
     run_script(f"run_{service_name}.sh", host, scriptArg)
     print("*** ***")
@@ -104,7 +110,6 @@ command_server = data["ip_addresses"]['command_server']
 rabbitmq_broker = data["ip_addresses"]['rabbitmq_broker']
 web_backend_server = data["ip_addresses"]['web_backend_server']
 
-# run_service("rabbitmq_broker", rabbitmq_broker)
 run_service("command_server", command_server)
-run_service("web_backend_server", web_backend_server)
-run_service("web_frontend", web_backend_server)
+# run_service("web_backend_server", web_backend_server)
+# run_service("web_frontend", web_backend_server)
