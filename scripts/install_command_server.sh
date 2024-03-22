@@ -9,6 +9,7 @@ mv ipinfo Parallex/access_tokens
 cd Parallex
 
 # Instal conda enviornment
+conda init bash
 conda env create -f environment_xcompat.yml
 conda activate parallex
 
