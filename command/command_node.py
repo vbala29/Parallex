@@ -19,7 +19,7 @@ from aqmp_tools.AQMPProducerConnection import AQMPProducerConnection
 HEAD_NODE_CPUS = 1
 HEAD_NODE_RAM = 2048
 
-base_path = Path(__file__).paren
+base_path = Path(__file__).parent
 file_path = (base_path / '../config/config.json').resolve()
 config = json.load(open(file_path))
 _RABBITMQ_BROKER = config["ip_addresses"]["rabbitmq_broker"]
