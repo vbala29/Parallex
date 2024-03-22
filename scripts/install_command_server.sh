@@ -1,5 +1,5 @@
 #!/bin/bash
-
+(
 # Clone repository
 git clone https://github.com/vbala29/Parallex.git
 
@@ -20,3 +20,4 @@ chmod +x build.sh
 
 cd command
 chmod +x start_command_node.sh
+)

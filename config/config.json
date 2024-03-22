@@ -1,8 +1,8 @@
 {
     "ip_addresses" : {
-        "command_server": "54.197.146.71",
-        "web_backend_server": "3.86.210.239",
-        "rabbitmq_broker": "54.197.146.71"
+        "command_server": "18.207.245.109",
+        "web_backend_server": "3.95.189.42",
+        "rabbitmq_broker": "18.207.245.109"
     },
     "ports": {
         "ray_dashboard": 8265,

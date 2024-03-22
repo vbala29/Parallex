@@ -5,6 +5,7 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 source ~/.bashrc
 nvm install --lts
 
+(
 # Clone repoistory and build protos
 git clone https://github.com/vbala29/Parallex.git
 
@@ -24,3 +25,4 @@ cd ui/user_ui/
 npm install
 cd ../user_ui_backend
 npm install
+)
