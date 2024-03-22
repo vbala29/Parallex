@@ -89,8 +89,8 @@ def install_and_start_rabbitmq(host):
     print("Installing and starting rabbitmq on " + host)
     run_script("install_rabbitmq.sh", host)
 
-def run_service(service_name, host, scriptArg=None):
-    print(f"*** Running {service_name} on {host} ***")
+def install_service(service_name, host, scriptArg=None):
+    print(f"*** Installing {service_name} on {host} ***")
 
     if service_name == "command_server":
         install_git_debian(host)
@@ -103,8 +103,11 @@ def run_service(service_name, host, scriptArg=None):
         install_ui_frontend_backend(host)
         install_mongodb(host)
 
-    run_script(f"run_{service_name}.sh", host, scriptArg)
     print("*** ***")
+
+def run_services(service_list):
+    for (service_name, service_ip) in service_list:
+        run_script(f"run_{service_name}.sh", service_ip)
 
 command_server = data["ip_addresses"]['command_server']
 rabbitmq_broker = data["ip_addresses"]['rabbitmq_broker']
@@ -113,4 +116,6 @@ web_backend_server = data["ip_addresses"]['web_backend_server'] # Frontend will 
 install_service("command_server", command_server)
 install_service("web_backend_server", web_backend_server)
 
-run_services(command_server, web_backend_server)
+run_services([("command_server", command_server),
+              ("web_backend_server", web_backend_server),
+              ("web_frontend", web_backend_server)])
