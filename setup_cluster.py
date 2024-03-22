@@ -62,10 +62,11 @@ def install_rabbitmq(host):
 def run_service(service_name, host, scriptArg=None):
     print(f"*** Running {service_name} on {host} ***")
 
-    install_git_python(host)
     if service_name == "command_server":
+        install_git_python(host)
         install_command_server(host)
     if service_name == "web_backend_server":
+        install_git_python(host)
         install_ui_frontend_backend(host)
         install_mongodb(host)
     if service_name == "rabbitmq_broker":
