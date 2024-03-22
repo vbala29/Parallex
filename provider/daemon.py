@@ -80,19 +80,6 @@ class DynamicMetricsRunner:
         return False
 
 
-def _get_provider_ip_map(command_ip) -> dict[str, str]:
-    """Get the provider IP map from the command node.
-    Args:
-        command_ip (str): The IP address of the command node.
-    Returns:
-        dict[str, str]: A dictionary mapping provider IP addresses to their UUID.
-    """
-    channel = grpc.insecure_channel(command_ip)
-    stub = daemon_pb2_grpc.MetricsStub(channel)
-    response = stub.get_provider_ip_map(daemon_pb2.Empty())
-    return json.loads(response.json_str)
-
-
 def _get_indexes(arr, target):
     """Returns indexes in arr of strings where entry is equal to target string, case insensitive."""
     return [i for i, s in enumerate(arr) if s.lower() == target.lower()]

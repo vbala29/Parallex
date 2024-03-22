@@ -142,12 +142,12 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
 
                     providers_assigned = [
                         {
-                            providerID: job_spec.headProvider.providerID,
+                            provider_id: job_spec.headProvider.providerID,
                             status: "pending"
                         },
                         ...(job_spec.providers ? job_spec.providers.map(provider => {
                             return {
-                                providerID: provider.providerID,
+                                provider_id: provider.providerID,
                                 status: "pending"
                             }
                         }) : [])

@@ -82,6 +82,22 @@ Run start_command_node.sh from command directory
 Inject env variable `PARALLEX_PROVIDER_ID` to be consistent with backend provider._id in model.
 Run run_daemon.sh from provider directory.
 
+## Running the backend
+### Linux
+```(bash)
+SECRET_KEY=[key] node index.js
+```
+
+### Windows
+#### Powershell
+```(powershell)
+$env:SECRET_KEY='abcde'; node index.js
+```
+
+#### Command Prompt
+```(cmd)
+$env:SECRET_KEY='abcde'; node index.js
+```
 ## Miscellaneous
 
 ### What to do to update requirements for this project
