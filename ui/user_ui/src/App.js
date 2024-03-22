@@ -52,6 +52,8 @@ import axios from "axios";
 
 import Cookies from 'js-cookie';
 
+import config from "../../config.json"
+
 export default function App() {
   const [controller, dispatch] = useSoftUIController();
   const { miniSidenav, direction, layout, openConfigurator, sidenavColor } = controller;
@@ -139,7 +141,7 @@ export default function App() {
 
   console.log(pathname)
   if (pathname !== "/authentication/sign-in" && pathname !== "/authentication/sign-up"){
-    const host = "http://localhost:8080";
+    const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
     axios.get(host + "/authorize", {headers: {
       authorization: "Basic " + Cookies.get("token")
     }})

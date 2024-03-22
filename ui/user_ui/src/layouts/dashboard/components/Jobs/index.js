@@ -39,6 +39,8 @@ import { FaCheckCircle } from "react-icons/fa";
 import { LuClock3 } from "react-icons/lu";
 import { green } from "@mui/material/colors";
 
+import config from "../../config.json"
+
 function Jobs() {
   const { columns } = data();
   const [menu, setMenu] = useState(null);
@@ -68,7 +70,7 @@ function Jobs() {
   );
 
   const updateJobs = () => {
-    const host = "http://localhost:8080";
+    const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
     axios.get(host + "/job-list", {headers: {
       authorization: "Basic " + Cookies.get("token")
     }})
