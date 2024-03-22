@@ -52,7 +52,7 @@ import axios from "axios";
 
 import Cookies from 'js-cookie';
 
-import config from "../../config.json"
+import config from "config.json"
 
 export default function App() {
   const [controller, dispatch] = useSoftUIController();
