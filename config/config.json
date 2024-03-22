@@ -6,7 +6,7 @@
     },
     "ports": {
         "ray_dashboard": 8265,
-        "ray": 6379,
+        "ray": 6380,
         "command_server": 50051,
         "web_backend_server": 8080
     },
