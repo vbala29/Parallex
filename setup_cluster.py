@@ -16,20 +16,43 @@ with open(json_config, 'r') as file:
     data = json.load(file)
 
 def run_script(script, host, scriptArg=None):
-    os.system(f"scp -i Parallex-prod.pem scripts/{script} ec2-user@{host}:~")
-    if script == "install_command_server.sh":
-        os.system(f"scp -i Parallex-prod.pem access_tokens/ipinfo ec2-user@{host}:~")
-    if script == "install_mongodb.sh":
-        os.system(f"scp -i Parallex-prod.pem scripts/amzn23-mongo.yum ec2-user@{host}:~")
-    os.system(f"ssh -i Parallex-prod.pem ec2-user@{host} \"chmod +x {script}\"")
-    os.system(f"ssh -i Parallex-prod.pem ec2-user@{host} \"source {script} {scriptArg}\"")
+    if host == command_server:
+        # Debian Linux
+        user = "admin"
+    else:
+        # AMI Linux
+        user = "ec2-user"
 
-def install_git_python(host):
+    os.system(f"scp -i Parallex-prod.pem scripts/{script} {user}@{host}:~")
+    if script == "install_command_server.sh":
+        os.system(f"scp -i Parallex-prod.pem access_tokens/ipinfo {user}@{host}:~")
+    if script == "install_mongodb.sh":
+        os.system(f"scp -i Parallex-prod.pem scripts/amzn23-mongo.yum {user}@{host}:~")
+    os.system(f"ssh -i Parallex-prod.pem {user}@{host} \"chmod +x {script}\"")
+    os.system(f"ssh -i Parallex-prod.pem {user}@{host} \"source {script} {scriptArg}\"")
+
+def install_git_redhat(host):
     if not args.install_dependencies:
         return
 
     print("Installing git on " + host)
-    run_script("install_git_python.sh", host)
+    run_script("install_git_redhat.sh", host)
+
+def install_git_debian(host):
+    if not args.install_dependencies:
+        return
+
+    print("Installing git on " + host)
+    run_script("install_git_debian.sh", host)
+
+
+def install_conda(host):
+    if not args.install_dependencies:
+        return
+
+    print("Installing conda on " + host)
+    run_script("install_conda.sh", host)
+
 
 def install_command_server(host):
     if not args.install_dependencies:
@@ -63,14 +86,15 @@ def run_service(service_name, host, scriptArg=None):
     print(f"*** Running {service_name} on {host} ***")
 
     if service_name == "command_server":
-        install_git_python(host)
+        install_git_debian(host)
+        install_conda(host)
         install_command_server(host)
     if service_name == "web_backend_server":
-        install_git_python(host)
+        install_git_redhat(host)
         install_ui_frontend_backend(host)
         install_mongodb(host)
     if service_name == "rabbitmq_broker":
-        install_command_server(host) # The broker needs access to script setup files in the repo
+        # Will be on same machine as command server
         install_rabbitmq(host)
 
     run_script(f"run_{service_name}.sh", host, scriptArg)
