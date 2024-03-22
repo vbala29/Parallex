@@ -40,8 +40,8 @@ UUID: str = ""
 IP: str = ""
 
 _BACKEND_FIDELITY: int = 5
-_BACKEND_IP: str = config["ip_addresses"]["web_backend_server"] + str(
-    config["ports"]["web_backend_server"]
+_BACKEND_IP: str = (
+    f'http://{config["ip_addresses"]["web_backend_server"]}:{str(config["ports"]["web_backend_server"])}'
 )
 
 _HEAD_START_DELAY_SECS: int = 5
@@ -120,7 +120,7 @@ class ResourceUpdateRunner:
         Returns:
             The PCU of the provider
         """
-        return (cpu / 100, ram / psutil.virtual_memory().total)
+        return (cpu + ram) / 1000 * duration
 
     def run(self):
         resource_consumption_by_provider = self.get_resource_usage()
@@ -165,7 +165,11 @@ class ResourceUpdateRunner:
             ).decode("utf8")
         )
 
-        return {node["node_ip"]: node["node_id"] for node in node_info}
+        # `provider_map` maps from the IP of the node to the provider UUID.
+        # Here we map from the ray node ID to the provider UUID, intermediating via the provider map and ray's knowledge of the node IP.
+        return {
+            node["node_id"]: self.provider_map[node["node_ip"]] for node in node_info
+        }
 
     def _process_memory_usage_str(self, memory_usage_str: str) -> float:
         """Process the memory usage string in the ray status output.
@@ -174,7 +178,7 @@ class ResourceUpdateRunner:
         Returns:
             float: The memory usage.
         """
-        memory_usage = memory_usage_str.split("/")
+        memory_usage = memory_usage_str.split("/")[0]
         if memory_usage.endswith("GiB"):
             return float(memory_usage[:-3])
         if memory_usage.endswith("MiB"):
@@ -201,6 +205,9 @@ class ResourceUpdateRunner:
         cpu_usage = float(cpu_usage_str.split("/")[0])
         memory_usage_str = split_resources[node_index + 6]
         memory_usage = self._process_memory_usage_str(memory_usage_str)
+        print(
+            f"ray node id: {ray_node_id} used {cpu_usage} CPU and {memory_usage} GiB memory"
+        )
         return ray_node_id, cpu_usage, memory_usage
 
     def get_resource_usage(self) -> dict[str, tuple[float, float]]:
