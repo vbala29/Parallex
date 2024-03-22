@@ -9,6 +9,8 @@ from ray.job_submission import JobSubmissionClient, JobStatus
 from aqmp_tools.AQMPConsumerConnection import AQMPConsumerConnection
 from aqmp_tools.formats.job_submission_request import job_submission_request
 
+from launch import launch_utils
+
 base_path = Path(__file__).parent
 file_path = (base_path / '../../../config/config.json').resolve()
 config = json.load(open(file_path))
@@ -30,13 +32,12 @@ def wait_until_status(client, job_id, status_to_wait_for, timeout_seconds=5):
 def submit_ray_job(
     working_dir: str, head_node_ip: str, runtime_name: str, job_script_name: str
 ):
-    activate_conda_command = f"conda activate {runtime_name}"
     runtime_env_json = '{"conda": "parallex_runtime"}'
     submit_job_command = f"RAY_ADDRESS='{head_node_ip}' ray job submit --runtime-env-json={runtime_env_json} --working-dir {working_dir} -- python {job_script_name}"
 
-    full_command = f"{activate_conda_command}; {submit_job_command}"
+    wrapped_command = launch_utils.make_conda_command(submit_job_command)
     subprocess.run(
-        full_command,
+        wrapped_command,
         shell=True,
         check=True,
     )
