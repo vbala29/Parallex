@@ -20,6 +20,6 @@ chmod +x build.sh
 
 # Insall node modules
 cd ui/user_ui/
-npm init
+npm install
 cd ../user_ui_backend
-npm init
+npm install
