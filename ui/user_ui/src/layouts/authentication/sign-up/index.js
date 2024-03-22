@@ -51,7 +51,7 @@ function SignUp() {
 
   const navigate = useNavigate();
 
-  const host = config.ip_addresses.web_backend_server;
+  const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
   const submitForm = (event) => {
     const data = {
       username: name,

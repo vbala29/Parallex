@@ -59,7 +59,7 @@ function Dashboard() {
   const [dashboardData, setDashboardData] = useState({});
 
   useEffect(() => {
-    const host = config.ip_addresses.web_backend_server;
+    const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
     axios.get(host + "/dashboard-info", {headers: {
       authorization: "Basic " + Cookies.get("token")
     }})

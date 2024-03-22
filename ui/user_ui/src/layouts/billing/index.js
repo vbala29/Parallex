@@ -43,7 +43,7 @@ import config from "../../config.json"
 function Billing() {
   const [availablePCUs, setAvailablePCUs] = useState(0);
   const getPCUs = () => {
-    const host = config.ip_addresses.web_backend_server;
+    const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
     axios.get(host + "/available-pcu-count", {headers: {
       authorization: "Basic " + Cookies.get("token")
     }})

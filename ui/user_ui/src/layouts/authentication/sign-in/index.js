@@ -52,7 +52,7 @@ function SignIn() {
 
   const navigate = useNavigate();
 
-  const host = config.ip_addresses.web_backend_server;
+  const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
   const checkKeyPress = (e) => {
     if(e.key === 'Enter'){
       submitForm();

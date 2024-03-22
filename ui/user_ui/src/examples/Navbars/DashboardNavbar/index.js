@@ -96,7 +96,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
       setTransparentNavbar(dispatch, (fixedNavbar && window.scrollY === 0) || !fixedNavbar);
     }
 
-    const host = config.ip_addresses.web_backend_server;
+    const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
     axios.get(host + "/available-pcu-count", {headers: {
       authorization: "Basic " + Cookies.get("token")
     }})
