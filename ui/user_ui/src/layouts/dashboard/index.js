@@ -47,6 +47,8 @@ import { useEffect, useState } from "react";
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
+import fs from 'fs';
+
 function Dashboard() {
   // We want the dashboard to contain a chart of all jobs. Ongoing and finished?
   // We want the dashbaord to contain info on how much money has been spent?
@@ -57,7 +59,8 @@ function Dashboard() {
   const [dashboardData, setDashboardData] = useState({});
 
   useEffect(() => {
-    const host = "http://localhost:8080";
+    var config = JSON.parse(fs.readFileSync(__dirname + '/../../../config/config.json', 'utf8'));
+    const host = config.ip_addresses.web_backend_server;
     axios.get(host + "/dashboard-info", {headers: {
       authorization: "Basic " + Cookies.get("token")
     }})
@@ -109,60 +112,11 @@ function Dashboard() {
             </Grid>
           </Grid>
         </SoftBox>
-        {/* <SoftBox mb={3}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} lg={7}>
-              <BuildByDevelopers />
-            </Grid>
-            <Grid item xs={12} lg={5}>
-              <WorkWithTheRockets />
-            </Grid>
-          </Grid>
-        </SoftBox> */}
-        {/* <SoftBox mb={3}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} lg={5}>
-              <ReportsBarChart
-                title="active users"
-                description={
-                  <>
-                    (<strong>+23%</strong>) than last week
-                  </>
-                }
-                chart={chart}
-                items={items}
-              />
-            </Grid>
-            <Grid item xs={12} lg={7}>
-              <GradientLineChart
-                title="Sales Overview"
-                description={
-                  <SoftBox display="flex" alignItems="center">
-                    <SoftBox fontSize={size.lg} color="success" mb={0.3} mr={0.5} lineHeight={0}>
-                      <Icon className="font-bold">arrow_upward</Icon>
-                    </SoftBox>
-                    <SoftTypography variant="button" color="text" fontWeight="medium">
-                      4% more{" "}
-                      <SoftTypography variant="button" color="text" fontWeight="regular">
-                        in 2021
-                      </SoftTypography>
-                    </SoftTypography>
-                  </SoftBox>
-                }
-                height="20.25rem"
-                chart={gradientLineChartData}
-              />
-            </Grid>
-          </Grid>
-        </SoftBox> */}
         <div>
           <Grid item xs={12} md={6} lg={8}>
             <Jobs />
           </Grid>
         </div>
-          {/* <Grid item xs={12} md={6} lg={4}>
-            <OrderOverview />
-          </Grid> */}
       </SoftBox>
       <Footer />
     </DashboardLayout>

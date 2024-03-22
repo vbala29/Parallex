@@ -37,8 +37,12 @@ import axios from 'axios';
 
 import Cookies from 'js-cookie';
 
+import fs from 'fs';
+
 
 function SignIn() {
+  var config = JSON.parse(fs.readFileSync(__dirname + '/../../../config/config.json', 'utf8'));
+
   const [rememberMe, setRememberMe] = useState(true);
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
@@ -49,7 +53,7 @@ function SignIn() {
 
   const navigate = useNavigate();
 
-  const host = "http://localhost:8080";
+  const host = config.ip_addresses.web_backend_server;
   const checkKeyPress = (e) => {
     if(e.key === 'Enter'){
       submitForm();

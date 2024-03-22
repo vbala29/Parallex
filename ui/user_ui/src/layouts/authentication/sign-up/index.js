@@ -38,7 +38,10 @@ import curved6 from "assets/images/curved-images/curved14.jpg";
 
 import axios from 'axios';
 
+import fs from 'fs';
+
 function SignUp() {
+  var config = JSON.parse(fs.readFileSync(__dirname + '/../../../config/config.json', 'utf8'));
   const [agreement, setAgremment] = useState(true);
 
   const handleSetAgremment = () => setAgremment(!agreement);
@@ -49,7 +52,7 @@ function SignUp() {
 
   const navigate = useNavigate();
 
-  const host = "http://localhost:8080";
+  const host = config.ip_addresses.web_backend_server;
   const submitForm = (event) => {
     const data = {
       username: name,

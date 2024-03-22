@@ -26,10 +26,13 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useState } from "react";
 
+import fs from 'fs';
+
 function BuyPCU() {
+  var config = JSON.parse(fs.readFileSync(__dirname + '/../../../../config/config.json', 'utf8'));
   const [numPCUs, setNumPCUs] = useState(0);
   const purchase = () => {
-    const host = "http://localhost:8080";
+    const host = config.ip_addresses.web_backend_server;
     axios.post(host + "/buy-pcu", {pcu_bought: {numPCUs}},{headers: {
       authorization: "Basic " + Cookies.get("token")
     }
