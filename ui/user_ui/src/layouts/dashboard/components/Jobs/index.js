@@ -39,7 +39,7 @@ import { FaCheckCircle } from "react-icons/fa";
 import { LuClock3 } from "react-icons/lu";
 import { green } from "@mui/material/colors";
 
-import config from "../../../config.json"
+import config from "../../../../config.json"
 
 function Jobs() {
   const { columns } = data();
