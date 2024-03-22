@@ -1,4 +1,5 @@
 """ Utilities for Parallex head launcher. """
+
 import socket
 from contextlib import closing
 import os
@@ -26,3 +27,10 @@ def make_dir(dir_path: str) -> None:
     """Constructs `dir_path` if it does not already exist."""
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
+
+
+def make_conda_command(command: str) -> str:
+    command_with_conda = f"""
+    conda run -n parallex_runtime bash -c "{command}"
+    """
+    return command_with_conda

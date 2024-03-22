@@ -52,15 +52,17 @@ router.post('/provider/login', async (req, res) => {
 
 /*
 Requires:
+provider_id: string
 job_id: Number
 job_userid: Number
 pcu_increment: Number
 time_end: Optional[Number], in Unix time
 */
-router.post('/provider/update', checkAuth, async (req, res) => {
+router.post('/provider/update', async (req, res) => {
+    /* This is insecure for now. Ideally every daemon is linked up with the JWT and reports its own metrics, but only the head node runs the metrics agent for now. */
 
     try {
-        const providerId = req.userData.userId;
+        const providerId = req.body.provider_id;
         const job_id = req.body.job_id;
         const pcu_increment = req.body.pcu_increment;
         const job_userid = req.body.job_userid;

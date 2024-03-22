@@ -4,12 +4,12 @@
         "web_backend_server": "3.87.12.135",
         "rabbitmq_broker": "34.239.130.32"
     },
-    "ports" : {
+    "ports": {
         "ray_dashboard": 8265,
         "ray": 6379,
         "command_server": 50051
     },
-    "rabbitmq" : {
+    "rabbitmq": {
         "username": "test",
         "password": "test",
         "job_submission_queue_name": "ray_job_startup"

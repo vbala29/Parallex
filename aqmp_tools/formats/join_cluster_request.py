@@ -11,6 +11,10 @@ class join_cluster_request:
     type = "join_cluster_request"
 
     def __init__(self, infoDict):
+        if not isinstance(infoDict, dict) or "headIP" not in infoDict:
+            raise ValueError(
+                f"Tried to create join_cluster_request without headIP: {infoDict}"
+            )
         self.fields = infoDict
 
     @staticmethod
@@ -20,7 +24,7 @@ class join_cluster_request:
     @staticmethod
     def createNewRequest(headIP):
         return join_cluster_request(
-            json.dumps({"type": join_cluster_request.type, "headIP": headIP})
+            {"type": join_cluster_request.type, "headIP": headIP}
         )
 
     @staticmethod
