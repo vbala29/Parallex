@@ -270,7 +270,7 @@ router.post('/buy-pcu', checkAuth, async (req, res) => {
     console.log("in buy pcu")
     await User.findOneAndUpdate(
         { '_id': req.userData.userId },
-        { $inc: req.body.pcu_bought }
+        { $inc: { available_pcu_count: req.body.pcu_bought } }
     ).exec().then(
         async (user) => {
             res.sendStatus(200);
