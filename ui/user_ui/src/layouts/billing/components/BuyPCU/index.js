@@ -37,7 +37,7 @@ function BuyPCU() {
     }
     })
     .then(response => {
-      console.log(response);
+      alert("Purchase Successful");
     })
     .catch(error => {
       alert(error);

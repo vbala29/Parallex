@@ -55,7 +55,9 @@ function Billing() {
       })
   }
   useEffect(() => {
-    getPCUs();
+    setInterval(() => {
+      getPCUs();
+    }, 2000);
   },[]);
   return (
     <DashboardLayout>
