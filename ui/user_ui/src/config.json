@@ -1,7 +1,7 @@
 {
     "ip_addresses" : {
         "command_server": "44.201.145.224",
-        "web_backend_server": "localhost",
+        "web_backend_server": "44.201.145.224",
         "rabbitmq_broker": "44.201.145.224"
     },
     "ports": {
