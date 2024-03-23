@@ -51,7 +51,7 @@ import { useSelector, useDispatch } from 'react-redux'
 
 
 import { secondsToTime, pcuToDisplay } from "utils/format";
-import { selectPCUContributed, setProviderDuration, selectProviderDuration, selectReliability, incrementProviderDuration } from "layouts/dashboard/metricsState";
+import { setPCUContributed, setProviderDuration, setReliabilityScore, selectPCUContributed, selectProviderDuration, selectReliability, incrementProviderDuration } from "layouts/dashboard/metricsState";
 import { selectIsStarted } from "layouts/dashboard/components/StartStop/startState";
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -112,11 +112,11 @@ function Dashboard() {
         // Update the provider duration from the local counter
         console.log('Updating provider duration to', lifetimeProviderDuration)
         axios.post(host + "/provider/update-duration", {
+          'provider_duration': lifetimeProviderDuration
+        }, {
           headers: {
-            authorization: "Basic " + Cookies.get("token")
-          },
-          data: {
-            duration: lifetimeProviderDuration
+            'Authorization': "Basic " + Cookies.get("token"),
+            'Content-Type': 'application/json'
           }
         }).then(response => {
           console.log(response.data);

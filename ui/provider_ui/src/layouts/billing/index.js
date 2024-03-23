@@ -36,7 +36,16 @@ import Transactions from "layouts/billing/components/Transactions";
 
 import Countdown from 'react-countdown';
 
+import { selectPCUContributed } from "layouts/dashboard/metricsState";
+import { useSelector } from 'react-redux'
+
+
+
 function Billing() {
+  const lifetimePCU = useSelector(selectPCUContributed);
+  // TODO(andy): This should be dynamic and linked to the backend.
+  const pcu_conversion_rate = 0.05; // USD per PCU
+  const lotteries_per_pcu = 3; // Lottery tickets per PCU
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -61,7 +70,7 @@ function Billing() {
                     icon="local_activity"
                     title="Lottery Entries"
                     description="90th Percentile"
-                    value="100"
+                    value={`${Math.trunc(lifetimePCU * lotteries_per_pcu)}`}
                   />
                 </Grid>
                 <Grid item xs={12} md={4} xl={4}>
@@ -69,7 +78,7 @@ function Billing() {
                     icon="account_balance"
                     title="Lifetime Earnings"
                     description="Top 2%!"
-                    value="$103.40"
+                    value={`$${(lifetimePCU * pcu_conversion_rate).toFixed(2)}`}
                   />
                 </Grid>
 

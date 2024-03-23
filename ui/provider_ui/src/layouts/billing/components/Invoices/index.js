@@ -24,12 +24,12 @@ import SoftButton from "components/SoftButton";
 // Billing page components
 import Invoice from "layouts/billing/components/Invoice";
 
-function Invoices() {
+function Invoices({ job_data }) {
   return (
     <Card id="delete-account" sx={{ height: "100%" }}>
       <SoftBox pt={2} px={2} display="flex" justifyContent="space-between" alignItems="center">
         <SoftTypography variant="h6" fontWeight="medium">
-          Invoices
+          Jobs Completed
         </SoftTypography>
         <SoftButton variant="outlined" color="info" size="small">
           view all
@@ -37,6 +37,17 @@ function Invoices() {
       </SoftBox>
       <SoftBox p={2}>
         <SoftBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
+          {/* {
+            job_data.map((job, index) => (
+              <Invoice
+                key={index}
+                date={invoice.date}
+                id={invoice.id}
+                price={`$${invoice.price.toFixed(2)}`}
+                noGutter={index === invoices.length - 1}
+              />
+            ))
+          } */}
           <Invoice date="2024-02-15" id="#MS-415646" price="$1.50" />
           <Invoice date="2024-02-15" id="#RV-126749" price="$0.70" />
           <Invoice date="2024-02-15" id="#QW-103578" price="$0.98" />
