@@ -18,7 +18,7 @@ const ProviderSchema = new Schema({
         jobID: { type: String, required: true },
         time_start: { type: Number, required: true }, // Unix time
         time_end: { type: Number, required: false }, // Unix time
-        pcu_consumed: { type: Number, required: true, default: 0 }
+        pcu_consumed: { type: Number, required: true, default: 0.0 }
     }],
     reliability: { type: Number, required: true, default: 4.5 },
 })

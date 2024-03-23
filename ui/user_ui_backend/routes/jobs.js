@@ -168,7 +168,7 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
                         {
                             name: uniqueID,
                             url: head_node_url,
-                            running: false,
+                            running: true,
                             creation_time: Date.now(),
                             cpu_count: cpu_count,
                             memory_count: memory_count,
