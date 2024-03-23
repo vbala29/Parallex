@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Install node
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-source ~/.bashrc
-nvm install --lts
+# Install node on debian
+sudo apt update && sudo apt upgrade -y
+curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+sudo apt-get install -y nodejs
 
 (
 # Clone repoistory and build protos
