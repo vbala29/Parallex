@@ -98,10 +98,6 @@ router.post('/provider/update', async (req, res) => {
             }
         }
 
-
-        const update = await Provider.findOne(find_schema)
-        console.log(update)
-
         await Provider.findOneAndUpdate(
             find_schema,
             provider_update_command
@@ -111,13 +107,29 @@ router.post('/provider/update', async (req, res) => {
         // Complete user billing. Non-race (I think)?        
         const user = await User.findById(job_userid)
         if (user) {
+            console.log('completing user billing')
             const job = user.jobs_created.find(job => job.unique_id === job_id);
             const allProvidersCompleted = job.providers_assigned.every(provider => provider.status === 'completed');
+
             if (allProvidersCompleted) {
-                console.log('Completing job with ID', job_id, 'and user', job_userid)
+
+                last_time_end = req.body.time_end;
+                for (const provider of job.providers_assigned) {
+                    const provider_entry = await Provider.findById(provider.provider_id);
+                    if (provider_entry) {
+                        const provider_job_entry = provider_entry.jobs_running.find(job_running => job_running.jobID === job_id);
+                        if (provider_job_entry) {
+                            last_time_end = Math.max(last_time_end, provider_job_entry.time_end)
+                        }
+                    }
+                }
+                console.log('Completing job with ID', job_id, 'and user', job_userid, 'with time_end', last_time_end)
+
                 job.running = false;
+                job.termination_time = last_time_end;
                 console.log('Billing user', job_userid, 'for job', job_id, 'with cost', job.job_cost);
                 user.available_pcu_count -= job.cpu_count;
+
                 await user.save();
             }
         }
