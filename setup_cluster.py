@@ -98,8 +98,8 @@ def install_service(service_name, host, scriptArg=None):
         install_command_server(host)
         install_and_start_rabbitmq(rabbitmq_broker) # Will be on same machine as command server
     if service_name == "web_backend_server":
-        install_git_redhat(host)
-        install_conda_redhat(host)
+        install_git_debian(host)
+        install_conda_debian(host)
         install_ui_frontend_backend(host)
         install_mongodb(host)
 

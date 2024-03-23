@@ -10,14 +10,15 @@ from ray.train import Checkpoint
 from ray.data import ActorPoolStrategy
 import xgboost
 
+
 def prepare_data() -> Tuple[Dataset, Dataset, Dataset]:
     dataset = ray.data.read_csv("s3://anonymous@air-example-data/breast_cancer.csv")
     train_dataset, valid_dataset = dataset.train_test_split(test_size=0.3)
     test_dataset = valid_dataset.drop_columns(["target"])
     return train_dataset, valid_dataset, test_dataset
 
-def train_xgboost(
-_workers: int, use_gpu: bool = False) -> Result:
+
+def train_xgboost(num_workers: int, use_gpu: bool = False) -> Result:
     train_dataset, valid_dataset, _ = prepare_data()
 
     # Scale some random columns
@@ -39,18 +40,21 @@ _workers: int, use_gpu: bool = False) -> Result:
         params=params,
         datasets={"train": train_dataset, "valid": valid_dataset},
         num_boost_round=100,
-        metadata = {"preprocessor_pkl": preprocessor.serialize()}
+        metadata={"preprocessor_pkl": preprocessor.serialize()},
     )
     result = trainer.fit()
     print(result.metrics)
 
     return result
 
+
 class Predict:
 
     def __init__(self, checkpoint: Checkpoint):
         self.model = XGBoostTrainer.get_model(checkpoint)
-        self.preprocessor = Preprocessor.deserialize(checkpoint.get_metadata()["preprocessor_pkl"])
+        self.preprocessor = Preprocessor.deserialize(
+            checkpoint.get_metadata()["preprocessor_pkl"]
+        )
 
     def __call__(self, batch: pd.DataFrame) -> pd.DataFrame:
         preprocessed_batch = self.preprocessor.transform_batch(batch)
@@ -62,17 +66,19 @@ def predict_xgboost(result: Result):
     _, _, test_dataset = prepare_data()
 
     scores = test_dataset.map_batches(
-        Predict, 
-        fn_constructor_args=[result.checkpoint], 
-        compute=ActorPoolStrategy(), 
-        batch_format="pandas"
+        Predict,
+        fn_constructor_args=[result.checkpoint],
+        compute=ActorPoolStrategy(),
+        batch_format="pandas",
     )
-    
-    predicted_labels = scores.map_batches(lambda df: (df > 0.5).astype(int), batch_format="pandas")
+
+    predicted_labels = scores.map_batches(
+        lambda df: (df > 0.5).astype(int), batch_format="pandas"
+    )
     print(f"PREDICTED LABELS")
     predicted_labels.show()
+
 
 if __name__ == "__main__":
     result = train_xgboost(num_workers=2, use_gpu=False)
     predict_xgboost(result)
-

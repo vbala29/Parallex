@@ -12,12 +12,13 @@ from aqmp_tools.formats.job_submission_request import job_submission_request
 from launch import launch_utils
 
 base_path = Path(__file__).parent
-file_path = (base_path / '../../../config/config.json').resolve()
+file_path = (base_path / "../../../config/config.json").resolve()
 config = json.load(open(file_path))
 
 _QUEUE_NAME: str = config["rabbitmq"]["job_submission_queue_name"]
 _HEAD_START_DELAY_SECS: int = 20
 _EXPRESS_SERVER_IP: str = config["ip_addresses"]["web_backend_server"]
+
 
 def wait_until_status(client, job_id, status_to_wait_for, timeout_seconds=5):
     start = time.time()
@@ -33,9 +34,10 @@ def submit_ray_job(
     working_dir: str, head_node_ip: str, runtime_name: str, job_script_name: str
 ):
     runtime_env_json = '{"conda": "parallex_runtime"}'
-    submit_job_command = f"RAY_ADDRESS='{head_node_ip}' ray job submit --runtime-env-json={runtime_env_json} --working-dir {working_dir} -- python {job_script_name}"
-
+    submit_job_command = f"RAY_ADDRESS='{head_node_ip}' ray job submit --working-dir {working_dir} -- python {job_script_name}"
+    print(submit_job_command)
     wrapped_command = launch_utils.make_conda_command(submit_job_command)
+    print(wrapped_command)
     subprocess.run(
         wrapped_command,
         shell=True,
