@@ -179,7 +179,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
           <SoftBox pr={15}>
             <Link to="/billing">
               <SoftTypography variant="h6">
-                PCU: XXX USD
+                PCU: 1.23 USD
               </SoftTypography>
             </Link>
           </SoftBox>
