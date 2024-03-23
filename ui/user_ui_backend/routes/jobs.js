@@ -211,7 +211,8 @@ router.get('/dashboard-info', checkAuth, async (req, res) => {
 
         var one_month_counter = 0;
         var total_cost = 0;
-        var total_job_durations = 0;
+        var total_job_durations = 0.0;
+        var completed_job_count = 0;
         var job_list = doc.jobs_created;
         const ms_in_one_minute = 6000;
 
@@ -224,19 +225,23 @@ router.get('/dashboard-info', checkAuth, async (req, res) => {
                 // Within the one month interval so add to counter
                 one_month_counter++;
             }
-            console.log(job)
             total_cost += job.job_cost;
-            if ('termination_time' in job) {
-                total_job_durations += job.termination_time - job.creation_time;
+            if ('termination_time' in job && job.termination_time) {
+                time_used = job.termination_time - job.creation_time;
+                total_job_durations += time_used;
+                console.log('found termination time in', job, 'with time used', time_used)
+                console.log('total_job_durations', total_job_durations)
+                completed_job_count++;
             }
         }
+
 
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify(
             {
                 one_month_job_count: one_month_counter,
                 total_cost: total_cost,
-                avg_duration: (total_job_durations / job_list.length) / ms_in_one_minute,
+                avg_duration: (total_job_durations / completed_job_count) / ms_in_one_minute,
                 avg_cost: total_cost / job_list.length,
             }
         ));
