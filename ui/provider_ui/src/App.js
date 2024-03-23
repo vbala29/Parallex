@@ -16,7 +16,7 @@ Coded by www.creative-tim.com
 import { useState, useEffect, useMemo } from "react";
 
 // react-router components
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 
 // @mui material components
 import { ThemeProvider } from "@mui/material/styles";
@@ -41,6 +41,7 @@ import createCache from "@emotion/cache";
 
 // Soft UI Dashboard React routes
 import routes from "routes";
+import axios from "axios";
 
 // Soft UI Dashboard React contexts
 import { useSoftUIController, setMiniSidenav, setOpenConfigurator } from "context";
@@ -48,12 +49,19 @@ import { useSoftUIController, setMiniSidenav, setOpenConfigurator } from "contex
 // Images
 import brand from "assets/images/logo-ct.png";
 
+import Cookies from 'js-cookie';
+
+
+import config from "config.json"
+
+
 export default function App() {
   const [controller, dispatch] = useSoftUIController();
   const { miniSidenav, direction, layout, openConfigurator, sidenavColor } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [rtlCache, setRtlCache] = useState(null);
   const { pathname } = useLocation();
+  const navigate = useNavigate();
 
   // Cache for the rtl
   useMemo(() => {
@@ -132,32 +140,23 @@ export default function App() {
     </SoftBox>
   );
 
-  return direction === "rtl" ? (
-    <CacheProvider value={rtlCache}>
-      <ThemeProvider theme={themeRTL}>
-        <CssBaseline />
-        {layout === "dashboard" && (
-          <>
-            <Sidenav
-              color={sidenavColor}
-              brand={brand}
-              brandName="Parallex"
-              routes={routes}
-              onMouseEnter={handleOnMouseEnter}
-              onMouseLeave={handleOnMouseLeave}
-            />
-            <Configurator />
-            {configsButton}
-          </>
-        )}
-        {layout === "vr" && <Configurator />}
-        <Routes>
-          {getRoutes(routes)}
-          <Route path="*" element={<Navigate to="/dashboard" />} />
-        </Routes>
-      </ThemeProvider>
-    </CacheProvider>
-  ) : (
+  if (pathname !== "/authentication/sign-in" && pathname !== "/authentication/sign-up") {
+    const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
+    axios.get(host + "/authorize", {
+      headers: {
+        authorization: "Basic " + Cookies.get("token")
+      }
+    })
+      .then(response => {
+        console.log(response);
+      }
+      )
+      .catch(response => {
+        navigate("/authentication/sign-in");
+      })
+  }
+
+  return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       {layout === "dashboard" && (
@@ -166,7 +165,7 @@ export default function App() {
             color={sidenavColor}
             brand={brand}
             brandName="Parallex"
-            routes={routes}
+            routes={routes.slice(0, routes.length - 2)}
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}
           />
@@ -181,4 +180,5 @@ export default function App() {
       </Routes>
     </ThemeProvider>
   );
+
 }

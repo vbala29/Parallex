@@ -1,0 +1,22 @@
+{
+    "ip_addresses" : {
+        "command_server": "44.201.145.224",
+        "web_backend_server": "44.201.145.224",
+        "rabbitmq_broker": "44.201.145.224"
+    },
+    "ports": {
+        "ray_dashboard": 8265,
+        "ray": 6380,
+        "command_server": 50051,
+        "web_backend_server": 8080
+    },
+    "rabbitmq": {
+        "username": "test",
+        "password": "test",
+        "job_submission_queue_name": "ray_job_startup"
+    },
+    "prometheus": {
+      "ip": "127.0.0.1",
+      "port": 5000
+    }
+}
