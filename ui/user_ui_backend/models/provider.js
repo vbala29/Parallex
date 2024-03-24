@@ -16,6 +16,7 @@ const ProviderSchema = new Schema({
     jobs_running: [{
         userID: { type: String, required: true },
         jobID: { type: String, required: true },
+        time_start: { type: Number, required: true }, // Unix time.
         time_end: { type: Number, required: false }, // Unix time. If set indicates job completion.
         pcu_consumed: { type: Number, required: true, default: 0.0 }
     }],

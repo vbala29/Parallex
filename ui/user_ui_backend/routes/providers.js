@@ -166,6 +166,75 @@ router.get('/provider/dashboard-info', checkAuth, async (req, res) => {
     }
 })
 
+// This technically doesn't align with `/provider/reward`, since the lifetime duration of the Provider is different from
+// the duration for each job (which is what `/provider/job-summary` uses)
+function calculate_reward(PCU, duration) {
+    value_pcu = 0.05
+    value_duration = 1.0 / 3600
+    return PCU * value_pcu + duration * value_duration
+}
+
+function calculate_lottery(PCU, duration) {
+    lottery_pcu = 2
+    lottery_duration = 10.0 / 3600
+    return lottery_pcu * PCU + lottery_duration * duration
+}
+
+router.get('/provider/rewards', checkAuth, async (req, res) => {
+    try {
+        const provider = await Provider.findOne({ '_id': req.userData.userId });
+        if (!provider) {
+            throw "Provider not found";
+        }
+
+        // TODO(andy) this should probably be cached and updated, instead of recomputing every time.
+        totalPcuConsumed = provider.jobs_running.reduce((total, job) => total + (job.pcu_consumed || 0), 0)
+        // TODO(andy) - incorporate reliability into rewards calculation
+        console.log('reward for provider with total PCU', totalPcuConsumed, 'and duration', provider.provider_duration, 'is', calculate_reward(totalPcuConsumed, provider.provider_duration))
+        total_reward = calculate_reward(totalPcuConsumed, provider.provider_duration)
+        lottery_reward = calculate_lottery(totalPcuConsumed, provider.provider_duration)
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify(
+            {
+                lottery_entries: lottery_reward,
+                total_reward: total_reward,
+            }
+        ));
+    } catch (err) {
+        console.error(err)
+        res.sendStatus(500);
+    }
+})
+
+
+router.get('/provider/job-summary', checkAuth, async (req, res) => {
+    try {
+        const provider = await Provider.findOne({ '_id': req.userData.userId });
+        if (!provider) {
+            throw "Provider not found";
+        }
+
+        let sortedJobs = provider.jobs_running.sort((a, b) => b.time_start - a.time_start);
+        let recentJobs = sortedJobs.slice(0, 5);
+        let jobSummaries = recentJobs.map(job => {
+            return {
+                job_id: job.jobID,
+                time_start: job.time_start,
+                reward: calculate_reward(job.pcu_consumed, (job.time_end ? job.time_end - job.time_start : Date.now() - job.time_start)/1000),
+            }
+        })
+        console.log('job summary', jobSummaries)
+
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify(jobSummaries));
+    } catch (err) {
+        console.error(err)
+        res.sendStatus(500);
+    }
+})
+
+
+
 router.post('/provider/update-duration', checkAuth, async (req, res) => {
     try {
         if (!req.body.provider_duration) {

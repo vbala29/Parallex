@@ -55,13 +55,13 @@ router.get('/job-list', checkAuth, async (req, res) => {
     });
 });
 
-async function updateProvider(providerID, jobID, userID) {
+async function updateProvider(providerID, jobID, userID, time_start) {
     console.log("updateProvider called with " + providerID + " " + jobID + " " + userID)
     // Find the provider and add the new job to the runningJobs array
     try {
         await Provider.findOneAndUpdate(
             { '_id': providerID },
-            { $push: { jobs_running: { jobID: jobID, userID: userID } } },
+            { $push: { jobs_running: { jobID: jobID, userID: userID, time_start: time_start } } },
             { new: true, useFindAndModify: false }
         );
 
@@ -163,13 +163,14 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
                             }
                         }) : [])
                     ]
+                    job_creation_time = Date.now();
                     // Update Jobs DB
                     await doc.jobs_created.push(
                         {
                             name: uniqueID,
                             url: head_node_url,
                             running: true,
-                            creation_time: Date.now(),
+                            creation_time: job_creation_time,
                             cpu_count: cpu_count,
                             memory_count: memory_count,
                             unique_id: uniqueID,
@@ -179,11 +180,13 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
                     await doc.save();
                     console.log('created jobs')
 
-                    await updateProvider(job_spec.headProvider.providerID, uniqueID, req.userData.userId);
+                    // Assume for now that time `time_start` of a Provider is the same as the job creation time. Eventually this will not be the case
+                    // once we have a feedback mechanism from Ray
+                    await updateProvider(job_spec.headProvider.providerID, uniqueID, req.userData.userId, job_creation_time);
 
                     if (job_spec.providers > 0) {
                         await Promise.all(job_spec.providers.map(provider =>
-                            updateProvider(provider.providerID, uniqueID, req.userData.userId)
+                            updateProvider(provider.providerID, uniqueID, req.userData.userId, job_creation_time)
                         ));
                     }
 
