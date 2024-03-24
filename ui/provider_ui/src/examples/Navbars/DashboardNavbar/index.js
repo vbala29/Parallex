@@ -16,7 +16,7 @@ Coded by www.creative-tim.com
 import { useState, useEffect } from "react";
 
 // react-router components
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
@@ -28,6 +28,8 @@ import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import Icon from "@mui/material/Icon";
 
+import LogoutIcon from '@mui/icons-material/Logout';
+
 // Soft UI Dashboard React components
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
@@ -36,6 +38,8 @@ import SoftInput from "components/SoftInput";
 // Soft UI Dashboard React examples
 import Breadcrumbs from "examples/Breadcrumbs";
 import NotificationItem from "examples/Items/NotificationItem";
+
+
 
 // Custom styles for DashboardNavbar
 import {
@@ -54,6 +58,8 @@ import {
   setOpenConfigurator,
 } from "context";
 
+import Cookies from 'js-cookie';
+
 // Images
 import team2 from "assets/images/team-2.jpg";
 import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
@@ -64,6 +70,12 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator } = controller;
   const [openMenu, setOpenMenu] = useState(false);
   const route = useLocation().pathname.split("/").slice(1);
+
+  const navigate = useNavigate();
+  const logout = () => {
+    Cookies.set("token", "");
+    navigate("/authentication/sign-in");
+  }
 
   useEffect(() => {
     // Setting the navbar type
@@ -200,10 +212,21 @@ function DashboardNavbar({ absolute, light, isMini }) {
               >
                 <Icon className={light ? "text-white" : "text-dark"}>notifications</Icon>
               </IconButton>
+
+              <IconButton
+                size="small"
+                color="inherit"
+                sx={navbarIconButton}
+                onClick={logout}
+              >
+                <LogoutIcon/>
+              </IconButton>
               {renderMenu()}
             </SoftBox>
+
           </SoftBox>
         )}
+
       </Toolbar>
     </AppBar>
   );
