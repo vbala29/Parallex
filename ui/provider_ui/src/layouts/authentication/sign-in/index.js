@@ -16,7 +16,7 @@ Coded by www.creative-tim.com
 import { useState } from "react";
 
 // react-router-dom components
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 // @mui material components
 import Switch from "@mui/material/Switch";
@@ -31,27 +31,65 @@ import SoftButton from "components/SoftButton";
 import CoverLayout from "layouts/authentication/components/CoverLayout";
 
 // Images
-import curved9 from "assets/images/curved-images/curved-6.jpg";
+import curved6 from "assets/images/curved-images/curved14.jpg";
+
+import axios from 'axios';
+
+import Cookies from 'js-cookie';
+
+import config from "../../../config.json"
+
 
 function SignIn() {
+
   const [rememberMe, setRememberMe] = useState(true);
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
 
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+
+  const navigate = useNavigate();
+
+  const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
+  const checkKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      submitForm();
+    }
+  }
+  const submitForm = () => {
+    const data = {
+      username: username,
+      password: password
+    }
+
+    axios.post(host + "/provider/login", data)
+      .then(response => {
+        console.log(response);
+        const token = response.data.token;
+        Cookies.set("token", token);
+        Cookies.set("username", username);
+        navigate("/dashboard");
+      })
+      .catch(error => {
+        alert(error);
+      })
+  }
   return (
     <CoverLayout
       title="Welcome back"
-      description="Enter your email and password to sign in"
-      image={curved9}
+      description="Enter your username and password to sign in"
+      image={curved6}
     >
       <SoftBox component="form" role="form">
         <SoftBox mb={2}>
           <SoftBox mb={1} ml={0.5}>
             <SoftTypography component="label" variant="caption" fontWeight="bold">
-              Email
+              Username
             </SoftTypography>
           </SoftBox>
-          <SoftInput type="email" placeholder="Email" />
+          <SoftInput type="user" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
         </SoftBox>
         <SoftBox mb={2}>
           <SoftBox mb={1} ml={0.5}>
@@ -59,7 +97,7 @@ function SignIn() {
               Password
             </SoftTypography>
           </SoftBox>
-          <SoftInput type="password" placeholder="Password" />
+          <SoftInput type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyPress={(e) => checkKeyPress(e)} />
         </SoftBox>
         <SoftBox display="flex" alignItems="center">
           <Switch checked={rememberMe} onChange={handleSetRememberMe} />
@@ -73,7 +111,7 @@ function SignIn() {
           </SoftTypography>
         </SoftBox>
         <SoftBox mt={4} mb={1}>
-          <SoftButton variant="gradient" color="info" fullWidth>
+          <SoftButton variant="gradient" color="info" fullWidth onClick={() => submitForm()}>
             sign in
           </SoftButton>
         </SoftBox>

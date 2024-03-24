@@ -141,4 +141,48 @@ router.post('/provider/update', async (req, res) => {
     res.sendStatus(200);
 })
 
+
+router.get('/provider/dashboard-info', checkAuth, async (req, res) => {
+    try {
+        const provider = await Provider.findOne({ '_id': req.userData.userId });
+        if (!provider) {
+            throw "Provider not found";
+        }
+
+        // TODO(andy) this should probably be cached and updated, instead of recomputing every time.
+        totalPcuConsumed = provider.jobs_running.reduce((total, job) => total + (job.pcu_consumed || 0), 0)
+
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify(
+            {
+                provider_duration: provider.provider_duration,
+                pcu_contributed: totalPcuConsumed,
+                reliability_score: provider.reliability,
+            }
+        ));
+    } catch (err) {
+        console.error(err)
+        res.sendStatus(500);
+    }
+})
+
+router.post('/provider/update-duration', checkAuth, async (req, res) => {
+    try {
+        if (!req.body.provider_duration) {
+            throw "No provider_duration field in request body";
+        }
+        const provider = await Provider.findOne({ '_id': req.userData.userId });
+        if (!provider) {
+            throw "Provider not found"
+        }
+        provider.provider_duration = req.body.provider_duration;
+        await provider.save();
+        res.sendStatus(200);
+
+    } catch (err) {
+        console.error(err)
+        res.sendStatus(500);
+    }
+})
+
 module.exports = router;

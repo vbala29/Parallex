@@ -16,7 +16,7 @@ Coded by www.creative-tim.com
 import { useState } from "react";
 
 // react-router-dom components
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -36,15 +36,44 @@ import Separator from "layouts/authentication/components/Separator";
 // Images
 import curved6 from "assets/images/curved-images/curved14.jpg";
 
+import axios from 'axios';
+
+import config from "../../../config.json"
+
 function SignUp() {
   const [agreement, setAgremment] = useState(true);
 
   const handleSetAgremment = () => setAgremment(!agreement);
 
+  const [name, setName]= useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const navigate = useNavigate();
+
+  const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
+  const submitForm = (event) => {
+    const data = {
+      username: name,
+      email: email,
+      password: password
+    }
+    axios.post(host + "/provider/register", data)
+      .then(response => {
+        console.log(response);
+        navigate("/authentication/sign-in");
+        // probably add a successfully signed up page
+      })
+      .catch(error => {
+        alert(error);
+      })
+    event.preventDefault();
+    return false;
+  };
   return (
     <BasicLayout
-      title="Welcome to Parallex!"
-      description="Please register here to start as a Parallex Provider."
+      title="Parallex"
+      description="Accessible Compute For All"
       image={curved6}
     >
       <Card>
@@ -58,38 +87,19 @@ function SignUp() {
         </SoftBox>
         <Separator />
         <SoftBox pt={2} pb={3} px={3}>
-          <SoftBox component="form" role="form">
+          <SoftBox component="form" role="form" onSubmit={(e) => submitForm(e)}>
             <SoftBox mb={2}>
-              <SoftInput placeholder="Name" />
-            </SoftBox>
-            <SoftBox mb={2}>
-              <SoftInput type="email" placeholder="Email" />
+              <SoftInput placeholder="Name" value={name} onChange={(e) => setName(e.target.value)}/>
             </SoftBox>
             <SoftBox mb={2}>
-              <SoftInput type="password" placeholder="Password" />
+              <SoftInput type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
             </SoftBox>
-            <SoftBox display="flex" alignItems="center">
-              <Checkbox checked={agreement} onChange={handleSetAgremment} />
-              <SoftTypography
-                variant="button"
-                fontWeight="regular"
-                onClick={handleSetAgremment}
-                sx={{ cursor: "poiner", userSelect: "none" }}
-              >
-                &nbsp;&nbsp;I agree the&nbsp;
-              </SoftTypography>
-              <SoftTypography
-                component="a"
-                href="#"
-                variant="button"
-                fontWeight="bold"
-                textGradient
-              >
-                Terms and Conditions
-              </SoftTypography>
+            <SoftBox mb={2}>
+              <SoftInput type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}/>
             </SoftBox>
+
             <SoftBox mt={4} mb={1}>
-              <SoftButton variant="gradient" color="dark" fullWidth>
+              <SoftButton variant="gradient" color="dark" type="submit" fullWidth>
                 sign up
               </SoftButton>
             </SoftBox>

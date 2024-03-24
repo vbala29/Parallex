@@ -3,8 +3,8 @@ import { createSlice } from '@reduxjs/toolkit'
 export const metricsSlice = createSlice({
     name: 'metrics',
     initialState: {
-        pcuContributed: 142,
-        providerDuration: 8 * 3600 + 30 * 60 + 16,
+        pcuContributed: 0,
+        providerDuration: 0,
         reliability: 4.5
     },
     reducers: {
