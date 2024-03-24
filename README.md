@@ -101,10 +101,12 @@ set SECRET_KEY=abcde && node index.js
 ## Deploying to AWS
 ### All Platforms
 *Note: you must have the Parallex.pem ssh key in your root directory of this repoistory locally.*
+
 **To install dependencies (RabbitMQ, MongoDB, git, conda, etc) when deploying for the first time**
 ```(bash)
 python setup_cluster.py -i
 ```
+
 **To simply redploy with updated code**
 ```(bash)
 python setup_cluster.py
