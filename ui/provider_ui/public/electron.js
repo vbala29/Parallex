@@ -14,6 +14,7 @@ function createWindow() {
             preload: path.join(__dirname, "preload.js"),
             devTools: !app.isPackaged
         },
+        autoHideMenuBar: true,
     });
 
     // In production, set the initial browser path to the local bundle generated
