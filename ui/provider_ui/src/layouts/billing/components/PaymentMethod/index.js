@@ -28,8 +28,8 @@ import SoftButton from "components/SoftButton";
 import borders from "assets/theme/base/borders";
 
 // Images
-import masterCardLogo from "assets/images/logos/mastercard.png";
-import visaLogo from "assets/images/logos/visa.png";
+import chaseLogo from "assets/images/logos/chase-logo-transparent.png";
+// import visaLogo from "assets/images/logos/visa.png";
 
 function PaymentMethod() {
   const { borderWidth, borderColor } = borders;
@@ -38,11 +38,11 @@ function PaymentMethod() {
     <Card id="delete-account">
       <SoftBox pt={2} px={2} display="flex" justifyContent="space-between" alignItems="center">
         <SoftTypography variant="h6" fontWeight="medium">
-          Payment Method
+          Transfer Method
         </SoftTypography>
         <SoftButton variant="gradient" color="dark">
           <Icon sx={{ fontWeight: "bold" }}>add</Icon>
-          &nbsp;add new card
+          &nbsp;add new bank account
         </SoftButton>
       </SoftBox>
       <SoftBox p={2}>
@@ -56,12 +56,12 @@ function PaymentMethod() {
               alignItems="center"
               p={3}
             >
-              <SoftBox component="img" src={masterCardLogo} alt="master card" width="10%" mr={2} />
+              <SoftBox component="img" src={chaseLogo} alt="Chase" width="10%" mr={2} />
               <SoftTypography variant="h6" fontWeight="medium">
                 ****&nbsp;&nbsp;****&nbsp;&nbsp;****&nbsp;&nbsp;7852
               </SoftTypography>
               <SoftBox ml="auto" lineHeight={0}>
-                <Tooltip title="Edit Card" placement="top">
+                <Tooltip title="Edit Account" placement="top">
                   <Icon sx={{ cursor: "pointer" }} fontSize="small">
                     edit
                   </Icon>
@@ -78,12 +78,12 @@ function PaymentMethod() {
               alignItems="center"
               p={3}
             >
-              <SoftBox component="img" src={visaLogo} alt="master card" width="10%" mr={2} />
+              <SoftBox component="img" src={chaseLogo} alt="Chase" width="10%" mr={2} />
               <SoftTypography variant="h6" fontWeight="medium">
                 ****&nbsp;&nbsp;****&nbsp;&nbsp;****&nbsp;&nbsp;5248
               </SoftTypography>
               <SoftBox ml="auto" lineHeight={0}>
-                <Tooltip title="Edit Card" placement="top">
+                <Tooltip title="Edit Account" placement="top">
                   <Icon sx={{ cursor: "pointer" }} fontSize="small">
                     edit
                   </Icon>

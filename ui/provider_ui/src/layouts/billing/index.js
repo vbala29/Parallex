@@ -15,6 +15,7 @@ Coded by www.creative-tim.com
 
 // @mui material components
 import Grid from "@mui/material/Grid";
+import React, { useState, useEffect } from 'react';
 
 // Soft UI Dashboard React components
 import SoftBox from "components/SoftBox";
@@ -39,13 +40,51 @@ import Countdown from 'react-countdown';
 import { selectPCUContributed } from "layouts/dashboard/metricsState";
 import { useSelector } from 'react-redux'
 
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
+import config from "../../config.json"
 
 function Billing() {
-  const lifetimePCU = useSelector(selectPCUContributed);
-  // TODO(andy): This should be dynamic and linked to the backend.
-  const pcu_conversion_rate = 0.05; // USD per PCU
-  const lotteries_per_pcu = 3; // Lottery tickets per PCU
+
+  const [lotteryEntries, setLotteryEntries] = useState(0);
+  const [lifetimeEarnings, setLifetimeEarnings] = useState(0);
+  const [job_data, setJobData] = useState([]);
+
+  useEffect(() => {
+    const fetchAndUpdateData = async () => {
+      const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
+      axios.get(host + "/provider/rewards", {
+        headers: {
+          authorization: "Basic " + Cookies.get("token")
+        }
+      }).then(response => {
+        console.log(response.data);
+        setLotteryEntries(response.data.lottery_entries);
+        setLifetimeEarnings(response.data.total_reward);
+      }).catch(error => {
+        console.log(error);
+      })
+
+      axios.get(host + "/provider/job-summary", {
+        headers: {
+          authorization: "Basic " + Cookies.get("token")
+        }
+      }).then(response => {
+        console.log(response.data);
+        setJobData(response.data);
+      }).catch(error => {
+        console.log(error);
+      })
+    }
+
+    fetchAndUpdateData();
+    const interval = setInterval(fetchAndUpdateData, 5000); // 5000 milliseconds = 5 seconds
+
+    // Cleanup function to clear the interval when the component unmounts
+    return () => clearInterval(interval);
+  }, []); // Empty dependency array means this effect runs once on mount and cleanup on unmount
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -59,7 +98,7 @@ function Billing() {
                     icon="hourglass_bottom"
                     title="Lottery Drawing"
                     description="Win up to $1000000!"
-                    value={<Countdown date={Date.now() + (24*3600 * 10 + 8 * 3600 + 30) * 1000} />}
+                    value={<Countdown date={Date.now() + (24 * 3600 * 10 + 8 * 3600 + 30) * 1000} />}
                   >
                   </DefaultInfoCard>
                   {/* <Countdown date={Date.now() + 10000} /> */}
@@ -70,7 +109,7 @@ function Billing() {
                     icon="local_activity"
                     title="Lottery Entries"
                     description="90th Percentile"
-                    value={`${Math.trunc(lifetimePCU * lotteries_per_pcu)}`}
+                    value={`${Math.trunc(lotteryEntries)}`}
                   />
                 </Grid>
                 <Grid item xs={12} md={4} xl={4}>
@@ -78,7 +117,7 @@ function Billing() {
                     icon="account_balance"
                     title="Lifetime Earnings"
                     description="Top 2%!"
-                    value={`$${(lifetimePCU * pcu_conversion_rate).toFixed(2)}`}
+                    value={`$${(lifetimeEarnings).toFixed(2)}`}
                   />
                 </Grid>
 
@@ -88,7 +127,7 @@ function Billing() {
               </Grid>
             </Grid>
             <Grid item xs={12} lg={4}>
-              <Invoices />
+              <Invoices job_data={job_data} />
             </Grid>
           </Grid>
         </SoftBox>

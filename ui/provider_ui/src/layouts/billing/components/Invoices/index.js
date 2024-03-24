@@ -23,8 +23,11 @@ import SoftButton from "components/SoftButton";
 
 // Billing page components
 import Invoice from "layouts/billing/components/Invoice";
+import PropTypes from 'prop-types';
 
-function Invoices({ job_data }) {
+import moment from 'moment';
+
+function Invoices({job_data}) {
   return (
     <Card id="delete-account" sx={{ height: "100%" }}>
       <SoftBox pt={2} px={2} display="flex" justifyContent="space-between" alignItems="center">
@@ -37,26 +40,37 @@ function Invoices({ job_data }) {
       </SoftBox>
       <SoftBox p={2}>
         <SoftBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
-          {/* {
+          {
             job_data.map((job, index) => (
               <Invoice
                 key={index}
-                date={invoice.date}
-                id={invoice.id}
-                price={`$${invoice.price.toFixed(2)}`}
-                noGutter={index === invoices.length - 1}
+                date={moment.unix(job.time_start/1000).format("YYYY-MM-DD")}
+                id={job.job_id}
+                price={`$${job.reward.toFixed(2)}`}
+                noGutter={index === job_data.length - 1}
               />
             ))
-          } */}
-          <Invoice date="2024-02-15" id="#MS-415646" price="$1.50" />
+          }
+          {/* <Invoice date="2024-02-15" id="#MS-415646" price="$1.50" />
           <Invoice date="2024-02-15" id="#RV-126749" price="$0.70" />
           <Invoice date="2024-02-15" id="#QW-103578" price="$0.98" />
           <Invoice date="2024-02-15" id="#MS-415646" price="$0.43" />
-          <Invoice date="2024-02-15" id="#AR-803481" price="$2.50" noGutter />
+          <Invoice date="2024-02-15" id="#AR-803481" price="$2.50" noGutter /> */}
         </SoftBox>
       </SoftBox>
     </Card>
   );
 }
+
+Invoices.propTypes = {
+  job_data: PropTypes.arrayOf(
+    PropTypes.shape({
+      time_start: PropTypes.number.isRequired,
+      job_id: PropTypes.string.isRequired,
+      reward: PropTypes.number.isRequired,
+    })
+  ).isRequired,
+};
+
 
 export default Invoices;
