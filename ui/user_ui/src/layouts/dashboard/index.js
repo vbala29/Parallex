@@ -68,7 +68,7 @@ function Dashboard() {
         console.log(response.data);
       })
       .catch(error => {
-        alert(error);
+        console.log(error);
     })
   },[]);
 

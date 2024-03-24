@@ -96,7 +96,7 @@ $env:SECRET_KEY='abcde'; node index.js
 
 #### Command Prompt
 ```(cmd)
-$env:SECRET_KEY='abcde'; node index.js
+set SECRET_KEY=abcde && node index.js
 ```
 ## Miscellaneous
 

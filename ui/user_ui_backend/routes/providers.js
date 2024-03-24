@@ -53,8 +53,8 @@ router.post('/provider/login', async (req, res) => {
 /*
 Requires:
 provider_id: string
-job_id: Number
-job_userid: Number
+job_id: string
+job_userid: string
 pcu_increment: Number
 time_end: Optional[Number], in Unix time
 */
@@ -68,8 +68,7 @@ router.post('/provider/update', async (req, res) => {
         const job_userid = req.body.job_userid;
         const find_schema = {
             '_id': providerId,
-            'jobs_running.user': job_user,
-            'jobs_running.id': job_id,
+            'jobs_running.jobID': job_id,
         }
 
         provider_update_command = {
@@ -77,41 +76,113 @@ router.post('/provider/update', async (req, res) => {
         }
         if (req.body.time_end) {
             const time_end = req.body.time_end;
-            provider_update_command[$set] = { 'jobs_running.$.time_end': time_end }
+            provider_update_command['$set'] = { 'jobs_running.$.time_end': time_end }
+
+            const user_provider_find_schema = {
+                '_id': job_userid,
+                'jobs_created.unique_id': job_id,
+                // 'jobs_created.providers_assigned.provider_id': providerId
+            }
+
+            // Update the provider status. Non-race, so don't need `findOneAndUpdate` here.
+            const user = await User.findOne(user_provider_find_schema);
+            if (user) {
+                const job = user.jobs_created.find(job => job.unique_id === job_id);
+                if (job) {
+                    const provider = job.providers_assigned.find(provider => provider.provider_id === providerId);
+                    if (provider) {
+                        provider.status = 'completed';
+                        await user.save();
+                    }
+                }
+            }
         }
 
         await Provider.findOneAndUpdate(
             find_schema,
-            provider_update_command,
+            provider_update_command
         )
 
-        const user_find_schema = {
-            '_id': job_userid,
-            'jobs_created.unique_id': job_id
+
+        // Complete user billing. Non-race (I think)?        
+        const user = await User.findById(job_userid)
+        if (user) {
+            console.log('completing user billing')
+            const job = user.jobs_created.find(job => job.unique_id === job_id);
+            const allProvidersCompleted = job.providers_assigned.every(provider => provider.status === 'completed');
+
+            if (allProvidersCompleted) {
+
+                last_time_end = req.body.time_end;
+                for (const provider of job.providers_assigned) {
+                    const provider_entry = await Provider.findById(provider.provider_id);
+                    if (provider_entry) {
+                        const provider_job_entry = provider_entry.jobs_running.find(job_running => job_running.jobID === job_id);
+                        if (provider_job_entry) {
+                            last_time_end = Math.max(last_time_end, provider_job_entry.time_end)
+                        }
+                    }
+                }
+                console.log('Completing job with ID', job_id, 'and user', job_userid, 'with time_end', last_time_end)
+
+                job.running = false;
+                job.termination_time = last_time_end;
+                console.log('Billing user', job_userid, 'for job', job_id, 'with cost', job.job_cost);
+                user.available_pcu_count -= job.cpu_count;
+
+                await user.save();
+            }
         }
 
-        const user = await User.findById(userId)
-        const allProvidersCompleted = user.jobs_created.every(job =>
-            job.providers_assigned.every(provider => provider.status === 'completed')
-        );
-
-        user_update_command = {
-            $inc: { 'jobs_created.$.job_cost': pcu_increment }
-        }
-
-        if (allProvidersCompleted) {
-            user_update_command[$set] = { 'jobs_created.$.running': false }
-        }
-
-        await User.findOneAndUpdate(
-            user_find_schema,
-            user_update_command
-        )
     } catch (err) {
         console.error("Error in Query for /provider/update: " + err);
         res.sendStatus(500);
     }
     res.sendStatus(200);
+})
+
+
+router.get('/provider/dashboard-info', checkAuth, async (req, res) => {
+    try {
+        const provider = await Provider.findOne({ '_id': req.userData.userId });
+        if (!provider) {
+            throw "Provider not found";
+        }
+
+        // TODO(andy) this should probably be cached and updated, instead of recomputing every time.
+        totalPcuConsumed = provider.jobs_running.reduce((total, job) => total + (job.pcu_consumed || 0), 0)
+
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify(
+            {
+                provider_duration: provider.provider_duration,
+                pcu_contributed: totalPcuConsumed,
+                reliability_score: provider.reliability,
+            }
+        ));
+    } catch (err) {
+        console.error(err)
+        res.sendStatus(500);
+    }
+})
+
+router.post('/provider/update-duration', checkAuth, async (req, res) => {
+    try {
+        if (!req.body.provider_duration) {
+            throw "No provider_duration field in request body";
+        }
+        const provider = await Provider.findOne({ '_id': req.userData.userId });
+        if (!provider) {
+            throw "Provider not found"
+        }
+        provider.provider_duration = req.body.provider_duration;
+        await provider.save();
+        res.sendStatus(200);
+
+    } catch (err) {
+        console.error(err)
+        res.sendStatus(500);
+    }
 })
 
 module.exports = router;

@@ -32,12 +32,12 @@ function BuyPCU() {
   const [numPCUs, setNumPCUs] = useState(0);
   const purchase = () => {
     const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
-    axios.post(host + "/buy-pcu", {pcu_bought: {numPCUs}},{headers: {
+    axios.post(host + "/buy-pcu", {pcu_bought: parseInt(numPCUs)},{headers: {
       authorization: "Basic " + Cookies.get("token")
     }
     })
     .then(response => {
-      console.log(response);
+      alert("Purchase Successful");
     })
     .catch(error => {
       alert(error);

@@ -51,10 +51,15 @@ import { useSelector, useDispatch } from 'react-redux'
 
 
 import { secondsToTime, pcuToDisplay } from "utils/format";
-import { selectPCUContributed, selectProviderDuration, selectReliability, incrementProviderDuration } from "layouts/dashboard/metricsState";
+import { setPCUContributed, setProviderDuration, setReliabilityScore, selectPCUContributed, selectProviderDuration, selectReliability, incrementProviderDuration } from "layouts/dashboard/metricsState";
 import { selectIsStarted } from "layouts/dashboard/components/StartStop/startState";
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
+import config from "../../config.json"
 // ...
+
+
 
 
 function getRandomInt(min, max) {
@@ -63,6 +68,14 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function setDashboardData(redux_dispatch, initial_fetch_done, data) {
+  if (!initial_fetch_done) {
+    // Only update the provider duration counter from remote on first fetch
+    redux_dispatch(setProviderDuration(data.provider_duration));
+  }
+  redux_dispatch(setPCUContributed(data.pcu_contributed));
+  redux_dispatch(setReliabilityScore(data.reliability_score));
+}
 
 
 function Dashboard() {
@@ -75,32 +88,62 @@ function Dashboard() {
 
   const isOnline = useSelector(selectIsStarted);
   const dispatch = useDispatch();
+  const [initialFetchDone, setInitialFetchDone] = useState(false);
 
 
   useEffect(() => {
-    const timeDelayMillis = 1000
-    const fetchData = async () => {
-      console.log(`online: ${isOnline}`)
+    const timeDelayMillisRemote = 5000
+    const timeDelayMillisLocal = 1000
+    const fetchAndUpdateData = async () => {
 
-      // Replace with your actual API call
-      // const response = await fetch('https://your-api-url.com');
-      // const data = await response.json();
+      const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
+      axios.get(host + "/provider/dashboard-info", {
+        headers: {
+          authorization: "Basic " + Cookies.get("token")
+        }
+      }).then(response => {
+        console.log(response.data);
+        setDashboardData(dispatch, initialFetchDone, response.data);
+      }).catch(error => {
+        console.log(error);
+      })
 
-      // setLifetimePCU(142);
-      // setLifetimeProviderDuration(8 * 3600 + 30 * 60 + 16);
-      if (isOnline) {
-        dispatch(incrementProviderDuration(Math.round(timeDelayMillis/1000.0)));
+      if (initialFetchDone) {
+        // Update the provider duration from the local counter
+        console.log('Updating provider duration to', lifetimeProviderDuration)
+        axios.post(host + "/provider/update-duration", {
+          'provider_duration': lifetimeProviderDuration
+        }, {
+          headers: {
+            'Authorization': "Basic " + Cookies.get("token"),
+            'Content-Type': 'application/json'
+          }
+        }).then(response => {
+          console.log(response.data);
+        }).catch(error => {
+          console.log(error);
+        })
       }
 
+      if (!initialFetchDone) {
+        setInitialFetchDone(true);
+      }
 
     };
+    fetchAndUpdateData();
+    const intervalIdRemote = setInterval(fetchAndUpdateData, timeDelayMillisRemote); // Refresh every 60 seconds
 
-    fetchData();
-    const intervalId = setInterval(fetchData, timeDelayMillis); // Refresh every 60 seconds
+
+    const updateLocalCounter = async () => {
+      if (isOnline) {
+        dispatch(incrementProviderDuration(Math.round(timeDelayMillisLocal / 1000.0)));
+      }
+    }
+    const intervalIdLocal = setInterval(updateLocalCounter, timeDelayMillisLocal)
 
     // Clean up function
-    return () => clearInterval(intervalId);
-  }, [isOnline, incrementProviderDuration]); // Empty dependency array means this effect runs once on mount and clean up on unmount
+    return () => { clearInterval(intervalIdRemote); clearInterval(intervalIdLocal) }
+  }, [isOnline, initialFetchDone, incrementProviderDuration, lifetimeProviderDuration]); // Empty dependency array means this effect runs once on mount and clean up on unmount
 
   return (
     <DashboardLayout>
