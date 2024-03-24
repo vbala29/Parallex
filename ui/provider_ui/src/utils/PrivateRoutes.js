@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import { Route, Navigate, useLocation, Outlet } from 'react-router-dom';
 import axios from "axios";
 import PropTypes from 'prop-types';
-import Cookies from 'js-cookie';
+  
+import { selectToken, setToken } from "utils/authState";
+import { useSelector, useDispatch } from 'react-redux'
 
 import config from "../config.json"
 
@@ -10,6 +12,8 @@ const PrivateRoutes = () => {
   const { pathname } = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const token = useSelector(selectToken);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,7 +23,7 @@ const PrivateRoutes = () => {
         try {
           const response = await axios.get(host + "/authorize", {
             headers: {
-              authorization: "Basic " + Cookies.get("token")
+              authorization: "Basic " + token
             }
           });
           setIsAuthenticated(response.status === 200);

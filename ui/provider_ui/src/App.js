@@ -51,7 +51,6 @@ import brand from "assets/images/logo-ct.png";
 
 import PrivateRoutes from "utils/PrivateRoutes";
 
-import Cookies from 'js-cookie';
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
 import Billing from "layouts/billing";

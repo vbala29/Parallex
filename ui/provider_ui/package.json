@@ -52,9 +52,9 @@
     "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && npm start",
     "install:peer-deps": "npm install --legacy-peer-deps",
     "electron:start": "concurrently -k \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && electronmon .\"",
-    "electron:package:mac": "npm run build && electron-builder -m -c.extraMetadata.main=build/electron.js",
-    "electron:package:win": "npm run build && electron-builder -w -c.extraMetadata.main=build/electron.js",
-    "electron:package:linux": "npm run build && electron-builder -l -c.extraMetadata.main=build/electron.js"
+    "electron:package:mac": "npm run build && electron-builder -m --publish never -c.extraMetadata.main=build/electron.js",
+    "electron:package:win": "npm run build && electron-builder -w --publish never -c.extraMetadata.main=build/electron.js",
+    "electron:package:linux": "npm run build && electron-builder -l --publish never -c.extraMetadata.main=build/electron.js"
   },
   "eslintConfig": {
     "extends": [

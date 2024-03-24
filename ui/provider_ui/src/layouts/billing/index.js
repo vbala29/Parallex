@@ -37,11 +37,9 @@ import Transactions from "layouts/billing/components/Transactions";
 
 import Countdown from 'react-countdown';
 
-import { selectPCUContributed } from "layouts/dashboard/metricsState";
-import { useSelector } from 'react-redux'
-
+import { selectToken, setToken } from "utils/authState";
+import { useSelector, useDispatch } from 'react-redux'
 import axios from 'axios';
-import Cookies from 'js-cookie';
 
 import config from "../../config.json"
 
@@ -50,13 +48,14 @@ function Billing() {
   const [lotteryEntries, setLotteryEntries] = useState(0);
   const [lifetimeEarnings, setLifetimeEarnings] = useState(0);
   const [job_data, setJobData] = useState([]);
+  const token = useSelector(selectToken);
 
   useEffect(() => {
     const fetchAndUpdateData = async () => {
       const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
       axios.get(host + "/provider/rewards", {
         headers: {
-          authorization: "Basic " + Cookies.get("token")
+          authorization: "Basic " + token
         }
       }).then(response => {
         console.log(response.data);
@@ -68,7 +67,7 @@ function Billing() {
 
       axios.get(host + "/provider/job-summary", {
         headers: {
-          authorization: "Basic " + Cookies.get("token")
+          authorization: "Basic " + token
         }
       }).then(response => {
         console.log(response.data);
