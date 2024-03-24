@@ -16,7 +16,7 @@ Coded by www.creative-tim.com
 
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, HashRouter } from "react-router-dom";
 import App from "App";
 import AlertTemplate from 'react-alert-template-basic'
 import { transitions, positions, Provider as AlertProvider } from 'react-alert'
@@ -62,7 +62,7 @@ import { SoftUIControllerProvider } from "context";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <BrowserRouter>
+  <HashRouter>
     <SoftUIControllerProvider>
       <Provider store={store}>
         <AlertProvider template={AlertTemplate} {...options}>
@@ -70,5 +70,5 @@ root.render(
         </AlertProvider>
       </Provider>
     </SoftUIControllerProvider>
-  </BrowserRouter>
+  </HashRouter>
 );
