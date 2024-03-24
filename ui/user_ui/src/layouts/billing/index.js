@@ -51,7 +51,7 @@ function Billing() {
         setAvailablePCUs(response.data.available_pcu_count)
       })
       .catch(error => {
-        alert(error);
+        console.log(error);
       })
   }
   useEffect(() => {

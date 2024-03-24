@@ -97,16 +97,19 @@ function DashboardNavbar({ absolute, light, isMini }) {
     }
 
     const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
-    axios.get(host + "/available-pcu-count", {headers: {
-      authorization: "Basic " + Cookies.get("token")
-    }})
-      .then(response => {
-        setAvailablePCUs(response.data.available_pcu_count)
-      })
-      .catch(error => {
-        alert(error);
-      })
-
+    function update(){
+      axios.get(host + "/available-pcu-count", {headers: {
+        authorization: "Basic " + Cookies.get("token")
+      }})
+        .then(response => {
+          setAvailablePCUs(response.data.available_pcu_count)
+        })
+        .catch(error => {
+          console.log(error);
+        })
+    }
+    update();
+    setInterval(update, 2000);
 
     /** 
      The event listener that's calling the handleTransparentNavbar function when 

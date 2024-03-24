@@ -48,26 +48,6 @@ function Jobs() {
   const openMenu = ({ currentTarget }) => setMenu(currentTarget);
   const closeMenu = () => setMenu(null);
   const [rows, setRows] = useState([]);
-  const renderMenu = (
-    <Menu
-      id="simple-menu"
-      anchorEl={menu}
-      anchorOrigin={{
-        vertical: "top",
-        horizontal: "left",
-      }}
-      transformOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      open={Boolean(menu)}
-      onClose={closeMenu}
-    >
-      <MenuItem onClick={closeMenu}>Action</MenuItem>
-      <MenuItem onClick={closeMenu}>Another action</MenuItem>
-      <MenuItem onClick={closeMenu}>Something else</MenuItem>
-    </Menu>
-  );
 
   const updateJobs = () => {
     const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
@@ -93,15 +73,6 @@ function Jobs() {
       console.log(error)
     });
 
-    // const jobs = [{
-    //   job: 'test',
-    //   'start time': 'today',
-    //   'end time': 'who knows',
-    //   'cost': 'a lot'
-    // }];
-
-    // setRows(jobs);
-
     setTimeout(() => {
       updateJobs();
     }, 30000);
@@ -118,27 +89,7 @@ function Jobs() {
           <SoftTypography variant="h6" gutterBottom>
             Jobs
           </SoftTypography>
-          {/* <SoftBox display="flex" alignItems="center" lineHeight={0}>
-            <Icon
-              sx={{
-                fontWeight: "bold",
-                color: ({ palette: { info } }) => info.main,
-                mt: -0.5,
-              }}
-            >
-              done
-            </Icon>
-            <SoftTypography variant="button" fontWeight="regular" color="text">
-              &nbsp;<strong>XXX done</strong> this month
-            </SoftTypography>
-          </SoftBox> */}
         </SoftBox>
-        <SoftBox color="text" px={2}>
-          <Icon sx={{ cursor: "pointer", fontWeight: "bold" }} fontSize="small" onClick={openMenu}>
-            more_vert
-          </Icon>
-        </SoftBox>
-        {renderMenu}
       </SoftBox>
       <SoftBox
         sx={{

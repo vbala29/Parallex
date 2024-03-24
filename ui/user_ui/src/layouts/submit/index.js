@@ -114,7 +114,7 @@ function Submit() {
       <DashboardNavbar/>
       <SoftBox py={3}>
         <Grid container spacing={3}>
-          <Grid item xs={8}>
+          <Grid item xs={7}>
             <Card style={{height:'100%'}}>
               <div style={{display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', padding:'5px', height:'100%'}}>
                 <div {...getRootProps()} style={dropzoneStyles}>
@@ -142,14 +142,14 @@ function Submit() {
                   autoComplete="off"
                 >
               <CardHeader title="Job Specifications"/>
-                <TextField required  id="outlined-name" variant="outlined" label="Job Name" defaultValue="test" margin="normal" value={jobName} onChange={(e) => setJobName(e.target.value)}></TextField>  
+                <TextField required  id="outlined-name" variant="standard" label="Job Name" defaultValue="test" margin="normal" value={jobName} onChange={(e) => setJobName(e.target.value)}></TextField>  
                 <div style={{height:"8px"}}></div>
-                <TextField required  id="outlined-cores" variant="outlined" label="CPU Cores" defaultValue="0" margin="normal" value={cores} onChange={(e) => setCores(e.target.value)}></TextField>  
+                <TextField required  id="outlined-cores" variant="standard" label="CPU Cores" defaultValue="0" margin="normal" value={cores} onChange={(e) => setCores(e.target.value)}></TextField>  
                 <div style={{height:"8px"}}></div>
-                <TextField required  id="outlined-ram" variant="outlined" label="MiB RAM" defaultValue="0" margin="normal" value={ram} onChange={(e) => setRam(e.target.value)}></TextField>
+                <TextField required  id="outlined-ram" variant="standard" label="MiB RAM" defaultValue="0" margin="normal" value={ram} onChange={(e) => setRam(e.target.value)}></TextField>
                 <div style={{height:"6px"}}></div>
                 <SoftTypography variant="body2">
-                  Estimated Cost Per Hour: {ram * cores / 100}
+                  Estimated Cost Per Hour: {ram * cores / 2500}
                 </SoftTypography>
               </Box>
             </Card> 
