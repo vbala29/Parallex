@@ -116,6 +116,10 @@ web_backend_server = data["ip_addresses"]['web_backend_server'] # Frontend will 
 install_service("command_server", command_server)
 install_service("web_backend_server", web_backend_server)
 
-run_services([("command_server", command_server),
-              ("web_backend_server", web_backend_server),
-              ("web_frontend", web_backend_server)])
+run_services([
+    ("kill_processes", command_server),
+    ("kill_processes", web_backend_server),
+    ("command_server", command_server),
+    ("web_backend_server", web_backend_server),
+    ("web_frontend", web_backend_server)
+    ])
