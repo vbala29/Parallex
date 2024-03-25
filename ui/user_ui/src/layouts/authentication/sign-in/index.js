@@ -31,7 +31,7 @@ import SoftButton from "components/SoftButton";
 import CoverLayout from "layouts/authentication/components/CoverLayout";
 
 // Images
-import curved6 from "assets/images/curved-images/curved14.jpg";
+import curved6 from "assets/images/curved-images/extended_logo.png";
 
 import axios from 'axios';
 
@@ -122,7 +122,7 @@ function SignIn() {
               component={Link}
               to="/authentication/sign-up"
               variant="button"
-              color="info"
+              color="dark"
               fontWeight="medium"
               textGradient
             >

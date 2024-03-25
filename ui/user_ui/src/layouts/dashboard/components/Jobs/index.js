@@ -63,7 +63,7 @@ function Jobs() {
           'status' : job.termination_time ? (<div style={{color: "green"}}><FaCheckCircle/> Done</div>) : (<div style={{color: "orange"}}><LuClock3/> Running</div>),
           'start time': new Date(job.creation_time).toLocaleString(),
           'end time' : job.termination_time ? new Date(job.termination_time).toLocaleString() : null,
-          'cost' : Math.floor(Math.random() * 1000)/ 100 + " USD"
+          'cost' : job.job_cost + " USD"
         }
         return job_obj;
       });

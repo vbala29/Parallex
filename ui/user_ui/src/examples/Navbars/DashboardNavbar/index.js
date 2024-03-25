@@ -64,6 +64,9 @@ import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
 
 import config from "../../../config.json"
 
+import { FaMicrochip } from "react-icons/fa6";
+import { FaArrowRight } from "react-icons/fa";
+import { FaMoneyBill } from "react-icons/fa";
 
 function DashboardNavbar({ absolute, light, isMini }) {
   const [navbarType, setNavbarType] = useState();
@@ -172,25 +175,33 @@ function DashboardNavbar({ absolute, light, isMini }) {
     <AppBar
       position={absolute ? "absolute" : navbarType}
       color="inherit"
-      sx={(theme) => navbar(theme, { transparentNavbar, absolute, light })}
+      sx={{borderRadius:"15px", background:"rgba(0,0,0,0)"}}
     >
-      <Toolbar sx={(theme) => navbarContainer(theme)}>
+      <Toolbar sx={(theme) => navbarContainer(theme) }>
         <SoftBox color="inherit" mb={{ xs: 1, md: 0 }} sx={(theme) => navbarRow(theme, { isMini })}>
           <Breadcrumbs icon="home" title={route[route.length - 1]} route={route} light={light} />
         </SoftBox>
         <SoftBox display="flex" flex-direction="row">
           <SoftBox pr={15}>
             <Link to="/billing">
+              <div>
+                <FaMicrochip style={{color:"black"}}/>
+                <FaArrowRight style={{color:"black", padding:"3px"}}/>
+                <FaMoneyBill style={{color:"green"}}/>
+              </div>
               <SoftTypography variant="h6">
-                PCU: 1.23 USD
+                1.23 USD
               </SoftTypography>
             </Link>
           </SoftBox>
           <SoftBox pr={0}>
             <Link to="/billing">
-              <SoftTypography variant="h6">
-                Available PCUs: {availablePCUs}
-              </SoftTypography>
+              <div style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
+                <FaMicrochip style={{color:"black", marginBottom:"10px", marginTop:"2px"}}/>
+                <SoftTypography variant="h6" pl={1}>
+                  PCUs: {availablePCUs}
+                </SoftTypography>
+              </div>
             </Link>
           </SoftBox>
         </SoftBox>
@@ -198,7 +209,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
           <SoftBox sx={(theme) => navbarRow(theme, { isMini })}>
             <SoftBox pr={1}>
               <Link to="/dashboard">
-                <SoftTypography variant="h5">
+                <SoftTypography variant="h6">
                   {username}
                 </SoftTypography>
               </Link>
@@ -210,6 +221,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
                     sx={({ palette: { dark, white } }) => ({
                       color: light ? white.main : dark.main,
                     })}
+                    mb={1}
                   >
                     account_circle
                   </Icon>
@@ -217,7 +229,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
               </Link>
               {renderMenu()}
             </SoftBox>
-            <SoftBox pr={1} onClick={logout} style={{ cursor: 'pointer' }}>
+            <SoftBox pl={1} pr={1} onClick={logout} style={{ cursor: 'pointer' }}>
               <SoftTypography variant="h6">
                 logout
               </SoftTypography>

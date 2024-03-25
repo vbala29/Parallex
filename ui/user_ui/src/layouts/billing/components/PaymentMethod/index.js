@@ -38,7 +38,7 @@ function PaymentMethod() {
   const { borderWidth, borderColor } = borders;
 
   return (
-    <Card id="delete-account" sx={{flexGrow:1}}>
+    <Card sx={{flexGrow:1, margin:"10px"}}>
       <SoftBox pt={2} px={2} display="flex" justifyContent="space-between" alignItems="center">
         <SoftTypography variant="h6" fontWeight="medium">
           Payment Method

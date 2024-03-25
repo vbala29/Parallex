@@ -31,6 +31,7 @@ import Footer from "examples/Footer";
 import PaymentMethod from "layouts/billing/components/PaymentMethod";
 import Invoices from "layouts/billing/components/Invoices";
 import BuyPCU from "./components/BuyPCU";
+import ConfirmPayment from "./components/ConfirmPayment";
 
 import {useEffect, useState} from 'react';
 
@@ -40,8 +41,22 @@ import Cookies from 'js-cookie';
 
 import config from "../../config.json"
 
+import { FaMicrochip } from "react-icons/fa6";
+
+
 function Billing() {
   const [availablePCUs, setAvailablePCUs] = useState(0);
+  const [open, setOpen] = useState(false);
+  const [selectedValue, setSelectedValue] = useState("test");
+  const [numPCUs, setNumPCUs] = useState(0);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
   const getPCUs = () => {
     const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
     axios.get(host + "/available-pcu-count", {headers: {
@@ -55,6 +70,7 @@ function Billing() {
       })
   }
   useEffect(() => {
+    getPCUs();
     setInterval(() => {
       getPCUs();
     }, 2000);
@@ -62,17 +78,29 @@ function Billing() {
   return (
     <DashboardLayout>
       <DashboardNavbar />
-        <SoftBox display="flex" flex-direction="row">
+        <SoftBox b={2} display="flex" flex-direction="row">
           <PaymentMethod/>
-          <Invoices />
+          <Invoices style={{flexGrow: "1"}}/>
         </SoftBox>
-        <SoftBox display="flex" flex-direction="row">
-          <DefaultInfoCard
-            icon="account_balance"
-            title="PCUs"
-            value={availablePCUs}
+        <SoftBox b={2} display="flex" flex-direction="row">
+          <div style={{margin:"10px"}}>
+            <DefaultInfoCard
+              icon={<FaMicrochip></FaMicrochip>}
+              title="PCUs"
+              value={availablePCUs}
+            />
+          </div>
+          <BuyPCU 
+            open={handleClickOpen}
+            numPCUs={numPCUs}
+            setNumPCUs={setNumPCUs}
           />
-          <BuyPCU/>
+          <ConfirmPayment
+          selectedValue={selectedValue}
+          open={open}
+          onClose={handleClose}
+          numPCUs={numPCUs}
+          ></ConfirmPayment>
         </SoftBox>
       <Footer />
     </DashboardLayout>

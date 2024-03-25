@@ -13,6 +13,8 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
+import PropTypes from "prop-types";
+
 // @mui material components
 import Card from "@mui/material/Card";
 
@@ -28,8 +30,8 @@ import { useState } from "react";
 
 import config from "../../../../config.json"
 
-function BuyPCU() {
-  const [numPCUs, setNumPCUs] = useState(0);
+function BuyPCU(props) {
+  const { open, numPCUs, setNumPCUs } = props;
   const purchase = () => {
     const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
     axios.post(host + "/buy-pcu", {pcu_bought: parseInt(numPCUs)},{headers: {
@@ -40,11 +42,11 @@ function BuyPCU() {
       alert("Purchase Successful");
     })
     .catch(error => {
-      alert(error);
+      console.log(error);
   })
   }
   return (
-    <Card sx={{ flexGrow: 1 }}>
+    <Card p={2} sx={{flexGrow:1, margin:"10px"}}>
       <SoftBox pt={2} px={2} display="flex" justifyContent="space-between" alignItems="center">
         <SoftTypography variant="h6" fontWeight="medium">
           Buy PCUs
@@ -53,12 +55,18 @@ function BuyPCU() {
       <SoftBox p={4} display="flex" aligntItems="center">
         <SoftInput value={numPCUs} onChange={(e) => {setNumPCUs(e.target.value)}}>
         </SoftInput>
-        <SoftButton variant="gradient" color="dark" onClick={purchase}>
+        <SoftButton variant="gradient" color="dark" onClick={open}>
           Buy PCUs
         </SoftButton>
       </SoftBox>
     </Card>
   );
 }
+
+BuyPCU.propTypes = {
+  open: PropTypes.func.isRequired,
+  numPCUs: PropTypes.number.isRequired,
+  setNumPCUs: PropTypes.func.isRequired
+};
 
 export default BuyPCU;

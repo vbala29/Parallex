@@ -23,25 +23,60 @@ import SoftButton from "components/SoftButton";
 
 // Billing page components
 import Invoice from "layouts/billing/components/Invoice";
+import { useEffect, useState } from "react";
+
+import axios from 'axios';
+
+import Cookies from 'js-cookie';
+
+import config from "../../../../config.json";
 
 function Invoices() {
+  const [invoiceData, setInvoiceData] = useState([]);
+  const getInvoiceData = () => {
+    const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
+    axios.get(host + "/job-list", {headers: {
+      authorization: "Basic " + Cookies.get("token")
+    }})
+      .then(response => {
+        console.log(response)
+        const jobs_list = response.data.jobs_created;
+        const invoice_list = jobs_list.map((job) => {
+          const invoice_obj = {
+            job: job.name,
+            end_time : job.termination_time ? new Date(job.termination_time).toLocaleString() : null,
+            cost :job.job_cost
+          }
+          return invoice_obj;
+        });
+        setInvoiceData(invoice_list.slice(0,6)); //slice array to just show first 6, can implement show all feature later
+      })
+      .catch(error => {
+        console.log(error);
+      })
+  };
+  useEffect(() => {
+    setInterval(() => {
+      getInvoiceData();
+    }, 2000);
+  },[]);
+
+  const invoices_list = invoiceData.map((invoice) => {
+    if(invoice.end_time){
+      return <Invoice date={invoice.end_time} id={invoice.job} price={invoice.cost} key={invoice.job}/>
+    }
+  })
+
   return (
-    <Card id="delete-account" sx={{ height: "100%" }}>
+    <Card p={2} id="delete-account" sx={{flexGrow:2, margin:"10px"}}>
       <SoftBox pt={2} px={2} display="flex" justifyContent="space-between" alignItems="center">
         <SoftTypography variant="h6" fontWeight="medium">
           Invoices
         </SoftTypography>
-        <SoftButton variant="outlined" color="info" size="small">
-          view all
-        </SoftButton>
       </SoftBox>
       <SoftBox p={2}>
         <SoftBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
-          <Invoice date="March, 01, 2020" id="#MS-415646" price="$180" />
-          <Invoice date="February, 10, 2021" id="#RV-126749" price="$250" />
-          <Invoice date="April, 05, 2020" id="#QW-103578" price="$120" />
-          <Invoice date="June, 25, 2019" id="#MS-415646" price="$180" />
-          <Invoice date="March, 01, 2019" id="#AR-803481" price="$300" noGutter />
+          {invoices_list}
         </SoftBox>
       </SoftBox>
     </Card>
