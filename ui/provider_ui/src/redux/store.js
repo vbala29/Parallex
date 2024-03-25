@@ -2,11 +2,13 @@ import { configureStore } from '@reduxjs/toolkit'
 import providerReducer from 'examples/Configurator/ProviderState'
 import metricsReducer from 'layouts/dashboard/metricsState'
 import startReducer from 'layouts/dashboard/components/StartStop/startState'
+import authReducer from 'utils/authState'
 
 export default configureStore({
   reducer: {
     provider: providerReducer,
     metrics: metricsReducer,
-    start: startReducer
+    start: startReducer,
+    auth: authReducer,
   }
 })

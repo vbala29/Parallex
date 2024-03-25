@@ -49,7 +49,12 @@ import { useSoftUIController, setMiniSidenav, setOpenConfigurator } from "contex
 // Images
 import brand from "assets/images/logo-ct.png";
 
-import Cookies from 'js-cookie';
+import PrivateRoutes from "utils/PrivateRoutes";
+
+import SignIn from "layouts/authentication/sign-in";
+import SignUp from "layouts/authentication/sign-up";
+import Billing from "layouts/billing";
+import Dashboard from "layouts/dashboard";
 
 
 import config from "config.json"
@@ -103,18 +108,24 @@ export default function App() {
     document.scrollingElement.scrollTop = 0;
   }, [pathname]);
 
-  const getRoutes = (allRoutes) =>
-    allRoutes.map((route) => {
-      if (route.collapse) {
-        return getRoutes(route.collapse);
-      }
+  // const getRoutes = (allRoutes) =>
+  //   allRoutes.map((route) => {
+  //     // if (route.collapse) {
+  //     //   return getRoutes(route.collapse);
+  //     // }
 
-      if (route.route) {
-        return <Route exact path={route.route} element={route.component} key={route.key} />;
-      }
+  //     if (!route.route.includes("authentication")) {
+  //       return <Route path={route.route}
+  //         element={
+  //           <PrivateRoute>
+  //             {route.component}
+  //           </PrivateRoute>
+  //         } key={route.key} />;
+  //     }
 
-      return null;
-    });
+  //     return <Route path={route.route} element={route.component} key={route.key} />;
+
+  //   });
 
   const configsButton = (
     <SoftBox
@@ -140,21 +151,6 @@ export default function App() {
     </SoftBox>
   );
 
-  if (pathname !== "/authentication/sign-in" && pathname !== "/authentication/sign-up") {
-    const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
-    axios.get(host + "/authorize", {
-      headers: {
-        authorization: "Basic " + Cookies.get("token")
-      }
-    })
-      .then(response => {
-        console.log(response);
-      }
-      )
-      .catch(response => {
-        navigate("/authentication/sign-in");
-      })
-  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -175,8 +171,14 @@ export default function App() {
       )}
       {layout === "vr" && <Configurator />}
       <Routes>
-        {getRoutes(routes)}
-        <Route path="*" element={<Navigate to="/dashboard" />} />
+        <Route path="/" element={<PrivateRoutes/>} >
+          <Route path="/dashboard" element={<Dashboard /> } />
+          <Route path="/rewards" element={<Billing />} />
+        </Route>
+        <Route path="/authentication/sign-in" element={<SignIn />} />
+        <Route path="/authentication/sign-up" element={<SignUp />} />
+      
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </ThemeProvider>
   );

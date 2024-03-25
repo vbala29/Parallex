@@ -47,6 +47,7 @@ import DefaultInfoCard from "examples/Cards/InfoCards/DefaultInfoCard";
 
 
 import React, { useState, useEffect } from 'react';
+import { selectToken, setToken } from "utils/authState";
 import { useSelector, useDispatch } from 'react-redux'
 
 
@@ -54,7 +55,8 @@ import { secondsToTime, pcuToDisplay } from "utils/format";
 import { setPCUContributed, setProviderDuration, setReliabilityScore, selectPCUContributed, selectProviderDuration, selectReliability, incrementProviderDuration } from "layouts/dashboard/metricsState";
 import { selectIsStarted } from "layouts/dashboard/components/StartStop/startState";
 import axios from 'axios';
-import Cookies from 'js-cookie';
+  
+
 
 import config from "../../config.json"
 // ...
@@ -87,6 +89,7 @@ function Dashboard() {
   const reliability = useSelector(selectReliability);
 
   const isOnline = useSelector(selectIsStarted);
+  const token = useSelector(selectToken);
   const dispatch = useDispatch();
   const [initialFetchDone, setInitialFetchDone] = useState(false);
 
@@ -99,7 +102,7 @@ function Dashboard() {
       const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
       axios.get(host + "/provider/dashboard-info", {
         headers: {
-          authorization: "Basic " + Cookies.get("token")
+          authorization: "Basic " + token
         }
       }).then(response => {
         console.log(response.data);
@@ -115,7 +118,7 @@ function Dashboard() {
           'provider_duration': lifetimeProviderDuration
         }, {
           headers: {
-            'Authorization': "Basic " + Cookies.get("token"),
+            'Authorization': "Basic " + token,
             'Content-Type': 'application/json'
           }
         }).then(response => {

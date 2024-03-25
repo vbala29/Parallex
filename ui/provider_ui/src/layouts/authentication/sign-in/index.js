@@ -30,12 +30,15 @@ import SoftButton from "components/SoftButton";
 // Authentication layout components
 import CoverLayout from "layouts/authentication/components/CoverLayout";
 
+import { selectToken, setToken } from "utils/authState";
+import { useSelector, useDispatch } from 'react-redux'
+
+
 // Images
 import curved6 from "assets/images/curved-images/curved14.jpg";
 
 import axios from 'axios';
 
-import Cookies from 'js-cookie';
 
 import config from "../../../config.json"
 
@@ -45,6 +48,8 @@ function SignIn() {
   const [rememberMe, setRememberMe] = useState(true);
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
+
+  const dispatch = useDispatch();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -68,8 +73,7 @@ function SignIn() {
       .then(response => {
         console.log(response);
         const token = response.data.token;
-        Cookies.set("token", token);
-        Cookies.set("username", username);
+        dispatch(setToken(token));
         navigate("/dashboard");
       })
       .catch(error => {
