@@ -52,16 +52,13 @@ def submit_ray_job(
         check=True,
     )
 
-def get_and_extract_files(job_name, working_dir):
+def get_and_extract_files(job_name):
     api_endpoint = _BACKEND_IP + '/job-files'
     print(api_endpoint)
     try: 
         response = requests.get(url=api_endpoint, params={"job_name": job_name})
         if not os.path.exists(f'../extracted/{job_name}'):
             os.makedirs(f'../extracted/{job_name}')
-        
-        if not os.path.exists(f'../extracted/{job_name}'):
-            os.makedirs(working_dir)
         
         zip_save_path = f'../extracted/{job_name}/{job_name}.zip'
         
@@ -72,7 +69,7 @@ def get_and_extract_files(job_name, working_dir):
             print(f"Failed to download zip: Status Code: {response.status_code}")
 
         with zipfile.ZipFile(zip_save_path,"r") as zip_ref:
-            zip_ref.extractall(working_dir)
+            zip_ref.extractall(f"../extracted/{job_name}")
 
     except Exception as e:
         print("An error occurred:", e)
@@ -90,7 +87,7 @@ async def handleJobSubmissionRequest(msg):
 
         working_dir = f"../extracted/{job_name}/working_dir"
 
-        get_and_extract_files(job_name = job_name, working_dir= working_dir)
+        get_and_extract_files(job_name = job_name)
 
 
         print(f" Sleeping for {_HEAD_START_DELAY_SECS}")
