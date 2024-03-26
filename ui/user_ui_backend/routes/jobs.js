@@ -35,7 +35,7 @@ const client = new job(
 );
 
 /* Routes */
-
+router.get('')
 router.get('/job-list', checkAuth, async (req, res) => {
     await User.findOne({ '_id': req.userData.userId }).exec().then((async (doc) => {
         if (!doc) {
@@ -99,18 +99,21 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
 
         // Create directory to extract files if it doesn't exist
         if (!fs.existsSync(extractionPath)) {
-            fs.mkdirSync(extractionPath);
+            fs.mkdirSync("./extracted/");
+            console.log("Made extraction path")
         }
+        
+        fs.rename(zipFilePath, extractionPath + "/" + files.file[0].name);
 
         // Extract the zip file
-        fs.createReadStream(zipFilePath)
-            .pipe(unzipper.Extract({ path: extractionPath }))
-            .on('finish', () => {
-                resolve('Zip file extracted successfully');
-            })
-            .on('error', (err) => {
-                reject('Error extracting zip file: ' + err);
-            });
+        // fs.createReadStream(zipFilePath)
+        //     .pipe(unzipper.Extract({ path: extractionPath }))
+        //     .on('finish', () => {
+        //         resolve('Zip file extracted successfully');
+        //     })
+        //     .on('error', (err) => {
+        //         reject('Error extracting zip file: ' + err);
+        //     });
 
     })).then(async (msg) => {
         console.log(msg);
