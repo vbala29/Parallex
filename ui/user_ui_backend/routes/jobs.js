@@ -37,9 +37,9 @@ const client = new job(
 /* Routes */
 router.get('/job-files', async (req, res) => {
     console.log("Here");
-    const job_name = req.params.job_name;
+    const job_name = req.query.job_name;
     const job_file_path = './job_files/' + job_name;
-    console.log(req);
+    console.log(req.query);
     fs.stat(job_file_path, (err, stat) => {
         if (err) {
             console.error(err);
