@@ -40,7 +40,7 @@ router.get('/job-files', async (req, res) => {
     const job_name = req.job_name;
     const job_file_path = './job_files/' + job_name;
 
-    fs.stat(job_file_path, (req, res) => {
+    fs.stat(job_file_path, (err, stat) => {
         if (err) {
             console.error(err);
             return res.status(404).send(err);
