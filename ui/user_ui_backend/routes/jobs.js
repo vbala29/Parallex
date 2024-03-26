@@ -35,7 +35,7 @@ const client = new job(
 );
 
 /* Routes */
-router.get('/job-files/:job_name', async (req, res) => {
+router.get('/job-files', async (req, res) => {
     console.log("Here");
     const job_name = req.params.job_name;
     const job_file_path = './job_files/' + job_name;
@@ -99,7 +99,6 @@ async function updateProvider(providerID, jobID, userID, time_start) {
 router.put('/create-job', checkAuth, async (req, res, next) => {
     const form = formidable.formidable({ multiples: false });
     const uniqueID = uuidv4();
-    console.log('in create job')
 
     new Promise((resolve, reject) => form.parse(req, async (err, fields, files) => {
         if (err) {
@@ -109,8 +108,6 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
 
         cpu_count = fields.cpu_count[0]
         memory_count = fields.memory_count[0]
-
-        console.log('cpu count', cpu_count, 'memory count', memory_count)
 
         // Check if a file was uploaded
         if (!files.file) {
@@ -145,16 +142,11 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
         //     });
 
     })).then(async (msg) => {
-        console.log(msg);
-        console.log("lookup user with username: " + req.userData.username)
         User.findOne({ '_id': req.userData.userId }).exec().then((doc) => {
             if (!doc) {
                 throw "Undefined Document Error";
             } else {
                 var dummyIP = "8.8.8.8"; //Ipv4 Google DNS
-                console.log('sending job request')
-                console.log(client)
-                console.log(client.sendJob)
                 job_request = {
                     clientIP: String(dummyIP),
                     jobID: String(uniqueID),
@@ -162,26 +154,22 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
                     cpuCount: Number(cpu_count),
                     memoryCount: Number(memory_count),
                 }
-                console.log('request', job_request)
                 new Promise((resolve, reject) => client.sendJob(
                     job_request,
                     (err, job_spec) => {
                         if (err) {
-                            console.log('errored on command', err)
                             reject(err);
                         } else {
                             resolve(job_spec);
                         }
                     }
                 )).then(async (job_spec) => {
-                    console.log('got job spec', job_spec)
                     head_node_ip = job_spec.headProvider.providerIP;
 
                     if (head_node_ip.toLowerCase().includes("invalid")) {
                         throw new Error("Invalid head node IP");
                     }
 
-                    console.log("Head node ip: " + head_node_ip);
                     var head_node_url = "http://" + head_node_ip + ":" + config.ports.ray_dashboard;
 
                     providers_assigned = [
@@ -211,7 +199,6 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
                             providers_assigned: providers_assigned
                         });
                     await doc.save();
-                    console.log('created jobs')
 
                     // Assume for now that time `time_start` of a Provider is the same as the job creation time. Eventually this will not be the case
                     // once we have a feedback mechanism from Ray
