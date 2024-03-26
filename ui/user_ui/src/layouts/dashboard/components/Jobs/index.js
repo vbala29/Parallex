@@ -20,6 +20,7 @@ import Card from "@mui/material/Card";
 import Icon from "@mui/material/Icon";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import { Link } from "@mui/material";
 
 // Soft UI Dashboard React components
 import SoftBox from "components/SoftBox";
@@ -59,7 +60,7 @@ function Jobs() {
       const jobs_list = response.data.jobs_created;
       const new_jobs = jobs_list.map((job) => {
         const job_obj = {
-          job: job.name,
+          job: <Link href={job.url}>{job.name}</Link>,
           'status' : job.termination_time ? (<div style={{color: "green"}}><FaCheckCircle/> Done</div>) : (<div style={{color: "orange"}}><LuClock3/> Running</div>),
           'start time': new Date(job.creation_time).toLocaleString(),
           'end time' : job.termination_time ? new Date(job.termination_time).toLocaleString() : null,
