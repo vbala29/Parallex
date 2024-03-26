@@ -104,9 +104,10 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
         
         console.log(`Renaming path ${zipFilePath} to ${extractionPath}`);
         fs.rename(zipFilePath, extractionPath, (err) => {
-            if (err) throw err;
-            console.log('Rename complete!');
-          });
+            if (err) reject('Error downloading/renaming zip file: ' + err);
+        });
+        
+        resolve('Zip file saved successfully');
 
         // Extract the zip file
         // fs.createReadStream(zipFilePath)
