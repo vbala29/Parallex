@@ -58,7 +58,9 @@ import {
   setOpenConfigurator,
 } from "context";
 
-import Cookies from 'js-cookie';
+
+import { selectToken, setToken } from "utils/authState";
+import { useSelector, useDispatch } from 'react-redux'
 
 // Images
 import team2 from "assets/images/team-2.jpg";
@@ -71,9 +73,10 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const [openMenu, setOpenMenu] = useState(false);
   const route = useLocation().pathname.split("/").slice(1);
 
+  const reduxDispatch = useDispatch();
   const navigate = useNavigate();
   const logout = () => {
-    Cookies.set("token", "");
+    reduxDispatch(setToken(""));
     navigate("/authentication/sign-in");
   }
 
