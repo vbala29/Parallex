@@ -44,6 +44,8 @@ import { useDropzone } from 'react-dropzone';
 
 import Cookies from 'js-cookie';
 import { CardContent } from "@mui/material";
+import config from "../../config.json"
+
 
 function Submit() {
   const [cores, setCores] = useState(0);
@@ -79,7 +81,9 @@ function Submit() {
       myFiles.map(file => (
         formData.append('file', file)
       ));
-      axios.put('http://localhost:8080/create-job', formData, {
+      const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
+
+      axios.put(host + '/create-job', formData, {
         headers:{
           authorization: "Basic " + Cookies.get("token")
         },

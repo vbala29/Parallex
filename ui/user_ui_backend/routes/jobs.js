@@ -74,6 +74,7 @@ async function updateProvider(providerID, jobID, userID, time_start) {
 router.put('/create-job', checkAuth, async (req, res, next) => {
     const form = formidable.formidable({ multiples: false });
     const uniqueID = uuidv4();
+    console.log('in create job')
 
     new Promise((resolve, reject) => form.parse(req, async (err, fields, files) => {
         if (err) {
