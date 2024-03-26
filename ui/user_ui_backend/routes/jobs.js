@@ -57,6 +57,7 @@ router.get('/job-files', async (req, res) => {
           readStream.pipe(res);
     })
 })
+
 router.get('/job-list', checkAuth, async (req, res) => {
     await User.findOne({ '_id': req.userData.userId }).exec().then((async (doc) => {
         if (!doc) {
