@@ -36,16 +36,15 @@ const client = new job(
 
 /* Routes */
 router.get('/job-files', async (req, res) => {
-    console.log("Here");
     const job_name = req.query.job_name;
     const job_file_path = './job_files/' + job_name;
-    console.log(req.query);
+
     fs.stat(job_file_path, (err, stat) => {
         if (err) {
             console.error(err);
             return res.status(404).send(err);
         }
-        console.log("Here1");
+
         res.setHeader('Content-type', 'application/zip');
         res.setHeader('Content-Length', stat.size);
 
