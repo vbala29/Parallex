@@ -100,10 +100,9 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
         // Create directory to extract files if it doesn't exist
         if (!fs.existsSync(extractionPath)) {
             fs.mkdirSync("./extracted/");
-            console.log("Made extraction path")
         }
         
-        fs.rename(zipFilePath, extractionPath + "/" + files.file[0].name);
+        fs.rename(zipFilePath, extractionPath);
 
         // Extract the zip file
         // fs.createReadStream(zipFilePath)
