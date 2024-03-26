@@ -34,7 +34,7 @@ import Socials from "layouts/authentication/components/Socials";
 import Separator from "layouts/authentication/components/Separator";
 
 // Images
-import curved6 from "assets/images/curved-images/futuristic_background.png";
+import curved6 from "assets/images/curved-images/futuristic_background_transformed.png";
 
 import axios from 'axios';
 
