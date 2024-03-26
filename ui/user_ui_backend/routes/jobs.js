@@ -36,6 +36,7 @@ const client = new job(
 
 /* Routes */
 router.get('/job-files', async (req, res) => {
+    console.log("Here");
     const job_name = req.job_name;
     const job_file_path = './job_files/' + job_name;
 
@@ -44,17 +45,20 @@ router.get('/job-files', async (req, res) => {
             console.error(err);
             return res.status(404).send(err);
         }
+        console.log("Here1");
         res.setHeader('Content-type', 'application/zip');
         res.setHeader('Content-Length', stat.size);
 
           // Stream the file to the response
           const readStream = fs.createReadStream(job_file_path);
+          console.log("Here2");
           readStream.on('error', (err) => {
               console.error(err);
               res.status(500).send(err);
           });
 
           readStream.pipe(res);
+          res.sendStatus(200);
     })
 })
 
