@@ -58,7 +58,6 @@ router.get('/job-files', async (req, res) => {
           });
 
           readStream.pipe(res);
-          res.sendStatus(200);
     })
 })
 
