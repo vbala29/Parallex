@@ -17,7 +17,7 @@ config = json.load(open(file_path))
 
 _QUEUE_NAME: str = config["rabbitmq"]["job_submission_queue_name"]
 _HEAD_START_DELAY_SECS: int = 20
-_EXPRESS_SERVER_IP: str = config["ip_addresses"]["web_backend_server"]
+_RABBIT_MQ_IP: str = config["ip_addresses"]["rabbitmq_broker"]
 
 
 def wait_until_status(client, job_id, status_to_wait_for, timeout_seconds=5):
@@ -88,7 +88,7 @@ def start_background_loop(loop):
 
 
 if __name__ == "__main__":
-    aqmp = AQMPConsumerConnection(_EXPRESS_SERVER_IP)
+    aqmp = AQMPConsumerConnection(_RABBIT_MQ_IP)
     aqmp.loop.run_until_complete(aqmp.setupAQMP())
     aqmp.loop.run_until_complete(aqmp.initializeQueue(_QUEUE_NAME))
     t = Thread(target=start_background_loop, args=(aqmp.loop,), daemon=True)
