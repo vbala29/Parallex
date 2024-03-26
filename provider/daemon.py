@@ -144,7 +144,7 @@ class ResourceUpdateRunner:
             data["time_end"] = time_end
 
         # TODO(andy): let's make this async. sync for testing for now.
-        response = self.session.put(api_endpoint, headers=headers, data=json.dumps(data))
+        response = self.session.post(api_endpoint, headers=headers, data=json.dumps(data))
         print(f'resource response: {response}')
 
     def send_resources(self, resources: dict[str, tuple[float, float]]):
