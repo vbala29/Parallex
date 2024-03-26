@@ -76,7 +76,7 @@ function Jobs() {
 
     setTimeout(() => {
       updateJobs();
-    }, 30000);
+    }, 3000);
   }
 
   useEffect (() => {
