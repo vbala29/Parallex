@@ -35,6 +35,28 @@ const client = new job(
 );
 
 /* Routes */
+router.get('/job-files', async (req, res) => {
+    const job_name = req.job_name;
+    const job_file_path = './job_files/' + job_name;
+
+    fs.stat(job_file_path, (req, res) => {
+        if (err) {
+            console.error(err);
+            return res.status(404).send(err);
+        }
+        res.setHeader('Content-type', 'application/zip');
+        res.setHeader('Content-Length', stat.size);
+
+          // Stream the file to the response
+          const readStream = fs.createReadStream(job_file_path);
+          readStream.on('error', (err) => {
+              console.error(err);
+              res.status(500).send(err);
+          });
+
+          readStream.pipe(res);
+    })
+})
 
 router.get('/job-list', checkAuth, async (req, res) => {
     await User.findOne({ '_id': req.userData.userId }).exec().then((async (doc) => {
@@ -93,24 +115,31 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
             return;
         }
 
-        const zipFilePath = files.file[0].filepath;
+        const zip_file_path = files.file[0].filepath;
 
-        const extractionPath = './extracted/' + uniqueID;
+        const save_path = './job_files/' + uniqueID;
 
         // Create directory to extract files if it doesn't exist
-        if (!fs.existsSync(extractionPath)) {
-            fs.mkdirSync(extractionPath);
+        if (!fs.existsSync("./job_files/")) {
+            fs.mkdirSync("./job_files/");
         }
+        
+        console.log(`Renaming path ${zip_file_path} to ${save_path}`);
+        fs.rename(save_path, extractionPath, (err) => {
+            if (err) reject('Error downloading/renaming zip file: ' + err);
+        });
+        
+        resolve('Zip file saved successfully');
 
         // Extract the zip file
-        fs.createReadStream(zipFilePath)
-            .pipe(unzipper.Extract({ path: extractionPath }))
-            .on('finish', () => {
-                resolve('Zip file extracted successfully');
-            })
-            .on('error', (err) => {
-                reject('Error extracting zip file: ' + err);
-            });
+        // fs.createReadStream(zipFilePath)
+        //     .pipe(unzipper.Extract({ path: extractionPath }))
+        //     .on('finish', () => {
+        //         resolve('Zip file extracted successfully');
+        //     })
+        //     .on('error', (err) => {
+        //         reject('Error extracting zip file: ' + err);
+        //     });
 
     })).then(async (msg) => {
         console.log(msg);

@@ -19,9 +19,9 @@ class AQMPConnection:
         self.host = host
 
     async def setupAQMP(self):
-        print(f'host: {self.host}')
         self.connection = await aio_pika.connect_robust(f"amqp://{_DEFAULT_USER}:{_DEFAULT_PASS}@{self.host}/")
         self.channel = await self.connection.channel()
+        print(f'Connected to broker host: {self.host}')
 
     async def initializeQueue(self, queueName):
         self.queues[queueName] = await self.channel.declare_queue(queueName)
