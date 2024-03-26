@@ -98,7 +98,7 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
         const extractionPath = './extracted/' + uniqueID;
 
         // Create directory to extract files if it doesn't exist
-        if (!fs.existsSync(extractionPath)) {
+        if (!fs.existsSync("./extracted/")) {
             fs.mkdirSync("./extracted/");
         }
         
