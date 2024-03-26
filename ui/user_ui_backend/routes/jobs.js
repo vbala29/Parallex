@@ -102,6 +102,7 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
             fs.mkdirSync("./extracted/");
         }
         
+        console.log(`Renaming path ${zipFilePath} to ${extractionPath}`);
         fs.rename(zipFilePath, extractionPath);
 
         // Extract the zip file
