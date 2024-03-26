@@ -78,9 +78,6 @@ def get_and_extract_files(job_name, working_dir):
     
 
 
-
-
-
 async def handleJobSubmissionRequest(msg):
     async with msg.process():
         req = job_submission_request.initFromDict(json.loads(msg.body))
@@ -97,8 +94,6 @@ async def handleJobSubmissionRequest(msg):
 
         print(f" Sleeping for {_HEAD_START_DELAY_SECS}")
         time.sleep(_HEAD_START_DELAY_SECS)
-
-        
 
         
         conda_name = "parallex_runtime"
