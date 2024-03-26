@@ -1,9 +1,12 @@
 import time
 import asyncio
 import json
+import os
 from threading import Thread
+import requests
 import subprocess
 from pathlib import Path
+import zipfile
 from ray.job_submission import JobSubmissionClient, JobStatus
 
 from aqmp_tools.AQMPConsumerConnection import AQMPConsumerConnection
@@ -18,6 +21,11 @@ config = json.load(open(file_path))
 _QUEUE_NAME: str = config["rabbitmq"]["job_submission_queue_name"]
 _HEAD_START_DELAY_SECS: int = 20
 _RABBIT_MQ_IP: str = config["ip_addresses"]["rabbitmq_broker"]
+_BACKEND_IP: str = (
+    f'http://{config["ip_addresses"]["web_backend_server"]}:{str(config["ports"]["web_backend_server"])}'
+)
+
+
 
 
 def wait_until_status(client, job_id, status_to_wait_for, timeout_seconds=5):
@@ -44,6 +52,34 @@ def submit_ray_job(
         check=True,
     )
 
+def get_and_extract_files(job_name, working_dir):
+    api_endpoint = _BACKEND_IP + '/job-files'
+    try: 
+        response = requests.get(url=api_endpoint, params={"job_name": job_name})
+        if not os.path.exists(f'../extracted/{job_name}'):
+            os.makedirs(f'../extracted/{job_name}')
+        
+        if not os.path.exists(f'../extracted/{job_name}'):
+            os.makedirs(working_dir)
+        
+        zip_save_path = f'../extracted/{job_name}/{job_name}.zip'
+        
+        if response.status_code == 200:
+            with open(zip_save_path, 'wb') as file:
+                file.write(response.content)
+        else:
+            print(f"Failed to download zip: Status Code: {response.status_code}")
+
+        with zipfile.ZipFile(zip_save_path,"r") as zip_ref:
+            zip_ref.extractall(working_dir)
+
+    except Exception as e:
+        print("An error occurred:", e)
+    
+
+
+
+
 
 async def handleJobSubmissionRequest(msg):
     async with msg.process():
@@ -53,10 +89,18 @@ async def handleJobSubmissionRequest(msg):
         print(
             f"Received job startup request. Params: job_name = {job_name}, head_node_url = {head_node_url}"
         )
+
+        working_dir = f"../extracted/{job_name}/working_dir"
+
+        get_and_extract_files(job_name = job_name, working_dir= working_dir)
+
+
         print(f" Sleeping for {_HEAD_START_DELAY_SECS}")
         time.sleep(_HEAD_START_DELAY_SECS)
 
-        working_dir = f"../extracted/{job_name}/working_dir"
+        
+
+        
         conda_name = "parallex_runtime"
         head_node_ip = head_node_url
         job_script_name = "job_script.py"
