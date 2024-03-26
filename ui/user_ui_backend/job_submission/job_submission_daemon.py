@@ -56,7 +56,7 @@ def get_and_extract_files(job_name, working_dir):
     api_endpoint = _BACKEND_IP + '/job-files'
     print(api_endpoint)
     try: 
-        response = requests.get(url=api_endpoint, data=json.dumps({"job_name": job_name}))
+        response = requests.get(url=api_endpoint, params={"job_name": job_name})
         if not os.path.exists(f'../extracted/{job_name}'):
             os.makedirs(f'../extracted/{job_name}')
         
