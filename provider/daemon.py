@@ -123,13 +123,27 @@ class ResourceUpdateRunner:
         return (cpu + ram) / 1000 * duration
 
     def run(self):
+        """Runs the resource update runner."""
         resource_consumption_by_provider = self.get_resource_usage()
         time_end = self._get_job_end()
-        
+
         self.send_resources(resource_consumption_by_provider, time_end)
         if time_end is not None:
+            # kill ray
+            ray_command = "ray stop"
+            subprocess.run(
+                launch_utils.make_conda_command(ray_command),
+                shell=True,
+                check=True,
+                executable="/bin/bash",
+            )
+
+            self._signal_command_job_end()
             self.stop_event.set()
 
+    def _signal_command_job_end(self):
+        """Tells the command node to set this node as free, because the job ended and the cluster was killed."""
+        return None
 
     def _get_job_end(self) -> Optional[int]:
         """Checks if a job has ended. Returns None if still in process, and the time the job ended if it has (in ms unix time)."""
@@ -140,28 +154,28 @@ class ResourceUpdateRunner:
             stderr=subprocess.STDOUT,
             shell=True,
         ).decode("utf8")
-        
+
         # The jobs_string is sorted in list of start time. There should only be one job for now, so we can just scan for the first `end_time` entry we see.
         end_time_index = jobs_string.find("end_time=")
-        
-        if end_time_index == -1:
-            raise ValueError('ray job list should provide an end_time entry')
 
-        value_index = end_time_index + len('end_time=')
-        end_value_index = jobs_string.find(',', value_index)
-        
-        #This returns the string wrapped with a `'` beginning and end, but int() accounts for that already.
+        if end_time_index == -1:
+            return None  # Job not yet submitted
+
+        value_index = end_time_index + len("end_time=")
+        end_value_index = jobs_string.find(",", value_index)
+
+        # This returns the string wrapped with a `'` beginning and end, but int() accounts for that already.
         maybe_time_end = jobs_string[value_index:end_value_index]
-        if 'None' in maybe_time_end: 
+        if "None" in maybe_time_end:
             return None
-        return int(maybe_time_end) 
-        
-        
+        return int(maybe_time_end)
 
     def _send_resource(
         self, provider_id: str, cpu: float, ram: float, time_end: Optional[float] = None
     ):
-        pcu = self._to_pcu(cpu, ram, self.fidelity) + self.fidelity * 0.01 # Add a charge per second
+        pcu = (
+            self._to_pcu(cpu, ram, self.fidelity) + self.fidelity * 0.01
+        )  # Add a charge per second
         api_endpoint = self.backend_ip + "/provider/update"
         headers = {"Content-Type": "application/json"}
         data = {
@@ -176,10 +190,16 @@ class ResourceUpdateRunner:
             data["time_end"] = time_end
 
         # TODO(andy): let's make this async. sync for testing for now.
-        response = self.session.post(api_endpoint, headers=headers, data=json.dumps(data))
-        print(f'resource response: {response}')
+        response = self.session.post(
+            api_endpoint, headers=headers, data=json.dumps(data)
+        )
+        print(f"resource response: {response}")
 
-    def send_resources(self, resources: dict[str, tuple[float, float]], time_end: Optional[float] = None):
+    def send_resources(
+        self,
+        resources: dict[str, tuple[float, float]],
+        time_end: Optional[float] = None,
+    ):
         """Sends resources to the backend.
         Args:
             resources (tuple[float, float]): The CPU and RAM usage of the provider, over `self.fidelity` seconds.
@@ -242,8 +262,6 @@ class ResourceUpdateRunner:
             f"ray node id: {ray_node_id} used {cpu_usage} CPU and {memory_usage} GiB memory"
         )
         return ray_node_id, cpu_usage, memory_usage
-    
-    def _get_job_status()
 
     def get_resource_usage(self) -> dict[str, tuple[float, float]]:
         """
