@@ -307,6 +307,15 @@ router.get('/transaction-history', checkAuth, async (req, res) => {
     });
 })
 
+router.get('/pcu-cost', checkAuth, (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(
+        {
+            pcu_cost : locals.pcu_cost
+        }
+    ));
+})
+
 router.post('/buy-pcu', checkAuth, async (req, res) => {
     new_transaction = {
         time : Date.now(),

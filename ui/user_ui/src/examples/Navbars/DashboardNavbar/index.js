@@ -76,9 +76,8 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const [username, setUsername] = useState("");
   const route = useLocation().pathname.split("/").slice(1);
   const navigate = useNavigate();
-  const [availablePCUs, setAvailablePCUs] = useState(0);
-  const [PCUPrice, setPCUPrice] = useState("5.24");
-
+  const [availablePCUs, setAvailablePCUs] = useState(0)
+  const [pcuCost, setPCUCost] = useState(0);
 
   const logout = () => {
     Cookies.set("token", "");
@@ -106,6 +105,16 @@ function DashboardNavbar({ absolute, light, isMini }) {
       }})
         .then(response => {
           setAvailablePCUs(response.data.available_pcu_count)
+        })
+        .catch(error => {
+          console.log(error);
+        })
+
+      axios.get(host + "/pcu-cost", {headers: {
+        authorization: "Basic " + Cookies.get("token")
+      }})
+        .then(response => {
+          setPCUCost(response.data.pcu_cost)
         })
         .catch(error => {
           console.log(error);
@@ -190,7 +199,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 <FaMoneyBill style={{color:"green"}}/>
               </div>
               <SoftTypography variant="h6">
-                1.23 USD
+               {pcuCost} USD
               </SoftTypography>
             </Link>
           </SoftBox>

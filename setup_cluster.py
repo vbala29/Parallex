@@ -7,6 +7,7 @@ import os
 parser = argparse.ArgumentParser(description='Cluster configuration script')
 
 parser.add_argument('-i', '--install_dependencies', action='store_true', help='reinstall code, broker, and db dependencies')
+parser.add_argument('-k', '--kill_cluster', action='store_true', help='stop all services running in the cluster')
 
 args = parser.parse_args()
 
