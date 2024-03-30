@@ -288,11 +288,38 @@ router.get('/available-pcu-count', checkAuth, async (req, res) => {
     })
 })
 
+router.get('/transaction-history', checkAuth, async (req, res) => {
+    await User.findOne({ '_id': req.userData.userId }).exec().then((async (doc) => {
+        if (!doc) {
+            throw "Undefined Document Error";
+        }
+
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(
+            {
+                pcu_transactions: doc.pcu_transactions
+            }
+        ));
+
+    })).catch((err) => {
+        console.error("Error in Query for /transaction-history: " + err);
+        res.sendStatus(500);
+    });
+})
+
 router.post('/buy-pcu', checkAuth, async (req, res) => {
-    console.log("in buy pcu")
+    new_transaction = {
+        time : Date.now(),
+        pcu_amount : req.body.pcu_bought,
+        usd_cost : pcu_amount * locals.pcu_cost
+    }
+
     await User.findOneAndUpdate(
         { '_id': req.userData.userId },
-        { $inc: { available_pcu_count: req.body.pcu_bought } }
+        { 
+            $inc: { available_pcu_count: req.body.pcu_bought },
+            $push: { pcu_transactions : new_transaction}  
+        }
     ).exec().then(
         async (user) => {
             res.sendStatus(200);
@@ -302,6 +329,7 @@ router.post('/buy-pcu', checkAuth, async (req, res) => {
         res.sendStatus(500);
     })
 })
+
 
 
 module.exports = router;

@@ -169,7 +169,7 @@ router.get('/provider/dashboard-info', checkAuth, async (req, res) => {
 // This technically doesn't align with `/provider/reward`, since the lifetime duration of the Provider is different from
 // the duration for each job (which is what `/provider/job-summary` uses)
 function calculate_reward(PCU, duration) {
-    value_pcu = 0.05
+    value_pcu = locals.pcu_cost
     value_duration = 1.0 / 3600
     return PCU * value_pcu + duration * value_duration
 }

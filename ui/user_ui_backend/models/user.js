@@ -14,6 +14,11 @@ const UserSchema = new Schema({
         unique: true
     },
     available_pcu_count: { type: Number, required: true },
+    pcu_transactions: [ { 
+        time : { type: Number, required: true },
+        pcu_amount : { type : Number, required : true},
+        usd_cost : { type : Number, required : true}
+    }],
     jobs_created: [{
         name: { type: String, required: true },
         url: { type: String, required: true },
@@ -23,7 +28,7 @@ const UserSchema = new Schema({
         cpu_count: { type: Number, required: true },
         memory_count: { type: Number, required: true },
         unique_id: { type: String, required: true },
-        job_cost: { type: Number, required: true },
+        job_cost: { type: Number, required: true }, // In USD
         providers_assigned: [{
             provider_id: { type: String, required: true },
             status: { type: String, required: true } // "pending", "running", "completed"
