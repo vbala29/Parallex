@@ -20,6 +20,9 @@ from launch import launch_utils
 
 import daemon_pb2_grpc
 import daemon_pb2
+import user_pb2_grpc
+import user_pb2
+
 from aqmp_tools.AQMPConsumerConnection import AQMPConsumerConnection
 from aqmp_tools.formats.head_node_join_cluster_request import (
     head_node_join_cluster_request,
@@ -73,8 +76,28 @@ class Poller(threading.Thread):
 
 
 class DynamicMetricsRunner:
+    def __init__(self, channel, metric_stub):
+        self.channel = channel
+        self.metric_stub = metric_stub
+
     def run(self):
-        send_dynamic_metrics()
+        self._send_dynamic_metrics()
+
+    def _send_dynamic_metrics(self):
+        time.sleep(DYNAMIC_METRIC_INTERVAL_SEC)
+        ram_usage_mib = psutil.virtual_memory().used / (BYTES_IN_MEBIBYTE)
+        cpu_usage = psutil.cpu_percent(interval=CPU_FREQ_INTERVAL_SEC)
+        try:
+            _ = self.metric_stub.SendDynamicMetrics(
+                daemon_pb2.DynamicMetrics(
+                    CPUUsage=cpu_usage,
+                    MiBRamUsage=ram_usage_mib,
+                    clientIP=IP,
+                    uuid=UUID,
+                )
+            )
+        except Exception as e:
+            print(f"Exception in send_dynamic_metrics: {e}")
 
     def stop_event_set(self) -> bool:
         return False
@@ -93,6 +116,7 @@ class ResourceUpdateRunner:
         fidelity: int,
         job_id: str,
         job_userid: str,
+        job_stub: user_pb2_grpc.JobStub,
     ):
         """
         Args:
@@ -110,6 +134,7 @@ class ResourceUpdateRunner:
         self.stop_event = threading.Event()
         self.job_id = job_id
         self.job_userid = job_userid
+        self.job_stub = job_stub
 
     def _to_pcu(self, cpu: float, ram: float, duration: float) -> float:
         """Converts CPU and RAM usage to PCU.
@@ -143,6 +168,7 @@ class ResourceUpdateRunner:
 
     def _signal_command_job_end(self):
         """Tells the command node to set this node as free, because the job ended and the cluster was killed."""
+        self.job_stub.FreeNode(user_pb2.Provider(providerID=UUID, providerIP=IP))
         return None
 
     def _get_job_end(self) -> Optional[int]:
@@ -301,21 +327,18 @@ class ResourceUpdateRunner:
         return self.stop_event.is_set()
 
 
-def send_static_metrics():
+def send_static_metrics(metric_stub):
     """Sends the following information to the command node:
     1. Number of CPU cores
     2. Model of the CPU
     3. Memory total
     """
-    channel = grpc.insecure_channel(_COMMAND_IP_PORT)
-    stub = daemon_pb2_grpc.MetricsStub(channel)
-
     CPUNumCores = psutil.cpu_count(logical=True)
     cpu_info = get_cpu_info()
     CPUName = cpu_info["brand_raw"] + " " + cpu_info["arch"]
     MiBRam = psutil.virtual_memory().total / (BYTES_IN_MEBIBYTE)
 
-    response = stub.SendStaticMetrics(
+    _ = metric_stub.SendStaticMetrics(
         daemon_pb2.StaticMetrics(
             CPUNumCores=CPUNumCores,
             CPUName=CPUName,
@@ -326,24 +349,7 @@ def send_static_metrics():
     )
 
 
-def send_dynamic_metrics():
-    channel = grpc.insecure_channel(_COMMAND_IP_PORT)
-    stub = daemon_pb2_grpc.MetricsStub(channel)
-
-    time.sleep(DYNAMIC_METRIC_INTERVAL_SEC)
-    MiBRamUsage = psutil.virtual_memory().used / (BYTES_IN_MEBIBYTE)
-    CPUUsage = psutil.cpu_percent(interval=CPU_FREQ_INTERVAL_SEC)
-    try:
-        response = stub.SendDynamicMetrics(
-            daemon_pb2.DynamicMetrics(
-                CPUUsage=CPUUsage, MiBRamUsage=MiBRamUsage, clientIP=IP, uuid=UUID
-            )
-        )
-    except Exception as e:
-        print(f"Exception in send_dynamic_metrics: {e}")
-
-
-async def handle_cluster_join_request(msg):
+async def handle_cluster_join_request(msg, job_stub):
     async with msg.process():
         jsonMsg = json.loads(msg.body)
         typeStr = jsonMsg["type"]
@@ -361,12 +367,15 @@ async def handle_cluster_join_request(msg):
             req = head_node_join_cluster_request.loadFromJson(jsonMsg)
             launch_head.launch_head(_RAY_PORT)
             print(f"provider map: {req.provider_map()}")
+
+            # Only run resource updater on the head node.
             resource_update_runner = ResourceUpdateRunner(
                 _BACKEND_IP,
                 req.provider_map(),
                 _BACKEND_FIDELITY,
                 req.job_id(),
                 req.job_userid(),
+                job_stub,
             )
             resource_poller = Poller(
                 interval=_BACKEND_FIDELITY, function_manager=resource_update_runner
@@ -383,13 +392,22 @@ def start_daemon():
     IP = _get_local_ip()
     print(f"IP is: {IP}")
     print(f"UUID is: {UUID}")
-    send_static_metrics()
+    channel = grpc.insecure_channel(_COMMAND_IP_PORT)
+    metric_stub = daemon_pb2_grpc.MetricsStub(channel)
+    job_stub = user_pb2_grpc.JobStub(channel)
+
+    # Send static metrics on start-up
+    send_static_metrics(metric_stub)
     asyncio.run_coroutine_threadsafe(
-        aqmp.receive_messages(UUID, lambda msg: handle_cluster_join_request(msg)),
+        aqmp.receive_messages(
+            UUID, lambda msg: handle_cluster_join_request(msg, job_stub)
+        ),
         aqmp.loop,
     )
 
-    dynamic_metrics_poller = Poller(DYNAMIC_METRIC_INTERVAL_SEC, DynamicMetricsRunner())
+    dynamic_metrics_poller = Poller(
+        DYNAMIC_METRIC_INTERVAL_SEC, DynamicMetricsRunner(channel, metric_stub)
+    )
     dynamic_metrics_poller.start()
 
 
@@ -413,6 +431,7 @@ def start_background_loop(loop):
 
 
 if __name__ == "__main__":
+    # TODO(andy): stop using globals for aqmp
     aqmp = AQMPConsumerConnection(_BROKER_IP)
     setupUUID()
     aqmp.loop.run_until_complete(aqmp.setupAQMP())
