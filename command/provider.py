@@ -34,9 +34,13 @@ class Provider:
             self.uuid, self.ip, self.lat, self.lon
         )
 
-    def to_proto(self):
+    def to_proto(self) -> user_pb2.Provider:
         """Converts the provider to a protobuf object."""
         return user_pb2.Provider(providerIP=self.ip, providerID=self.uuid)
+
+    def is_head_eligible(self) -> bool:
+        """Returns if the provider is eligible to be a head node."""
+        return True
 
 
 class ProviderCandidate:

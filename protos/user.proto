@@ -4,6 +4,8 @@ package job;
 
 service Job {
     rpc SendJob (JobMetrics) returns (JobSpec) {}
+    // Theoretically this should probably have authentication on it 
+    rpc FreeNode (Provider) returns (Empty) {}
 }
 
 message JobMetrics {
