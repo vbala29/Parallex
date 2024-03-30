@@ -320,7 +320,7 @@ router.post('/buy-pcu', checkAuth, async (req, res) => {
     new_transaction = {
         time : Date.now(),
         pcu_amount : req.body.pcu_bought,
-        usd_cost : pcu_amount * locals.pcu_cost
+        usd_cost : req.body.pcu_bought * locals.pcu_cost
     }
 
     await User.findOneAndUpdate(
