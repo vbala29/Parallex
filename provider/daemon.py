@@ -167,9 +167,11 @@ class ResourceUpdateRunner:
             self.stop_event.set()
 
     def _signal_command_job_end(self):
-        """Tells the command node to set this node as free, because the job ended and the cluster was killed."""
-        self.job_stub.FreeNode(user_pb2.Provider(providerID=UUID, providerIP=IP))
-        return None
+        """Tell command to free all the nodes in the cluster"""
+        for node_ip, node_id in self.provider_map.items():
+            self.job_stub.FreeNode(
+                user_pb2.Provider(providerID=node_id, providerIP=node_ip)
+            )
 
     def _get_job_end(self) -> Optional[int]:
         """Checks if a job has ended. Returns None if still in process, and the time the job ended if it has (in ms unix time)."""
