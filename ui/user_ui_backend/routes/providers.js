@@ -74,6 +74,7 @@ router.post('/provider/update', async (req, res) => {
         provider_update_command = {
             $inc: { 'jobs_running.$.pcu_consumed': pcu_increment }
         }
+
         if (req.body.time_end) {
             const time_end = req.body.time_end;
             provider_update_command['$set'] = { 'jobs_running.$.time_end': time_end }
@@ -86,16 +87,24 @@ router.post('/provider/update', async (req, res) => {
 
             // Update the provider status. Non-race, so don't need `findOneAndUpdate` here.
             const user = await User.findOne(user_provider_find_schema);
-            if (user) {
-                const job = user.jobs_created.find(job => job.unique_id === job_id);
-                if (job) {
-                    const provider = job.providers_assigned.find(provider => provider.provider_id === providerId);
-                    if (provider) {
-                        provider.status = 'completed';
-                        await user.save();
-                    }
-                }
+
+            if (!user) {
+                throw "User not found";
             }
+
+            const job = user.jobs_created.find(job => job.unique_id === job_id);
+
+            if (!job) {
+                throw "Job not found";
+            }
+
+            const provider = job.providers_assigned.find(provider => provider.provider_id === providerId);
+
+            if (!provider) {
+                throw "Provider not found";
+            }
+            provider.status = 'completed';
+            await user.save();
         }
 
         await Provider.findOneAndUpdate(
@@ -103,36 +112,50 @@ router.post('/provider/update', async (req, res) => {
             provider_update_command
         )
 
-
         // Complete user billing. Non-race (I think)?        
         const user = await User.findById(job_userid)
-        if (user) {
-            console.log('completing user billing')
-            const job = user.jobs_created.find(job => job.unique_id === job_id);
-            const allProvidersCompleted = job.providers_assigned.every(provider => provider.status === 'completed');
 
-            if (allProvidersCompleted) {
-
-                last_time_end = req.body.time_end;
-                for (const provider of job.providers_assigned) {
-                    const provider_entry = await Provider.findById(provider.provider_id);
-                    if (provider_entry) {
-                        const provider_job_entry = provider_entry.jobs_running.find(job_running => job_running.jobID === job_id);
-                        if (provider_job_entry) {
-                            last_time_end = Math.max(last_time_end, provider_job_entry.time_end)
-                        }
-                    }
-                }
-                console.log('Completing job with ID', job_id, 'and user', job_userid, 'with time_end', last_time_end)
-
-                job.running = false;
-                job.termination_time = last_time_end;
-                console.log('Billing user', job_userid, 'for job', job_id, 'with cost', job.job_cost);
-                user.available_pcu_count -= job.cpu_count;
-
-                await user.save();
-            }
+        if (!user) {
+            throw "User not found";
         }
+
+        const job = user.jobs_created.find(job => job.unique_id === job_id);
+
+        if (!job) {
+            throw "Job not found";
+        }
+
+        // Update the job cost
+        job.job_cost = job.job_cost + pcu_increment;
+
+
+        // Check if all providers have completed the job
+        const allProvidersCompleted = job.providers_assigned.every(provider => provider.status === 'completed');
+        if (allProvidersCompleted) {
+            // Update job running status and termination time
+            last_time_end = req.body.time_end;
+            for (const provider of job.providers_assigned) {
+                const provider_entry = await Provider.findById(provider.provider_id);
+                if (!provider_entry) {
+                    throw "Provider not found";
+                }
+                const provider_job_entry = provider_entry.jobs_running.find(job_running => job_running.jobID === job_id);
+                if (!provider_job_entry) {
+                    throw "Provider job not found";
+                }
+                last_time_end = Math.max(last_time_end, provider_job_entry.time_end)
+            }
+            console.log('Completing job with ID', job_id, 'and user', job_userid, 'with time_end', last_time_end)
+
+            job.running = false;
+            job.termination_time = last_time_end;
+
+            // Finish user billing
+            console.log('Billing user', job_userid, 'for job', job_id, 'with cost', job.job_cost);
+            user.available_pcu_count -= job.job_cost;
+        }
+
+        await user.save();
 
     } catch (err) {
         console.error("Error in Query for /provider/update: " + err);
@@ -220,7 +243,7 @@ router.get('/provider/job-summary', checkAuth, async (req, res) => {
             return {
                 job_id: job.jobID,
                 time_start: job.time_start,
-                reward: calculate_reward(job.pcu_consumed, (job.time_end ? job.time_end - job.time_start : Date.now() - job.time_start)/1000),
+                reward: calculate_reward(job.pcu_consumed, (job.time_end ? job.time_end - job.time_start : Date.now() - job.time_start) / 1000),
             }
         })
         console.log('job summary', jobSummaries)
