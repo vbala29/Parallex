@@ -20,6 +20,9 @@ from launch import launch_utils
 
 import daemon_pb2_grpc
 import daemon_pb2
+import user_pb2_grpc
+import user_pb2
+
 from aqmp_tools.AQMPConsumerConnection import AQMPConsumerConnection
 from aqmp_tools.formats.head_node_join_cluster_request import (
     head_node_join_cluster_request,
@@ -73,8 +76,28 @@ class Poller(threading.Thread):
 
 
 class DynamicMetricsRunner:
+    def __init__(self, channel, metric_stub):
+        self.channel = channel
+        self.metric_stub = metric_stub
+
     def run(self):
-        send_dynamic_metrics()
+        self._send_dynamic_metrics()
+
+    def _send_dynamic_metrics(self):
+        time.sleep(DYNAMIC_METRIC_INTERVAL_SEC)
+        ram_usage_mib = psutil.virtual_memory().used / (BYTES_IN_MEBIBYTE)
+        cpu_usage = psutil.cpu_percent(interval=CPU_FREQ_INTERVAL_SEC)
+        try:
+            _ = self.metric_stub.SendDynamicMetrics(
+                daemon_pb2.DynamicMetrics(
+                    CPUUsage=cpu_usage,
+                    MiBRamUsage=ram_usage_mib,
+                    clientIP=IP,
+                    uuid=UUID,
+                )
+            )
+        except Exception as e:
+            print(f"Exception in send_dynamic_metrics: {e}")
 
     def stop_event_set(self) -> bool:
         return False
@@ -93,6 +116,7 @@ class ResourceUpdateRunner:
         fidelity: int,
         job_id: str,
         job_userid: str,
+        job_stub: user_pb2_grpc.JobStub,
     ):
         """
         Args:
@@ -110,6 +134,7 @@ class ResourceUpdateRunner:
         self.stop_event = threading.Event()
         self.job_id = job_id
         self.job_userid = job_userid
+        self.job_stub = job_stub
 
     def _to_pcu(self, cpu: float, ram: float, duration: float) -> float:
         """Converts CPU and RAM usage to PCU.
@@ -123,13 +148,62 @@ class ResourceUpdateRunner:
         return (cpu + ram) / 1000 * duration
 
     def run(self):
+        """Runs the resource update runner."""
         resource_consumption_by_provider = self.get_resource_usage()
-        self.send_resources(resource_consumption_by_provider)
+        time_end = self._get_job_end()
+
+        self.send_resources(resource_consumption_by_provider, time_end)
+        if time_end is not None:
+            # kill ray
+            ray_command = "ray stop"
+            subprocess.run(
+                launch_utils.make_conda_command(ray_command),
+                shell=True,
+                check=True,
+                executable="/bin/bash",
+            )
+
+            self._signal_command_job_end()
+            self.stop_event.set()
+
+    def _signal_command_job_end(self):
+        """Tell command to free all the nodes in the cluster"""
+        for node_ip, node_id in self.provider_map.items():
+            self.job_stub.FreeNode(
+                user_pb2.Provider(providerID=node_id, providerIP=node_ip)
+            )
+
+    def _get_job_end(self) -> Optional[int]:
+        """Checks if a job has ended. Returns None if still in process, and the time the job ended if it has (in ms unix time)."""
+        ray_command = "ray job list"
+
+        jobs_string = subprocess.check_output(
+            launch_utils.make_conda_command(ray_command),
+            stderr=subprocess.STDOUT,
+            shell=True,
+        ).decode("utf8")
+
+        # The jobs_string is sorted in list of start time. There should only be one job for now, so we can just scan for the first `end_time` entry we see.
+        end_time_index = jobs_string.find("end_time=")
+
+        if end_time_index == -1:
+            return None  # Job not yet submitted
+
+        value_index = end_time_index + len("end_time=")
+        end_value_index = jobs_string.find(",", value_index)
+
+        # This returns the string wrapped with a `'` beginning and end, but int() accounts for that already.
+        maybe_time_end = jobs_string[value_index:end_value_index]
+        if "None" in maybe_time_end:
+            return None
+        return int(maybe_time_end)
 
     def _send_resource(
         self, provider_id: str, cpu: float, ram: float, time_end: Optional[float] = None
     ):
-        pcu = self._to_pcu(cpu, ram, self.fidelity)
+        pcu = (
+            self._to_pcu(cpu, ram, self.fidelity) + self.fidelity * 0.01
+        )  # Add a charge per second
         api_endpoint = self.backend_ip + "/provider/update"
         headers = {"Content-Type": "application/json"}
         data = {
@@ -144,16 +218,22 @@ class ResourceUpdateRunner:
             data["time_end"] = time_end
 
         # TODO(andy): let's make this async. sync for testing for now.
-        response = self.session.put(api_endpoint, headers=headers, data=json.dumps(data))
-        print(f'resource response: {response}')
+        response = self.session.post(
+            api_endpoint, headers=headers, data=json.dumps(data)
+        )
+        print(f"resource response: {response}")
 
-    def send_resources(self, resources: dict[str, tuple[float, float]]):
+    def send_resources(
+        self,
+        resources: dict[str, tuple[float, float]],
+        time_end: Optional[float] = None,
+    ):
         """Sends resources to the backend.
         Args:
             resources (tuple[float, float]): The CPU and RAM usage of the provider, over `self.fidelity` seconds.
         """
         for provider_id, (cpu, ram) in resources.items():
-            self._send_resource(provider_id, cpu, ram)
+            self._send_resource(provider_id, cpu, ram, time_end)
 
     def _get_ray_node_map(self):
         ray_command = "ray list nodes --format=json"
@@ -243,33 +323,24 @@ class ResourceUpdateRunner:
             provider_uuid = ray_node_map[ray_node_id]
             output[provider_uuid] = (cpu_usage, memory_usage)
 
-        job_complete = False
-
-        # TODO(andy) - parse for job completion
-        if job_complete:
-            self.stop_event.set()
-
         return output
 
     def stop_event_set(self) -> bool:
         return self.stop_event.is_set()
 
 
-def send_static_metrics():
+def send_static_metrics(metric_stub):
     """Sends the following information to the command node:
     1. Number of CPU cores
     2. Model of the CPU
     3. Memory total
     """
-    channel = grpc.insecure_channel(_COMMAND_IP_PORT)
-    stub = daemon_pb2_grpc.MetricsStub(channel)
-
     CPUNumCores = psutil.cpu_count(logical=True)
     cpu_info = get_cpu_info()
     CPUName = cpu_info["brand_raw"] + " " + cpu_info["arch"]
     MiBRam = psutil.virtual_memory().total / (BYTES_IN_MEBIBYTE)
 
-    response = stub.SendStaticMetrics(
+    _ = metric_stub.SendStaticMetrics(
         daemon_pb2.StaticMetrics(
             CPUNumCores=CPUNumCores,
             CPUName=CPUName,
@@ -280,24 +351,7 @@ def send_static_metrics():
     )
 
 
-def send_dynamic_metrics():
-    channel = grpc.insecure_channel(_COMMAND_IP_PORT)
-    stub = daemon_pb2_grpc.MetricsStub(channel)
-
-    time.sleep(DYNAMIC_METRIC_INTERVAL_SEC)
-    MiBRamUsage = psutil.virtual_memory().used / (BYTES_IN_MEBIBYTE)
-    CPUUsage = psutil.cpu_percent(interval=CPU_FREQ_INTERVAL_SEC)
-    try:
-        response = stub.SendDynamicMetrics(
-            daemon_pb2.DynamicMetrics(
-                CPUUsage=CPUUsage, MiBRamUsage=MiBRamUsage, clientIP=IP, uuid=UUID
-            )
-        )
-    except Exception as e:
-        print(f"Exception in send_dynamic_metrics: {e}")
-
-
-async def handle_cluster_join_request(msg):
+async def handle_cluster_join_request(msg, job_stub):
     async with msg.process():
         jsonMsg = json.loads(msg.body)
         typeStr = jsonMsg["type"]
@@ -315,12 +369,15 @@ async def handle_cluster_join_request(msg):
             req = head_node_join_cluster_request.loadFromJson(jsonMsg)
             launch_head.launch_head(_RAY_PORT)
             print(f"provider map: {req.provider_map()}")
+
+            # Only run resource updater on the head node.
             resource_update_runner = ResourceUpdateRunner(
                 _BACKEND_IP,
                 req.provider_map(),
                 _BACKEND_FIDELITY,
                 req.job_id(),
                 req.job_userid(),
+                job_stub,
             )
             resource_poller = Poller(
                 interval=_BACKEND_FIDELITY, function_manager=resource_update_runner
@@ -337,13 +394,22 @@ def start_daemon():
     IP = _get_local_ip()
     print(f"IP is: {IP}")
     print(f"UUID is: {UUID}")
-    send_static_metrics()
+    channel = grpc.insecure_channel(_COMMAND_IP_PORT)
+    metric_stub = daemon_pb2_grpc.MetricsStub(channel)
+    job_stub = user_pb2_grpc.JobStub(channel)
+
+    # Send static metrics on start-up
+    send_static_metrics(metric_stub)
     asyncio.run_coroutine_threadsafe(
-        aqmp.receive_messages(UUID, lambda msg: handle_cluster_join_request(msg)),
+        aqmp.receive_messages(
+            UUID, lambda msg: handle_cluster_join_request(msg, job_stub)
+        ),
         aqmp.loop,
     )
 
-    dynamic_metrics_poller = Poller(DYNAMIC_METRIC_INTERVAL_SEC, DynamicMetricsRunner())
+    dynamic_metrics_poller = Poller(
+        DYNAMIC_METRIC_INTERVAL_SEC, DynamicMetricsRunner(channel, metric_stub)
+    )
     dynamic_metrics_poller.start()
 
 
@@ -367,6 +433,7 @@ def start_background_loop(loop):
 
 
 if __name__ == "__main__":
+    # TODO(andy): stop using globals for aqmp
     aqmp = AQMPConsumerConnection(_BROKER_IP)
     setupUUID()
     aqmp.loop.run_until_complete(aqmp.setupAQMP())

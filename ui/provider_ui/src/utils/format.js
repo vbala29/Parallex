@@ -7,7 +7,7 @@ export function secondsToTime(seconds) {
 }
 
 export function pcuToDisplay(pcu) {
-    return pcu.toString() + " PCU";
+    return pcu.toFixed(2) + " PCU";
 }
 
 
