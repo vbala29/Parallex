@@ -29,6 +29,8 @@ import axios from 'axios';
 
 import Cookies from 'js-cookie';
 
+const { v4: uuidv4 } = require('uuid');
+
 import config from "../../../../config.json";
 
 function Invoices() {
@@ -43,7 +45,7 @@ function Invoices() {
         const transactions_list = response.data.pcu_transactions;
         const invoice_list = transactions_list.map((transaction) => {
           const invoice_obj = {
-            time: new Date(transaction.time).toLocaleString(),
+            time: new Date(transaction.time).toLocaleString('en-US', {year : 'numeric', month : 'long', day: 'numeric'}),
             pcu_amount : transaction.pcu_amount,
             usd_cost : transaction.usd_cost
           }
@@ -63,8 +65,9 @@ function Invoices() {
   },[]);
 
   const invoices_list = invoiceData.map((invoice) => {
-    return <Invoice time={invoice.time} pcu_amount={invoice.pcu_amount} price={invoice.usd_cost.toFixed(2)} key={invoice.time}/>
-    
+    const uniqueID = uuidv4();
+    console.log(uniqueID)
+    return <Invoice time={invoice.time} pcu_amount={invoice.pcu_amount} price={invoice.usd_cost.toFixed(2)} id={uniqueID} key={uniqueID}/>
   })
 
   return (
