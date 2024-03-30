@@ -35,17 +35,17 @@ function Invoices() {
   const [invoiceData, setInvoiceData] = useState([]);
   const getInvoiceData = () => {
     const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
-    axios.get(host + "/job-list", {headers: {
+    axios.get(host + "/transaction-history", {headers: {
       authorization: "Basic " + Cookies.get("token")
     }})
       .then(response => {
         console.log(response)
-        const jobs_list = response.data.jobs_created;
-        const invoice_list = jobs_list.map((job) => {
+        const transactions_list = response.data.pcu_transactions;
+        const invoice_list = transactions_list.map((transaction) => {
           const invoice_obj = {
-            job: job.name,
-            end_time : job.termination_time ? new Date(job.termination_time).toLocaleString() : null,
-            cost :job.job_cost
+            time: transaction.time,
+            pcu_amount : transaction.pcu_amount,
+            usd_cost : transaction.usd_cost
           }
           return invoice_obj;
         });
@@ -62,9 +62,8 @@ function Invoices() {
   },[]);
 
   const invoices_list = invoiceData.map((invoice) => {
-    if(invoice.end_time){
-      return <Invoice date={invoice.end_time} id={invoice.job} price={invoice.cost} key={invoice.job}/>
-    }
+    return <Invoice date={invoice.time} pcu_amount={invoice.pcu_amount} price={invoice.usd_cost} key={invoice.usd_cost}/>
+    
   })
 
   return (

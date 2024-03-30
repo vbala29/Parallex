@@ -23,7 +23,7 @@ import Icon from "@mui/material/Icon";
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 
-function Invoice({ date, id, price, noGutter }) {
+function Invoice({ time, pcu_amount, usd_cost, noGutter }) {
   return (
     <SoftBox
       component="li"
@@ -36,15 +36,15 @@ function Invoice({ date, id, price, noGutter }) {
     >
       <SoftBox lineHeight={1}>
         <SoftTypography display="block" variant="button" fontWeight="medium">
-          {date}
+          {time}
         </SoftTypography>
         <SoftTypography variant="caption" fontWeight="regular" color="text">
-          {id}
+          {pcu_amount}
         </SoftTypography>
       </SoftBox>
       <SoftBox display="flex" alignItems="center">
         <SoftTypography variant="button" fontWeight="regular" color="text">
-          ${price}
+          ${usd_cost}
         </SoftTypography>
       </SoftBox>
     </SoftBox>
@@ -58,9 +58,9 @@ Invoice.defaultProps = {
 
 // Typechecking props for the Invoice
 Invoice.propTypes = {
-  date: PropTypes.string.isRequired,
-  id: PropTypes.string.isRequired,
-  price: PropTypes.string.isRequired,
+  time: PropTypes.string.isRequired,
+  pcu_amount: PropTypes.string.isRequired,
+  usd_cost: PropTypes.string.isRequired,
   noGutter: PropTypes.bool,
 };
 
