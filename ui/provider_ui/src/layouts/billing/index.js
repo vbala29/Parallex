@@ -44,7 +44,8 @@ import axios from 'axios';
 import config from "../../config.json"
 
 function Billing() {
-
+  const [lotteryDate, setLotteryDate] = useState(Date.now() + (24 * 3600 * 10 + 8 * 3600 + 30) * 1000);
+  const [lotteryAmount, setLotteryAmount] = useState(0);
   const [lotteryEntries, setLotteryEntries] = useState(0);
   const [lifetimeEarnings, setLifetimeEarnings] = useState(0);
   const [job_data, setJobData] = useState([]);
@@ -77,7 +78,21 @@ function Billing() {
       })
     }
 
+    const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
+    axios.get(host + "/provider/lottery-info", {
+      headers: {
+        authorization: "Basic " + token
+      }
+    }).then(response => {
+      console.log(response.data);
+      setLotteryDate(response.data.unix_time);
+      setLotteryAmount(response.data.prize)
+    }).catch(error => {
+      console.log(error);
+    })
+
     fetchAndUpdateData();
+
     const interval = setInterval(fetchAndUpdateData, 5000); // 5000 milliseconds = 5 seconds
 
     // Cleanup function to clear the interval when the component unmounts
@@ -96,8 +111,8 @@ function Billing() {
                   <DefaultInfoCard
                     icon="hourglass_bottom"
                     title="Lottery Drawing"
-                    description="Win up to $1000000!"
-                    value={<Countdown date={Date.now() + (24 * 3600 * 10 + 8 * 3600 + 30) * 1000} />}
+                    description={`Win up to $${Math.round(lotteryAmount)}!`}
+                    value={<Countdown date={lotteryDate} />}
                   >
                   </DefaultInfoCard>
                   {/* <Countdown date={Date.now() + 10000} /> */}
