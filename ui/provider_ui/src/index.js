@@ -61,6 +61,7 @@ const options = {
 import { SoftUIControllerProvider } from "context";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+document.body.style = 'background: #f6f6f6;';
 root.render(
   <HashRouter>
     <SoftUIControllerProvider>

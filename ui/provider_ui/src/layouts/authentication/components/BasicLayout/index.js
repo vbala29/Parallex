@@ -32,7 +32,7 @@ import Footer from "layouts/authentication/components/Footer";
 
 function BasicLayout({ title, description, image, children }) {
   return (
-    <PageLayout>
+    <PageLayout background="#f6f6f6">
       <DefaultNavbar
         // action={{
         //   type: "external",
