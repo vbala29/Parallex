@@ -42,9 +42,6 @@ function SubmitInput({ label, placeholder, value, onChange }) {
         placeholder={placeholder}
         value={value}
         onChange={(e)=> onChange(e.target.value)}
-        // If you want to style the placeholder text
-        // className="chat-input"
-        // placeholderStyle={placeholderStyle}
       />
     </div>
   );

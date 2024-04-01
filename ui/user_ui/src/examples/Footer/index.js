@@ -43,70 +43,68 @@ function Footer({ company, links }) {
     ));
 
   return (
-    <div>
-    </div>
-    // <SoftBox
-    //   width="100%"
-    //   display="flex"
-    //   flexDirection={{ xs: "column", lg: "row" }}
-    //   justifyContent="space-between"
-    //   alignItems="center"
-    //   px={1.5}
-    // >
-    //   <SoftBox
-    //     display="flex"
-    //     justifyContent="center"
-    //     alignItems="center"
-    //     flexWrap="wrap"
-    //     color="text"
-    //     fontSize={size.sm}
-    //     px={1.5}
-    //   >
-    //     &copy; {new Date().getFullYear()}, made with
-    //     <SoftBox fontSize={size.md} color="text" mb={-0.5} mx={0.25}>
-    //       <Icon color="inherit" fontSize="inherit">
-    //         favorite
-    //       </Icon>
-    //     </SoftBox>
-    //     by
-    //     <Link href={href} target="_blank">
-    //       <SoftTypography variant="button" fontWeight="medium">
-    //         &nbsp;{name}&nbsp;
-    //       </SoftTypography>
-    //     </Link>
-    //     for a better web.
-    //   </SoftBox>
-    //   <SoftBox
-    //     component="ul"
-    //     sx={({ breakpoints }) => ({
-    //       display: "flex",
-    //       flexWrap: "wrap",
-    //       alignItems: "center",
-    //       justifyContent: "center",
-    //       listStyle: "none",
-    //       mt: 3,
-    //       mb: 0,
-    //       p: 0,
+    <SoftBox
+      width="100%"
+      display="flex"
+      flexDirection={{ xs: "column", lg: "row" }}
+      justifyContent="space-between"
+      alignItems="center"
+      px={1.5}
+    >
+      <SoftBox
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        flexWrap="wrap"
+        color="text"
+        fontSize={size.sm}
+        px={1.5}
+      >
+        &copy; {new Date().getFullYear()}, made with
+        <SoftBox fontSize={size.md} color="text" mb={-0.5} mx={0.25}>
+          <Icon color="inherit" fontSize="inherit">
+            favorite
+          </Icon>
+        </SoftBox>
+        by
+        <Link href={href} target="_blank">
+          <SoftTypography variant="button" fontWeight="medium">
+            &nbsp;{name}&nbsp;
+          </SoftTypography>
+        </Link>
+        for more accessible compute. Thank you for being a Parallex provider.
+      </SoftBox>
+      <SoftBox
+        component="ul"
+        sx={({ breakpoints }) => ({
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "center",
+          justifyContent: "center",
+          listStyle: "none",
+          mt: 3,
+          mb: 0,
+          p: 0,
 
-    //       [breakpoints.up("lg")]: {
-    //         mt: 0,
-    //       },
-    //     })}
-    //   >
-    //     {renderLinks()}
-    //   </SoftBox>
-    // </SoftBox>
+          [breakpoints.up("lg")]: {
+            mt: 0,
+          },
+        })}
+      >
+        {renderLinks()}
+      </SoftBox>
+    </SoftBox>
   );
 }
 
 // Setting default values for the props of Footer
 Footer.defaultProps = {
-  company: { href: "https://www.creative-tim.com/", name: "Creative Tim" },
+  company: { href: "https://www.parallex.com", name: "Parallex" },
   links: [
-    { href: "https://www.creative-tim.com/", name: "Creative Tim" },
-    { href: "https://www.creative-tim.com/presentation", name: "About Us" },
-    { href: "https://www.creative-tim.com/blog", name: "Blog" },
-    { href: "https://www.creative-tim.com/license", name: "License" },
+    { href: "https://www.parallex.com", name: "Parallex" }
+    // { href: "https://www.creative-tim.com/presentation", name: "About Us" },
+    // { href: "https://www.creative-tim.com/blog", name: "Blog" },
+    // { href: "https://www.creative-tim.com/license", name: "License" },
   ],
 };
 

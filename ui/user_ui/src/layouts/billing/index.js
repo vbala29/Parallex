@@ -14,7 +14,6 @@ Coded by www.creative-tim.com
 */
 
 // @mui material components
-import Grid from "@mui/material/Grid";
 
 // Soft UI Dashboard React components
 import SoftBox from "components/SoftBox";
@@ -42,6 +41,7 @@ import Cookies from 'js-cookie';
 import config from "../../config.json"
 
 import { FaMicrochip } from "react-icons/fa6";
+
 
 
 function Billing() {

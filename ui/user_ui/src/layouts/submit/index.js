@@ -51,11 +51,11 @@ import config from "../../config.json"
 
 
 function Submit() {
-  const [cores, setCores] = useState(0);
-  const [ram, setRam] = useState(0);
+  const [cores, setCores] = useState("");
+  const [ram, setRam] = useState("");
   const [status, setStatus] = useState("");
   const [myFiles, setMyFiles] = useState([]);
-  const [jobName, setJobName] = useState("test");
+  const [jobName, setJobName] = useState("");
 
   const onDrop = useCallback(acceptedFiles => {
     setMyFiles([...myFiles, ...acceptedFiles])
@@ -153,10 +153,10 @@ function Submit() {
                   <SubmitInput label="Job Name" placeholder="type job name here" value={jobName} onChange={setJobName}/>
                 </div>
                 <div style={{padding:"5px"}}>
-                  <SubmitInput label="CPU Cores" placeholder="number of cores" value={jobName} onChange={setCores}/>
+                  <SubmitInput label="CPU Cores" placeholder="number of cores" value={cores} onChange={setCores}/>
                 </div>
                 <div style={{padding:"5px"}}>
-                  <SubmitInput label="MiB RAM" placeholder="amount of RAM" value={jobName} onChange={setRam}/>
+                  <SubmitInput label="MiB RAM" placeholder="amount of RAM" value={ram} onChange={setRam}/>
                 </div>
                 <SoftTypography variant="body2">
                   Estimated Cost Per Hour: {ram * cores / 2500}
@@ -174,6 +174,7 @@ function Submit() {
           </SoftTypography>
         </div>
       </SoftBox>
+      <Footer/>
     </DashboardLayout>
   );
 }

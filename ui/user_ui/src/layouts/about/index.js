@@ -24,6 +24,8 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
 import logo from 'assets/images/logo-ct.png';
 
+import Footer from "examples/Footer";
+
 
 function About() {
 
