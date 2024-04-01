@@ -277,4 +277,20 @@ router.post('/provider/update-duration', checkAuth, async (req, res) => {
     }
 })
 
+router.get('/provider/lottery-info', checkAuth, async (req, res) => {
+    try {
+        let lotterySummary = {
+            "unix_time": new Date('2024-04-14T00:00:00Z').getTime(),
+            "prize": 1000000
+        }
+
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify(lotterySummary));
+    } catch (err) {
+        console.error(err)
+        res.sendStatus(500);
+    }
+})
+
+
 module.exports = router;

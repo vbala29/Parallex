@@ -33,6 +33,10 @@ import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import SoftInput from "components/SoftInput";
 
+import LogoutIcon from '@mui/icons-material/Logout';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+
+
 // Soft UI Dashboard React examples
 import Breadcrumbs from "examples/Breadcrumbs";
 import NotificationItem from "examples/Items/NotificationItem";
@@ -99,10 +103,12 @@ function DashboardNavbar({ absolute, light, isMini }) {
     }
 
     const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
-    function update(){
-      axios.get(host + "/available-pcu-count", {headers: {
-        authorization: "Basic " + Cookies.get("token")
-      }})
+    function update() {
+      axios.get(host + "/available-pcu-count", {
+        headers: {
+          authorization: "Basic " + Cookies.get("token")
+        }
+      })
         .then(response => {
           setAvailablePCUs(response.data.available_pcu_count)
         })
@@ -110,9 +116,11 @@ function DashboardNavbar({ absolute, light, isMini }) {
           console.log(error);
         })
 
-      axios.get(host + "/pcu-cost", {headers: {
-        authorization: "Basic " + Cookies.get("token")
-      }})
+      axios.get(host + "/pcu-cost", {
+        headers: {
+          authorization: "Basic " + Cookies.get("token")
+        }
+      })
         .then(response => {
           setPCUCost(response.data.pcu_cost)
         })
@@ -184,9 +192,9 @@ function DashboardNavbar({ absolute, light, isMini }) {
     <AppBar
       position={absolute ? "absolute" : navbarType}
       color="inherit"
-      sx={{borderRadius:"15px", background:"rgba(0,0,0,0)"}}
+      sx={{ borderRadius: "15px", background: "rgba(0,0,0,0)" }}
     >
-      <Toolbar sx={(theme) => navbarContainer(theme) }>
+      <Toolbar sx={(theme) => navbarContainer(theme)}>
         <SoftBox color="inherit" mb={{ xs: 1, md: 0 }} sx={(theme) => navbarRow(theme, { isMini })}>
           <Breadcrumbs icon="home" title={route[route.length - 1]} route={route} light={light} />
         </SoftBox>
@@ -194,19 +202,19 @@ function DashboardNavbar({ absolute, light, isMini }) {
           <SoftBox pr={15}>
             <Link to="/billing">
               <div>
-                <FaMicrochip style={{color:"black"}}/>
-                <FaArrowRight style={{color:"black", padding:"3px"}}/>
-                <FaMoneyBill style={{color:"green"}}/>
+                <FaMicrochip style={{ color: "black" }} />
+                <FaArrowRight style={{ color: "black", padding: "3px" }} />
+                <FaMoneyBill style={{ color: "green" }} />
               </div>
               <SoftTypography variant="h6">
-               {pcuCost} USD
+                {pcuCost} USD
               </SoftTypography>
             </Link>
           </SoftBox>
           <SoftBox pr={0}>
             <Link to="/billing">
-              <div style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
-                <FaMicrochip style={{color:"black", marginBottom:"10px", marginTop:"2px"}}/>
+              <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+                <FaMicrochip style={{ color: "black", marginBottom: "10px", marginTop: "2px" }} />
                 <SoftTypography variant="h6" pl={1}>
                   PCUs: {availablePCUs}
                 </SoftTypography>
@@ -216,33 +224,26 @@ function DashboardNavbar({ absolute, light, isMini }) {
         </SoftBox>
         {isMini ? null : (
           <SoftBox sx={(theme) => navbarRow(theme, { isMini })}>
-            <SoftBox pr={1}>
               <Link to="/dashboard">
                 <SoftTypography variant="h6">
                   {username}
                 </SoftTypography>
               </Link>
-            </SoftBox>
-            <SoftBox color={light ? "white" : "inherit"}>
-              <Link to="/dashboard">
-                <IconButton sx={navbarIconButton} size="small">
-                  <Icon
-                    sx={({ palette: { dark, white } }) => ({
-                      color: light ? white.main : dark.main,
-                    })}
-                    mb={1}
-                  >
-                    account_circle
-                  </Icon>
-                </IconButton>
-              </Link>
-              {renderMenu()}
-            </SoftBox>
-            <SoftBox pl={1} pr={1} onClick={logout} style={{ cursor: 'pointer' }}>
-              <SoftTypography variant="h6">
-                logout
-              </SoftTypography>
-            </SoftBox>
+
+            <Link to="/dashboard">
+              <IconButton sx={navbarIconButton} size="small">
+                <AccountCircleIcon />
+              </IconButton>
+            </Link>
+
+            <IconButton
+              size="small"
+              color="inherit"
+              sx={navbarIconButton}
+              onClick={logout}
+            >
+              <LogoutIcon />
+            </IconButton>
           </SoftBox>
         )}
       </Toolbar>

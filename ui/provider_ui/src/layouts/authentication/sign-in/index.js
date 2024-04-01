@@ -35,7 +35,7 @@ import { useSelector, useDispatch } from 'react-redux'
 
 
 // Images
-import curved6 from "assets/images/curved-images/curved14.jpg";
+import curved6 from "assets/images/curved-images/extended_logo_transformed.png";
 
 import axios from 'axios';
 
