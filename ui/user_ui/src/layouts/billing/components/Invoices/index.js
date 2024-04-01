@@ -44,12 +44,13 @@ function Invoices() {
         console.log(response)
         const transactions_list = response.data.pcu_transactions;
         const invoice_list = transactions_list.map((transaction) => {
+          const uniqueID = uuidv4();
           const invoice_obj = {
             time: new Date(transaction.time).toLocaleString('en-US', {year : 'numeric', month : 'long', day: 'numeric'}),
             pcu_amount : transaction.pcu_amount,
-            usd_cost : transaction.usd_cost
+            usd_cost : transaction.usd_cost,
+            unique_id : uniqueID
           }
-          console.log(invoice_obj)
           return invoice_obj;
         });
         setInvoiceData(invoice_list.slice(0,6)); //slice array to just show first 6, can implement show all feature later
@@ -65,9 +66,7 @@ function Invoices() {
   },[]);
 
   const invoices_list = invoiceData.map((invoice) => {
-    const uniqueID = uuidv4();
-    console.log(uniqueID)
-    return <Invoice time={invoice.time} pcu_amount={invoice.pcu_amount} price={invoice.usd_cost.toFixed(2)} id={uniqueID} key={uniqueID}/>
+    return <Invoice time={invoice.time} pcu_amount={invoice.pcu_amount} price={invoice.usd_cost.toFixed(2)} key={invoice.unique_id}/>
   })
 
   return (

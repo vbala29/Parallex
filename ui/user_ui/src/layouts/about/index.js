@@ -37,7 +37,7 @@ function About() {
         Parallex
       </SoftTypography>
       <SoftTypography >
-        Accessible Compute for All.
+        Accessible Computing for All
       </SoftTypography>
       </div>
     </DashboardLayout>
