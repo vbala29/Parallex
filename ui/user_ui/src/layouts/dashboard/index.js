@@ -88,7 +88,7 @@ function Dashboard() {
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard
                 title={{ text: "Total Cost" }}
-                count={dashboardData.total_cost ? "$" + dashboardData.total_cost :"$" +  0}
+                count={dashboardData.total_cost ? "$" + dashboardData.total_cost.toFixed(2) :"$" +  0}
                 icon={{ color: "info", component: "paid" }}
               />
             </Grid>
@@ -102,7 +102,7 @@ function Dashboard() {
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard
                 title={{ text: "Average Job Cost" }}
-                count={dashboardData.avg_cost ? "$" +  dashboardData.avg_cost : "$" +  0}
+                count={dashboardData.avg_cost ? "$" +  dashboardData.avg_cost.toFixed(2) : "$" +  0}
                 icon={{
                   color: "info",
                   component: "paid",
