@@ -31,7 +31,7 @@ import SoftButton from "components/SoftButton";
 import CoverLayout from "layouts/authentication/components/CoverLayout";
 
 // Images
-import curved6 from "assets/images/curved-images/extended_logo_transformed.png";
+import curved6 from "assets/images/parallex_pic.png";
 
 import axios from 'axios';
 

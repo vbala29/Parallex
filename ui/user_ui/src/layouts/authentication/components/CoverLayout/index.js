@@ -68,7 +68,7 @@ function CoverLayout({ color, header, title, description, image, top, children }
             height="100%"
             display={{ xs: "none", md: "block" }}
             position="relative"
-            right={{ md: "-12rem", xl: "-16rem" }}
+            right={{ md: "-12rem", xl: "-14rem" }}
             mr={-16}
             sx={{
               transform: "skewX(-10deg)",
@@ -77,7 +77,7 @@ function CoverLayout({ color, header, title, description, image, top, children }
             }}
           >
             <SoftBox
-              ml={-8}
+              ml={-12}
               height="100%"
               sx={{
                 backgroundImage: `url(${image})`,
