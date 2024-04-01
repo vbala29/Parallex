@@ -73,7 +73,11 @@ function SignIn() {
         navigate("/dashboard");
       })
       .catch(error => {
-        alert(error);
+        if (error.response.status == 400) {
+          alert("Invalid login information");
+        } else {
+          alert(error);
+        }
       })
   }
   return (
