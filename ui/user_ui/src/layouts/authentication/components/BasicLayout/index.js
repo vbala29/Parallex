@@ -34,11 +34,6 @@ function BasicLayout({ title, description, image, children }) {
   return (
     <PageLayout background="#f6f6f6">
       <DefaultNavbar
-        action={{
-          type: "external",
-          route: "https://creative-tim.com/product/soft-ui-dashboard-react",
-          label: "free download",
-        }}
         transparent
         light
       />

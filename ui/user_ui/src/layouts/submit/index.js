@@ -20,6 +20,8 @@ import Grid from "@mui/material/Grid";
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 
+
+import SubmitInput from './components/SubmitInput';
 // Soft UI Dashboard React components
 import SoftBox from "components/SoftBox";
 import SoftButton from "components/SoftButton"
@@ -147,12 +149,15 @@ function Submit() {
                   autoComplete="off"
                 >
               <CardHeader title="Job Specifications"/>
-                <TextField required  id="outlined-name" variant="standard" label="Job Name" defaultValue="test" margin="normal" value={jobName} onChange={(e) => setJobName(e.target.value)}></TextField>  
-                <div style={{height:"8px"}}></div>
-                <TextField required  id="outlined-cores" variant="standard" label="CPU Cores" defaultValue="0" margin="normal" value={cores} onChange={(e) => setCores(e.target.value)}></TextField>  
-                <div style={{height:"8px"}}></div>
-                <TextField required  id="outlined-ram" variant="standard" label="MiB RAM" defaultValue="0" margin="normal" value={ram} onChange={(e) => setRam(e.target.value)}></TextField>
-                <div style={{height:"6px"}}></div>
+                <div style={{padding:"5px"}}>
+                  <SubmitInput label="Job Name" placeholder="type job name here" value={jobName} onChange={setJobName}/>
+                </div>
+                <div style={{padding:"5px"}}>
+                  <SubmitInput label="CPU Cores" placeholder="number of cores" value={jobName} onChange={setCores}/>
+                </div>
+                <div style={{padding:"5px"}}>
+                  <SubmitInput label="MiB RAM" placeholder="amount of RAM" value={jobName} onChange={setRam}/>
+                </div>
                 <SoftTypography variant="body2">
                   Estimated Cost Per Hour: {ram * cores / 2500}
                 </SoftTypography>

@@ -202,9 +202,9 @@ function DashboardNavbar({ absolute, light, isMini }) {
           <SoftBox pr={15}>
             <Link to="/billing">
               <div>
-                <FaMicrochip style={{ color: "black" }} />
-                <FaArrowRight style={{ color: "black", padding: "3px" }} />
-                <FaMoneyBill style={{ color: "green" }} />
+                <FaMicrochip style={{ color: "#555555" }} />
+                <FaArrowRight style={{ color: "#555555", padding: "3px" }} />
+                <FaMoneyBill style={{ color: "#5cab6b" }} />
               </div>
               <SoftTypography variant="h6">
                 {pcuCost} USD
@@ -214,7 +214,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
           <SoftBox pr={0}>
             <Link to="/billing">
               <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-                <FaMicrochip style={{ color: "black", marginBottom: "10px", marginTop: "2px" }} />
+                <FaMicrochip style={{ color: "#555555", marginBottom: "10px", marginTop: "2px" }} />
                 <SoftTypography variant="h6" pl={1}>
                   PCUs: {availablePCUs}
                 </SoftTypography>

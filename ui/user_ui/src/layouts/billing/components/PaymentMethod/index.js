@@ -48,7 +48,7 @@ function PaymentMethod() {
           &nbsp;add new card
         </SoftButton>
       </SoftBox>
-      <SoftBox p={10}>
+      <SoftBox p={6}>
         <Grid container display="flex" flexDirection="column" spacing={3}>
         <FormControl >
           <FormLabel id="demo-radio-buttons-group-label"></FormLabel>

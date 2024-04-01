@@ -53,10 +53,10 @@ function BuyPCU(props) {
           Buy PCUs
         </SoftTypography>
       </SoftBox>
-      <SoftBox p={4} display="flex" aligntItems="center">
-        <SoftInput value={numPCUs} onChange={(e) => {setNumPCUs(e.target.value)}}>
+      <SoftBox p={4} display="flex" aligntItems="center" justifyContent="space-between">
+        <SoftInput value={numPCUs} sx={{margin:"10px"}} onChange={(e) => {setNumPCUs(e.target.value)}}>
         </SoftInput>
-        <SoftButton variant="gradient" color="dark" onClick={open}>
+        <SoftButton variant="gradient" color="dark" onClick={open} sx={{margin:"10px"}}>
           Buy PCUs
         </SoftButton>
       </SoftBox>

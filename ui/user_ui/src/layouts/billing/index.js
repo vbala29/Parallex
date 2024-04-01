@@ -83,7 +83,7 @@ function Billing() {
           <Invoices/>
         </SoftBox>
         <SoftBox b={2} display="flex" flex-direction="row">
-          <div style={{margin:"10px"}}>
+          <div style={{margin:"10px", flexGrow:"1"}}>
             <DefaultInfoCard
               icon={<FaMicrochip></FaMicrochip>}
               title="PCUs"
