@@ -32,7 +32,7 @@ import Footer from "layouts/authentication/components/Footer";
 
 function CoverLayout({ color, header, title, description, image, top, children }) {
   return (
-    <PageLayout background="#f6f6f6">
+    <PageLayout background="white">
       <DefaultNavbar/>
       <Grid
         container

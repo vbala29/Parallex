@@ -39,6 +39,7 @@ import curved6 from "assets/images/curved-images/data_center.jpg";
 import axios from 'axios';
 
 import config from "../../../config.json"
+import Footer from "examples/Footer";
 
 function SignUp() {
   const [agreement, setAgremment] = useState(true);
