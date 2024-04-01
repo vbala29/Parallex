@@ -56,8 +56,8 @@ import CustomerSupport from "examples/Icons/CustomerSupport";
 import CreditCard from "examples/Icons/CreditCard";
 import Basket from "examples/Icons/Basket";
 import Cube from "examples/Icons/Cube";
-import UploadIcon from '@mui/icons-material/Upload';
 import InfoIcon from '@mui/icons-material/Info';
+import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
 
 const routes = [
   {
@@ -74,7 +74,7 @@ const routes = [
     name: "Submit",
     key: "submit",
     route: "/submit",
-    icon: <UploadIcon size="12px" />,
+    icon: <DriveFolderUploadIcon size="12px" />,
     component: <Submit />,
     noCollapse: true,
   },

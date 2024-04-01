@@ -38,6 +38,7 @@ import Table from "examples/Tables/Table";
 import axios from "axios";
 // Icons
 import { LuUpload } from "react-icons/lu";
+import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
 
 import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
@@ -123,7 +124,7 @@ function Submit() {
               <div style={{display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', padding:'5px', height:'100%'}}>
                 <div {...getRootProps()} style={dropzoneStyles}>
                   <input {...getInputProps()} />
-                  <LuUpload style={{ width: '200px', height: '250px' }}></LuUpload>
+                  <DriveFolderUploadIcon style={{ width: '200px', height: '250px' }}></DriveFolderUploadIcon>
                   <p>Drag and drop some files here, or click to select files</p>
                 </div>
                 <ul>
