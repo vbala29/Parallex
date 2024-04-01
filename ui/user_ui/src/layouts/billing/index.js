@@ -80,7 +80,7 @@ function Billing() {
       <DashboardNavbar />
         <SoftBox b={2} display="flex" flex-direction="row">
           <PaymentMethod/>
-          <Invoices style={{flexGrow: "1"}}/>
+          <Invoices/>
         </SoftBox>
         <SoftBox b={2} display="flex" flex-direction="row">
           <div style={{margin:"10px"}}>

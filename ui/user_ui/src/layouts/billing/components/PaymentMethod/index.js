@@ -54,18 +54,18 @@ function PaymentMethod() {
           <FormLabel id="demo-radio-buttons-group-label"></FormLabel>
           <RadioGroup
             aria-labelledby="demo-radio-buttons-group-label"
-            defaultValue="female"
+            defaultValue="1"
             name="radio-buttons-group"
           >
-            <FormControlLabel value="female" control={<Radio />} label={<SoftBox
+            <FormControlLabel value="1" control={<Radio />} sx={{display:"flex", flexDirection:"row", padding:"10px"}}  label={<SoftBox
               border={`${borderWidth[1]} solid ${borderColor}`}
               borderRadius="lg"
               display="flex"
               justifyContent="space-between"
               alignItems="center"
-              p={3}
+              p={2}
             >
-              <SoftBox component="img" src={masterCardLogo} alt="master card" width="10%" mr={2} />
+              <SoftBox component="img" src={masterCardLogo} alt="master card" width="5%" mr={1} />
               <SoftTypography variant="h6" fontWeight="medium">
                 ****&nbsp;&nbsp;****&nbsp;&nbsp;****&nbsp;&nbsp;7852
               </SoftTypography>
@@ -77,15 +77,15 @@ function PaymentMethod() {
                 </Tooltip>
               </SoftBox>
             </SoftBox>} />
-            <FormControlLabel value="male" control={<Radio />} label={<SoftBox
+            <FormControlLabel value="2" control={<Radio />} sx={{display:"flex", flexDirection:"row", padding:"10px"}}  label={<SoftBox
               border={`${borderWidth[1]} solid ${borderColor}`}
               borderRadius="lg"
               display="flex"
               justifyContent="space-between"
               alignItems="center"
-              p={3}
+              p={2}
             >
-              <SoftBox component="img" src={visaLogo} alt="master card" width="10%" mr={2} />
+              <SoftBox component="img" src={visaLogo} alt="master card" width="5%" mr={1} />
               <SoftTypography variant="h6" fontWeight="medium">
                 ****&nbsp;&nbsp;****&nbsp;&nbsp;****&nbsp;&nbsp;5248
               </SoftTypography>

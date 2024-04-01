@@ -192,7 +192,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
     <AppBar
       position={absolute ? "absolute" : navbarType}
       color="inherit"
-      sx={{ borderRadius: "15px", background: "rgba(0,0,0,0)" }}
+      sx={{ background: "#f6f6f6", borderRadius:"0px"}}
     >
       <Toolbar sx={(theme) => navbarContainer(theme)}>
         <SoftBox color="inherit" mb={{ xs: 1, md: 0 }} sx={(theme) => navbarRow(theme, { isMini })}>

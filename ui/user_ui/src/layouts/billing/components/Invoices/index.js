@@ -60,21 +60,25 @@ function Invoices() {
       })
   };
   useEffect(() => {
+    getInvoiceData();
     setInterval(() => {
       getInvoiceData();
     }, 2000);
   },[]);
 
   const invoices_list = invoiceData.map((invoice) => {
-    return <Invoice time={invoice.time} pcu_amount={invoice.pcu_amount} price={parseFloat(invoice.usd_cost.toFixed(2))} key={invoice.unique_id}/>
+    return <Invoice time={invoice.time} pcu_amount={invoice.pcu_amount} price={invoice.usd_cost.toFixed(2)} key={invoice.unique_id}/>
   })
 
   return (
-    <Card p={2} id="delete-account" sx={{flexGrow:2, margin:"10px"}}>
+    <Card p={2} id="delete-account" sx={{width:"300px", margin:"10px"}}>
       <SoftBox pt={2} px={2} display="flex" justifyContent="space-between" alignItems="center">
         <SoftTypography variant="h6" fontWeight="medium">
           Invoices
         </SoftTypography>
+        <SoftButton variant="outlined" color="info" size="small">
+          view all
+        </SoftButton>
       </SoftBox>
       <SoftBox p={2}>
         <SoftBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
