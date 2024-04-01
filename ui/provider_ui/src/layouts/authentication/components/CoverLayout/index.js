@@ -55,7 +55,7 @@ function CoverLayout({ color, header, title, description, image, top, children }
               {!header ? (
                 <>
                   <SoftBox mb={1}>
-                    <SoftTypography variant="h3" fontWeight="bold" color={color} textGradient>
+                    <SoftTypography variant="h3" fontWeight="bold" textGradient>
                       {title}
                     </SoftTypography>
                   </SoftBox>
@@ -84,12 +84,18 @@ function CoverLayout({ color, header, title, description, image, top, children }
             }}
           >
             <SoftBox
-              ml={-8}
-              height="100%"
-              sx={{
-                backgroundImage: `url(${image})`,
-                backgroundSize: "cover",
-                transform: "skewX(10deg)",
+               ml={-7}
+               height="100%"
+               sx={{backgroundImage: ({ functions: { linearGradient, rgba }, palette: { gradients } }) =>
+               image &&
+               `${linearGradient(
+                 rgba(gradients.dark.main, 0),
+                 rgba(gradients.dark.state, 0)
+               )}, url(${image})`,
+             backgroundSize: "cover",
+             backgroundPosition: "center",
+             backgroundRepeat: "no-repeat",
+             transform: "skewX(10deg)"
               }}
             />
           </SoftBox>

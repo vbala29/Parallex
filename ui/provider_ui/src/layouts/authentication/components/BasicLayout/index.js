@@ -34,11 +34,6 @@ function BasicLayout({ title, description, image, children }) {
   return (
     <PageLayout background="#f6f6f6">
       <DefaultNavbar
-        // action={{
-        //   type: "external",
-        //   route: "https://creative-tim.com/product/soft-ui-dashboard-react",
-        //   label: "free download",
-        // }}
         transparent
         light
       />
@@ -54,8 +49,8 @@ function BasicLayout({ title, description, image, children }) {
           backgroundImage: ({ functions: { linearGradient, rgba }, palette: { gradients } }) =>
             image &&
             `${linearGradient(
-              rgba(gradients.dark.main, 0.6),
-              rgba(gradients.dark.state, 0.6)
+              rgba(gradients.dark.main, 0),
+              rgba(gradients.dark.state, 0),
             )}, url(${image})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
