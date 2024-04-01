@@ -34,6 +34,7 @@ function BuyPCU(props) {
   const { open, numPCUs, setNumPCUs } = props;
   const purchase = () => {
     const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
+    // Round PCU buying to a whole number!
     axios.post(host + "/buy-pcu", {pcu_bought: parseInt(numPCUs)},{headers: {
       authorization: "Basic " + Cookies.get("token")
     }

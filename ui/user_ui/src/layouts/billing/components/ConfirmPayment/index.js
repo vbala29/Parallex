@@ -31,20 +31,41 @@ import SoftTypography from "components/SoftTypography";
 
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import config from "../../../../config.json"
 
 function ConfirmPayment(props) {
   const { onClose, selectedValue, open, numPCUs } = props;
+  const [pcuCost, setPCUCost] = useState(0);
+
+  useEffect(() => {
+    const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
+    function update() {
+      axios.get(host + "/pcu-cost", {
+        headers: {
+          authorization: "Basic " + Cookies.get("token")
+        }
+      })
+        .then(response => {
+          setPCUCost(response.data.pcu_cost)
+        })
+        .catch(error => {
+          console.log(error);
+        })
+      }
+      setInterval(update, 2000);
+  }, [numPCUs])
 
   const handleClose = () => {
     onClose();
   };
 
+  const numPCURounded = parseFloat(numPCUs).toFixed(0)
+  const costRounded = Math.round(pcuCost * parseInt(numPCURounded) * 100)/100
   const buy = () => {
     const host = "http://" + config.ip_addresses.web_backend_server + ":8080";
-    axios.post(host + "/buy-pcu", {pcu_bought: parseInt(numPCUs)},{headers: {
+    axios.post(host + "/buy-pcu", {pcu_bought: numPCURounded},{headers: {
       authorization: "Basic " + Cookies.get("token")
     }
     })
@@ -62,7 +83,7 @@ function ConfirmPayment(props) {
       <DialogTitle>Confirm Payment</DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
-          Buy {numPCUs} PCUs for {1.23 * numPCUs}?
+          Buy {numPCURounded} PCU for {costRounded} USD?
         </DialogContentText>
       </DialogContent>
       <DialogActions>
