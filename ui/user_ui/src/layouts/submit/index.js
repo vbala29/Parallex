@@ -19,6 +19,7 @@ import CardHeader from "@mui/material/CardHeader";
 import Grid from "@mui/material/Grid";
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
+import {Input} from '@nextui-org/react'
 
 // Soft UI Dashboard React components
 import SoftBox from "components/SoftBox";
@@ -146,6 +147,13 @@ function Submit() {
                   autoComplete="off"
                 >
               <CardHeader title="Job Specifications"/>
+              <Input
+      isRequired
+      type="email"
+      label="Email"
+      defaultValue="junior@nextui.org"
+      className="max-w-xs"
+    />
                 <TextField required  id="outlined-name" variant="standard" label="Job Name" defaultValue="test" margin="normal" value={jobName} onChange={(e) => setJobName(e.target.value)}></TextField>  
                 <div style={{height:"8px"}}></div>
                 <TextField required  id="outlined-cores" variant="standard" label="CPU Cores" defaultValue="0" margin="normal" value={cores} onChange={(e) => setCores(e.target.value)}></TextField>  

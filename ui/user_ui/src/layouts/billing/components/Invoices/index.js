@@ -60,13 +60,14 @@ function Invoices() {
       })
   };
   useEffect(() => {
+    getInvoiceData();
     setInterval(() => {
       getInvoiceData();
     }, 2000);
   },[]);
 
   const invoices_list = invoiceData.map((invoice) => {
-    return <Invoice time={invoice.time} pcu_amount={invoice.pcu_amount} price={parseFloat(invoice.usd_cost.toFixed(2))} key={invoice.unique_id}/>
+    return <Invoice time={invoice.time} pcu_amount={invoice.pcu_amount} price={invoice.usd_cost.toFixed(2)} key={invoice.unique_id}/>
   })
 
   return (
@@ -75,6 +76,9 @@ function Invoices() {
         <SoftTypography variant="h6" fontWeight="medium">
           Invoices
         </SoftTypography>
+        <SoftButton variant="outlined" color="info" size="small">
+          view all
+        </SoftButton>
       </SoftBox>
       <SoftBox p={2}>
         <SoftBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
