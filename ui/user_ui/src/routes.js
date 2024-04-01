@@ -54,7 +54,10 @@ import Document from "examples/Icons/Document";
 import SpaceShip from "examples/Icons/SpaceShip";
 import CustomerSupport from "examples/Icons/CustomerSupport";
 import CreditCard from "examples/Icons/CreditCard";
+import Basket from "examples/Icons/Basket";
 import Cube from "examples/Icons/Cube";
+import UploadIcon from '@mui/icons-material/Upload';
+import InfoIcon from '@mui/icons-material/Info';
 
 const routes = [
   {
@@ -71,7 +74,7 @@ const routes = [
     name: "Submit",
     key: "submit",
     route: "/submit",
-    icon: <Office size="12px" />,
+    icon: <UploadIcon size="12px" />,
     component: <Submit />,
     noCollapse: true,
   },
@@ -89,7 +92,7 @@ const routes = [
     name: "About Us",
     key: "about",
     route: "/about",
-    icon: <Cube size="12px" />,
+    icon: <InfoIcon size="12px" />,
     component: <About />,
     noCollapse: true,
   },
