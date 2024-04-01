@@ -34,7 +34,7 @@ import Socials from "layouts/authentication/components/Socials";
 import Separator from "layouts/authentication/components/Separator";
 
 // Images
-import curved6 from "assets/images/curved-images/futuristic_background_transformed.png";
+import curved6 from "assets/images/curved-images/data_center.jpg";
 
 import axios from 'axios';
 
@@ -73,7 +73,7 @@ function SignUp() {
   return (
     <BasicLayout
       title="Parallex"
-      description="Accessible Compute For All"
+      description="Accessible Computing For All"
       image={curved6}
     >
       <Card>

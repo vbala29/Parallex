@@ -68,8 +68,8 @@ function CoverLayout({ color, header, title, description, image, top, children }
             height="100%"
             display={{ xs: "none", md: "block" }}
             position="relative"
-            right={{ md: "-12rem", xl: "-14rem" }}
-            mr={-16}
+            right={{ md: "-12rem", xl: "-16rem" }}
+            mr={-20}
             sx={{
               transform: "skewX(-10deg)",
               overflow: "hidden",
@@ -77,13 +77,19 @@ function CoverLayout({ color, header, title, description, image, top, children }
             }}
           >
             <SoftBox
-              ml={-12}
+              ml={-7}
               height="100%"
-              sx={{
-                backgroundImage: `url(${image})`,
-                backgroundSize: "cover",
-                transform: "skewX(10deg)",
-              }}
+              sx={{backgroundImage: ({ functions: { linearGradient, rgba }, palette: { gradients } }) =>
+              image &&
+              `${linearGradient(
+                rgba(gradients.dark.main, 0),
+                rgba(gradients.dark.state, 0)
+              )}, url(${image})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            transform: "skewX(10deg)"
+          }}
             />
           </SoftBox>
         </Grid>
