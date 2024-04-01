@@ -72,7 +72,7 @@ function Footer({ company, links }) {
             &nbsp;{name}&nbsp;
           </SoftTypography>
         </Link>
-        for more accessible compute. Thank you for being a Parallex provider.
+        for more accessible compute. Thank you for being a Parallex user.
       </SoftBox>
       <SoftBox
         component="ul"
