@@ -45,7 +45,7 @@ function CoverLayout({ color, header, title, description, image, top, children }
         container
         justifyContent="center"
         sx={{
-          minHeight: "75vh",
+          minHeight: "100vh",
           margin: 0,
         }}
       >
@@ -84,7 +84,7 @@ function CoverLayout({ color, header, title, description, image, top, children }
             }}
           >
             <SoftBox
-               ml={-7}
+               ml={-10}
                height="100%"
                sx={{backgroundImage: ({ functions: { linearGradient, rgba }, palette: { gradients } }) =>
                image &&
