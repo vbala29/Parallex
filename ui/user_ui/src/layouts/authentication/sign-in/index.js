@@ -31,7 +31,7 @@ import SoftButton from "components/SoftButton";
 import CoverLayout from "layouts/authentication/components/CoverLayout";
 
 // Images
-import curved6 from "assets/images/parallex_pic.png";
+import curved6 from "assets/images/parallex_pic2.png";
 
 import axios from 'axios';
 
@@ -115,7 +115,7 @@ function SignIn() {
           </SoftTypography>
         </SoftBox>
         <SoftBox mt={4} mb={1}>
-          <SoftButton variant="gradient" color="info" fullWidth onClick={() => submitForm()}>
+          <SoftButton variant="gradient" color="dark" fullWidth onClick={() => submitForm()}>
             sign in
           </SoftButton>
         </SoftBox>
