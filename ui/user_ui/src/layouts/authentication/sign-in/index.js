@@ -73,8 +73,8 @@ function SignIn() {
         navigate("/dashboard");
       })
       .catch(error => {
-        if (error.response.status == 400) {
-          alert("Invalid login information");
+        if (error.response.status == 401) {
+          alert("Invalid User Credentials");
         } else {
           alert(error);
         }
