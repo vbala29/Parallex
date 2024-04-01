@@ -107,6 +107,7 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
 
         cpu_count = fields.cpu_count[0]
         memory_count = fields.memory_count[0]
+        job_name = fields.name[0]
 
         // Check if a file was uploaded
         if (!files.file) {
@@ -187,7 +188,7 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
                     // Update Jobs DB
                     await doc.jobs_created.push(
                         {
-                            name: uniqueID,
+                            name: job_name,
                             url: head_node_url,
                             running: true,
                             creation_time: job_creation_time,
