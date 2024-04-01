@@ -82,21 +82,21 @@ function Dashboard() {
               <MiniStatisticsCard
                 title={{ text: "Jobs Run This Month" }}
                 count= {dashboardData.one_month_job_count ? dashboardData.one_month_job_count : 0}
-                icon={{ color: "info", component: "paid" }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} xl={3}>
-              <MiniStatisticsCard
-                title={{ text: "Total Cost" }}
-                count={dashboardData.total_cost ? "$" + dashboardData.total_cost.toFixed(2) :"$" +  0}
-                icon={{ color: "info", component: "paid" }}
+                icon={{ color: "info", component: "check_circle" }}
               />
             </Grid>
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard
                 title={{ text: "Average Job Duration" }}
                 count={dashboardData.avg_duration ? Math.round(dashboardData.avg_duration/60)+ " minutes" : 0 + " minutes"}
-                icon={{ color: "info", component: "emoji_events" }}
+                icon={{ color: "info", component: "access_time_filled" }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} xl={3}>
+              <MiniStatisticsCard
+                title={{ text: "Total Cost" }}
+                count={dashboardData.total_cost ? "$" + dashboardData.total_cost.toFixed(2) :"$" +  0}
+                icon={{ color: "info", component: "credit_card" }}
               />
             </Grid>
             <Grid item xs={12} sm={6} xl={3}>

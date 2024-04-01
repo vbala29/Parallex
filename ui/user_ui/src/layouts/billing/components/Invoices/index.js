@@ -66,7 +66,7 @@ function Invoices() {
   },[]);
 
   const invoices_list = invoiceData.map((invoice) => {
-    return <Invoice time={invoice.time} pcu_amount={invoice.pcu_amount} price={invoice.usd_cost.toFixed(2)} key={invoice.unique_id}/>
+    return <Invoice time={invoice.time} pcu_amount={invoice.pcu_amount} price={parseFloat(invoice.usd_cost.toFixed(2))} key={invoice.unique_id}/>
   })
 
   return (
