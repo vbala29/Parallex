@@ -70,7 +70,7 @@ function Invoices() {
   })
 
   return (
-    <Card p={2} id="delete-account" sx={{flexGrow:2, margin:"10px"}}>
+    <Card p={2} id="delete-account" sx={{width:"300px", margin:"10px"}}>
       <SoftBox pt={2} px={2} display="flex" justifyContent="space-between" alignItems="center">
         <SoftTypography variant="h6" fontWeight="medium">
           Invoices
