@@ -135,7 +135,7 @@ function Submit() {
               </div>
             </Card>
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={4}>
             <Card style={{
                   padding: '10px', 
                   height: '100%'
