@@ -90,7 +90,7 @@ function SignUp() {
         <SoftBox pt={2} pb={3} px={3}>
           <SoftBox component="form" role="form" onSubmit={(e) => submitForm(e)}>
             <SoftBox mb={2}>
-              <SoftInput placeholder="Name" value={name} onChange={(e) => setName(e.target.value)}/>
+              <SoftInput placeholder="Username" value={name} onChange={(e) => setName(e.target.value)}/>
             </SoftBox>
             <SoftBox mb={2}>
               <SoftInput type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
