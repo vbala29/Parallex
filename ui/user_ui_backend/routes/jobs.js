@@ -237,7 +237,7 @@ router.get('/dashboard-info', checkAuth, async (req, res) => {
         var total_job_durations = 0.0;
         var completed_job_count = 0;
         var job_list = doc.jobs_created;
-        const ms_in_one_minute = 6000;
+        const ms_in_one_second = 1000;
 
         var d = new Date();
         d.setMonth(d.getMonth() - 1);
@@ -264,7 +264,7 @@ router.get('/dashboard-info', checkAuth, async (req, res) => {
             {
                 one_month_job_count: one_month_counter,
                 total_cost: total_cost,
-                avg_duration: (total_job_durations / completed_job_count) / ms_in_one_minute,
+                avg_duration: (total_job_durations / completed_job_count) / ms_in_one_second,
                 avg_cost: total_cost / job_list.length,
             }
         ));

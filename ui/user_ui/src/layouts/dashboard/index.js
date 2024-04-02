@@ -49,6 +49,14 @@ import Cookies from 'js-cookie';
 
 import config from "../../config.json"
 
+function secondsToTime(seconds) {
+  let hours = Math.floor(seconds / 3600);
+  seconds %= 3600;
+  let minutes = Math.floor(seconds / 60);
+  seconds %= 60;
+  return [hours.toFixed(0), minutes.toFixed(0), seconds.toFixed(0)].map(v => v < 10 ? "0" + v : v).join(":");
+}
+
 function Dashboard() {
   // We want the dashboard to contain a chart of all jobs. Ongoing and finished?
   // We want the dashbaord to contain info on how much money has been spent?
@@ -72,6 +80,9 @@ function Dashboard() {
     })
   },[]);
 
+  let hours = dashboardData.avg_duration / 3600;
+  let minutes = (dashboardData.avg_duration % 3600) / 60;
+  let seconds = (dashboardData.avg_duration % 60);
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -89,7 +100,7 @@ function Dashboard() {
               <MiniStatisticsCard
                 title={{ text: "Average Job Duration" }}
                 // count={dashboardData.avg_duration ? Math.round(dashboardData.avg_duration/60)+ " minutes" : 0 + " minutes"}
-                count={dashboardData.avg_duration ? new Date(dashboardData.avg_duration * 1000).toISOString().slice(11, 19) : "00:00:00"}
+                count={dashboardData.avg_duration ? secondsToTime(dashboardData.avg_duration) : "00:00:00"}
                 icon={{ color: "info", component: "access_time_filled" }}
               />
             </Grid>
