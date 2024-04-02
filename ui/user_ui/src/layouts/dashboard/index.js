@@ -88,7 +88,8 @@ function Dashboard() {
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard
                 title={{ text: "Average Job Duration" }}
-                count={dashboardData.avg_duration ? Math.round(dashboardData.avg_duration/60)+ " minutes" : 0 + " minutes"}
+                // count={dashboardData.avg_duration ? Math.round(dashboardData.avg_duration/60)+ " minutes" : 0 + " minutes"}
+                count={dashboardData.avg_duration ? new Date(dashboardData.avg_duration * 1000).toISOString().slice(11, 19) : "00:00:00"}
                 icon={{ color: "info", component: "access_time_filled" }}
               />
             </Grid>
