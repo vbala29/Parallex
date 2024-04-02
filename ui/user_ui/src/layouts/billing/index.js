@@ -83,13 +83,6 @@ function Billing() {
           <Invoices/>
         </SoftBox>
         <SoftBox b={2} display="flex" flex-direction="row">
-          <div style={{margin:"10px", flexGrow:"1"}}>
-            <DefaultInfoCard
-              icon={<FaMicrochip></FaMicrochip>}
-              title="PCUs"
-              value={availablePCUs}
-            />
-          </div>
           <BuyPCU 
             open={handleClickOpen}
             numPCUs={numPCUs}
@@ -101,6 +94,13 @@ function Billing() {
           onClose={handleClose}
           numPCUs={numPCUs}
           ></ConfirmPayment>
+          <div style={{margin:"10px", flexGrow:"1"}}>
+            <DefaultInfoCard
+              icon={<FaMicrochip></FaMicrochip>}
+              title="PCUs"
+              value={availablePCUs}
+            />
+          </div>
         </SoftBox>
       <Footer />
     </DashboardLayout>
