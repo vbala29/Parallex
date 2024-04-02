@@ -53,7 +53,7 @@ function Invoices() {
           }
           return invoice_obj;
         });
-        setInvoiceData(invoice_list.slice(0,6)); //slice array to just show first 6, can implement show all feature later
+        setInvoiceData(invoice_list.slice(0,6).reverse()); //slice array to just show first 6, can implement show all feature later
       })
       .catch(error => {
         console.log(error);
