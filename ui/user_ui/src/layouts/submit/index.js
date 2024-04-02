@@ -150,13 +150,13 @@ function Submit() {
                 >
               <CardHeader title="Job Specifications"/>
                 <div style={{padding:"5px"}}>
-                  <SubmitInput label="Job Name" placeholder="type job name here" value={jobName} onChange={setJobName}/>
+                  <SubmitInput label="Job Name" placeholder="Enter Job Name Here" value={jobName} onChange={setJobName}/>
                 </div>
                 <div style={{padding:"5px"}}>
-                  <SubmitInput label="CPU Cores" placeholder="number of cores" value={cores} onChange={setCores}/>
+                  <SubmitInput label="CPU Cores" placeholder="Number of Cores" value={cores} onChange={setCores}/>
                 </div>
                 <div style={{padding:"5px"}}>
-                  <SubmitInput label="MiB RAM" placeholder="amount of RAM" value={ram} onChange={setRam}/>
+                  <SubmitInput label="MiB RAM" placeholder="Size of RAM" value={ram} onChange={setRam}/>
                 </div>
                 <SoftTypography variant="body2">
                   Estimated Cost Per Hour: {ram * cores / 2500}
