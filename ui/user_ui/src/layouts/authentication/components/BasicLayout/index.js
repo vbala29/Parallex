@@ -29,6 +29,7 @@ import PageLayout from "examples/LayoutContainers/PageLayout";
 
 // Authentication layout components
 import Footer from "layouts/authentication/components/Footer";
+import parallex_white from "assets/images/parallex_white.png";
 
 function BasicLayout({ title, description, image, children }) {
   return (

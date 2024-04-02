@@ -73,7 +73,7 @@ function SignUp() {
   };
   return (
     <BasicLayout
-      title="Parallex"
+      title="parallex"
       description="Accessible Computing For All"
       image={curved6}
     >
