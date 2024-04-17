@@ -210,8 +210,9 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
                     // Assume for now that time `time_start` of a Provider is the same as the job creation time. Eventually this will not be the case
                     // once we have a feedback mechanism from Ray
                     await updateProvider(job_spec.headProvider.providerID, uniqueID, req.userData.userId, job_creation_time);
-
-                    if (job_spec.providers > 0) {
+                    console.log('proivder spec length', job_spec.providers.length)
+                    if (job_spec.providers.length > 0) {
+                        console.log('found non-zero job spec providers')
                         await Promise.all(job_spec.providers.map(provider =>
                             updateProvider(provider.providerID, uniqueID, req.userData.userId, job_creation_time)
                         ));
