@@ -165,7 +165,7 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
                     }
                 )).then(async (job_spec) => {
                     head_node_ip = job_spec.headProvider.providerIP;
-
+                    console.log('job_spec', job_spec)
                     if (head_node_ip.toLowerCase().includes("invalid")) {
                         throw new Error("Invalid head node IP");
                     }
@@ -176,14 +176,21 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
                         {
                             provider_id: job_spec.headProvider.providerID,
                             status: "pending"
-                        },
-                        ...(job_spec.providers ? job_spec.providers.map(provider => {
-                            return {
+                        }
+                    ]
+                    
+                    if (job_spec.providers) {
+                        for (provider of job_spec.providers) {
+                            providers_assigned.push({
                                 provider_id: provider.providerID,
                                 status: "pending"
-                            }
-                        }) : [])
-                    ]
+                            })
+                        }
+                    }
+
+                    console.log('providers assigned', providers_assigned)
+
+
                     job_creation_time = Date.now();
                     // Update Jobs DB
                     await doc.jobs_created.push(
