@@ -8,4 +8,5 @@ cd ../protos/build
 export PYTHONPATH=$PYTHONPATH:$(pwd)
 cd ../../command
 echo $PYTHONPATH
-python command_node.py
+python command_node.py &
+echo "Started Command Node"
