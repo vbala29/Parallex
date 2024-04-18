@@ -444,7 +444,7 @@ if __name__ == "__main__":
     aqmp_handler = AQMPProducerConnection(_RABBITMQ_BROKER)
     command_node = CommandNode(aqmp_handler)
     gc = Poller(_GC_FIDELITY_SECS, GarbageCollectorRunner(command_node))
-    gc.run()
+    gc.start()
     aqmp_handler.loop.run_until_complete(aqmp_handler.setupAQMP())
     t = Thread(target=start_background_loop, args=(aqmp_handler.loop,), daemon=True)
     t.start()
