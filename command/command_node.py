@@ -55,6 +55,8 @@ class Poller(threading.Thread):
 
 
 class GarbageCollectorRunner:
+    """Runs the garbage collector for inactive nodes on the command node."""
+
     def __init__(self, cm):
         self.cm = cm
         self.stop_event = threading.Event()
