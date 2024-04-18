@@ -372,6 +372,13 @@ async def handle_cluster_join_request(msg, job_stub):
 
         elif typeStr == head_node_join_cluster_request.getTypeStr():
             print("Starting node as head")
+            print("Ensuring no residual ray processes")
+            subprocess.run(
+                launch_utils.make_conda_command("ray stop --force"),
+                shell=True,
+                check=True,
+                executable="/bin/bash",
+            )
             req = head_node_join_cluster_request.loadFromJson(jsonMsg)
             launch_head.launch_head(_RAY_PORT)
             print(f"provider map: {req.provider_map()}")
