@@ -48,15 +48,15 @@ router.get('/job-files', async (req, res) => {
         res.setHeader('Content-type', 'application/zip');
         res.setHeader('Content-Length', stat.size);
 
-          // Stream the file to the response
-          const readStream = fs.createReadStream(job_file_path);
-          console.log("Here2");
-          readStream.on('error', (err) => {
-              console.error(err);
-              res.status(500).send(err);
-          });
+        // Stream the file to the response
+        const readStream = fs.createReadStream(job_file_path);
+        console.log("Here2");
+        readStream.on('error', (err) => {
+            console.error(err);
+            res.status(500).send(err);
+        });
 
-          readStream.pipe(res);
+        readStream.pipe(res);
     })
 })
 
@@ -123,12 +123,12 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
         if (!fs.existsSync("./job_files/")) {
             fs.mkdirSync("./job_files/");
         }
-        
+
         console.log(`Renaming path ${zip_file_path} to ${save_path}`);
         fs.rename(zip_file_path, save_path, (err) => {
             if (err) reject('Error downloading/renaming zip file: ' + err);
         });
-        
+
         resolve('Zip file saved successfully');
 
         // Extract the zip file
@@ -178,7 +178,7 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
                             status: "pending"
                         }
                     ]
-                    
+
                     if (job_spec.providers) {
                         for (provider of job_spec.providers) {
                             providers_assigned.push({
@@ -211,7 +211,7 @@ router.put('/create-job', checkAuth, async (req, res, next) => {
                     // once we have a feedback mechanism from Ray
                     await updateProvider(job_spec.headProvider.providerID, uniqueID, req.userData.userId, job_creation_time);
                     console.log('proivder spec length', job_spec.providers.length)
-                    if (job_spec.providers.length > 0) {
+                    if (job_spec.providers && job_spec.providers.length > 0) {
                         console.log('found non-zero job spec providers')
                         await Promise.all(job_spec.providers.map(provider =>
                             updateProvider(provider.providerID, uniqueID, req.userData.userId, job_creation_time)
@@ -320,23 +320,23 @@ router.get('/pcu-cost', checkAuth, (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(
         {
-            pcu_cost : locals.pcu_cost
+            pcu_cost: locals.pcu_cost
         }
     ));
 })
 
 router.post('/buy-pcu', checkAuth, async (req, res) => {
     new_transaction = {
-        time : Date.now(),
-        pcu_amount : req.body.pcu_bought,
-        usd_cost : req.body.pcu_bought * locals.pcu_cost
+        time: Date.now(),
+        pcu_amount: req.body.pcu_bought,
+        usd_cost: req.body.pcu_bought * locals.pcu_cost
     }
 
     await User.findOneAndUpdate(
         { '_id': req.userData.userId },
-        { 
+        {
             $inc: { available_pcu_count: req.body.pcu_bought },
-            $push: { pcu_transactions : new_transaction}  
+            $push: { pcu_transactions: new_transaction }
         }
     ).exec().then(
         async (user) => {
