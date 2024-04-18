@@ -74,6 +74,10 @@ class GarbageCollectorRunner:
         for provider_id in expired_providers:
             self._expire_provider(provider_id)
 
+    def stop_event_set(self) -> bool:
+        """Returns if the stop event is set."""
+        return False
+
     def _expire_provider(self, provider_id: str):
         """Deletes nodes and removes it from provider lists"""
         if provider_id in self.cm.active_providers:
