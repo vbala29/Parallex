@@ -236,14 +236,13 @@ class ResourceUpdateRunner:
 
     def _get_ray_node_map(self):
         ray_command = "ray list nodes --format=json"
-
-        node_info = json.loads(
-            subprocess.check_output(
-                launch_utils.make_conda_command(ray_command),
-                stderr=subprocess.STDOUT,
-                shell=True,
-            ).decode("utf8")
-        )
+        ray_node_map_output = subprocess.check_output(
+            launch_utils.make_conda_command(ray_command),
+            stderr=subprocess.STDOUT,
+            shell=True,
+        ).decode("utf8")
+        print(f"ray node map output: {ray_node_map_output}")
+        node_info = json.loads(ray_node_map_output)
 
         # `provider_map` maps from the IP of the node to the provider UUID.
         # Here we map from the ray node ID to the provider UUID, intermediating via the provider map and ray's knowledge of the node IP.
