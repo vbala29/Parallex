@@ -216,7 +216,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
               <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
                 <FaMicrochip style={{ color: "#555555", marginBottom: "10px", marginTop: "2px" }} />
                 <SoftTypography variant="h6" pl={1}>
-                  PCUs: {availablePCUs}
+                  PCUs: {(availablePCUs).toFixed(2)}
                 </SoftTypography>
               </div>
             </Link>
