@@ -2,6 +2,8 @@ import time
 from protos.build import daemon_pb2
 from protos.build import user_pb2
 
+_EXPIRY_SECS: int = 60
+
 
 class Provider:
     def __init__(self, ip, uuid):
@@ -41,6 +43,10 @@ class Provider:
     def is_head_eligible(self) -> bool:
         """Returns if the provider is eligible to be a head node."""
         return True
+
+    def is_expired(self) -> bool:
+        """Returns if the provider is expired."""
+        return time.time() - self.last_seen > _EXPIRY_SECS
 
 
 class ProviderCandidate:

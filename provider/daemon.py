@@ -84,7 +84,6 @@ class DynamicMetricsRunner:
         self._send_dynamic_metrics()
 
     def _send_dynamic_metrics(self):
-        time.sleep(DYNAMIC_METRIC_INTERVAL_SEC)
         ram_usage_mib = psutil.virtual_memory().used / (BYTES_IN_MEBIBYTE)
         cpu_usage = psutil.cpu_percent(interval=CPU_FREQ_INTERVAL_SEC)
         try:

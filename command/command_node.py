@@ -18,8 +18,13 @@ from protos.build import user_pb2_grpc
 from aqmp_tools.formats.join_cluster_request import join_cluster_request
 from aqmp_tools.AQMPProducerConnection import AQMPProducerConnection
 
+import time
+import threading
+
+
 HEAD_NODE_CPUS = 1
 HEAD_NODE_RAM = 2048
+_GC_FIDELITY_SECS = 60
 
 base_path = Path(__file__).parent
 file_path = (base_path / "../config/config.json").resolve()
@@ -35,6 +40,55 @@ class Job:
         split = location.split(",")
         self.lat = split[0]
         self.lon = split[1]
+
+
+class Poller(threading.Thread):
+    def __init__(self, interval, function_manager):
+        super().__init__()
+        self.interval = interval
+        self.fm = function_manager
+
+    def run(self):
+        while not self.fm.stop_event_set():
+            self.fm.run()
+            time.sleep(self.interval)
+
+
+class GarbageCollectorRunner:
+    def __init__(self, cm):
+        self.cm = cm
+        self.stop_event = threading.Event()
+
+    def run(self):
+        # Only need to scan through providers and active providers because all heads are in providers and all active heads are in active providers.
+
+        expired_providers = []
+        for provider_id, provider in self.cm.providers.items():
+            if provider.is_expired():
+                expired_providers.append(provider_id)
+        for provider_id, provider in self.cm.active_providers.items():
+            if provider.is_expired():
+                expired_providers.append(provider_id)
+        for provider_id in expired_providers:
+            self._expire_provider(provider_id)
+
+    def _expire_provider(self, provider_id: str):
+        """Deletes nodes and removes it from provider lists"""
+        if provider_id in self.cm.active_providers:
+            print(f"Expiring an active provider: {provider_id}")
+            del self.cm.active_providers[provider_id]
+
+        if provider_id in self.cm.active_heads:
+            print(f"Expiring an active head node: {provider_id}")
+            del self.cm.active_heads[provider_id]
+
+        if provider_id in self.cm.providers:
+            print(f"Expiring an available provider: {provider_id}")
+            del self.cm.providers[provider_id]
+
+        if provider_id in self.cm.head_nodes:
+            print(f"Expiring an eligible head node: {provider_id}")
+            del self.cm.head_nodes[provider_id]
 
 
 class CommandNode:
@@ -383,6 +437,8 @@ def start_background_loop(loop):
 if __name__ == "__main__":
     aqmp_handler = AQMPProducerConnection(_RABBITMQ_BROKER)
     command_node = CommandNode(aqmp_handler)
+    gc = Poller(_GC_FIDELITY_SECS, GarbageCollectorRunner(command_node))
+    gc.run()
     aqmp_handler.loop.run_until_complete(aqmp_handler.setupAQMP())
     t = Thread(target=start_background_loop, args=(aqmp_handler.loop,), daemon=True)
     t.start()
