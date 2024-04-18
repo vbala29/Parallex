@@ -358,6 +358,13 @@ async def handle_cluster_join_request(msg, job_stub):
 
         if typeStr == join_cluster_request.getTypeStr():
             print("Received join_cluster_request")
+            print("Ensuring no residual ray processes")
+            subprocess.run(
+                launch_utils.make_conda_command("ray stop"),
+                shell=True,
+                check=True,
+                executable="/bin/bash",
+            )
             print(f" Sleeping for {_HEAD_START_DELAY_SECS}")
             time.sleep(_HEAD_START_DELAY_SECS)
             req = join_cluster_request.loadFromJson(jsonMsg)
