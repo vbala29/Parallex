@@ -259,8 +259,6 @@ router.get('/dashboard-info', checkAuth, async (req, res) => {
             if ('termination_time' in job && job.termination_time) {
                 time_used = job.termination_time - job.creation_time;
                 total_job_durations += time_used;
-                console.log('found termination time in', job, 'with time used', time_used)
-                console.log('total_job_durations', total_job_durations)
                 completed_job_count++;
             }
         }
