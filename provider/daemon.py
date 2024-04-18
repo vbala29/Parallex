@@ -155,7 +155,7 @@ class ResourceUpdateRunner:
         self.send_resources(resource_consumption_by_provider, time_end)
         if time_end is not None:
             # kill ray
-            ray_command = "ray stop"
+            ray_command = "ray stop --force"
             subprocess.run(
                 launch_utils.make_conda_command(ray_command),
                 shell=True,
@@ -360,7 +360,7 @@ async def handle_cluster_join_request(msg, job_stub):
             print("Received join_cluster_request")
             print("Ensuring no residual ray processes")
             subprocess.run(
-                launch_utils.make_conda_command("ray stop"),
+                launch_utils.make_conda_command("ray stop --force"),
                 shell=True,
                 check=True,
                 executable="/bin/bash",
