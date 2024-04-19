@@ -42,7 +42,7 @@ CPU_FREQ_INTERVAL_SEC: int = 1
 UUID: str = ""
 IP: str = ""
 
-_BACKEND_FIDELITY: int = 5
+_BACKEND_FIDELITY: int = 8
 _BACKEND_IP: str = (
     f'http://{config["ip_addresses"]["web_backend_server"]}:{str(config["ports"]["web_backend_server"])}'
 )
