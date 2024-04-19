@@ -47,7 +47,7 @@ _BACKEND_IP: str = (
     f'http://{config["ip_addresses"]["web_backend_server"]}:{str(config["ports"]["web_backend_server"])}'
 )
 
-_HEAD_START_DELAY_SECS: int = 5
+_HEAD_START_DELAY_SECS: int = 10
 
 _PROMETHEUS_IP_PORT: str = (
     config["prometheus"]["ip"] + ":" + str(config["prometheus"]["port"])
